@@ -1,0 +1,20 @@
+.sidebar-nav {
+  height: 100%;
+  padding: 12px 8px;
+  background: #ffffff;
+}
+
+a[mat-list-item] {
+  margin-bottom: 4px;
+  border-radius: 8px;
+}
+
+a[mat-list-item].active {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+:host-context(.menu-collapsed) .sidebar-nav {
+  padding-right: 6px;
+  padding-left: 6px;
+}

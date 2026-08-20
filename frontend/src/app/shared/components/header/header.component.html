@@ -1,0 +1,48 @@
+<mat-toolbar class="app-header" color="primary">
+  <button
+    mat-icon-button
+    class="menu-toggle"
+    type="button"
+    matTooltip="Menu"
+    aria-label="Alternar menu"
+    (click)="onMenuToggle()"
+  >
+    <mat-icon aria-hidden="true">menu</mat-icon>
+  </button>
+
+  <div class="brand">
+    <span class="brand-name">{{ appName }}</span>
+  </div>
+
+  <span class="header-spacer"></span>
+
+  <div class="header-actions">
+    <button
+      mat-icon-button
+      type="button"
+      matTooltip="Mensagens"
+      aria-label="Mensagens"
+    >
+      <mat-icon
+        [matBadge]="unreadMessages"
+        matBadgeColor="accent"
+        matBadgeSize="small"
+        aria-hidden="true"
+      >
+        mail
+      </mat-icon>
+    </button>
+
+    <button
+      mat-button
+      class="user-button"
+      type="button"
+      matTooltip="Usuario logado"
+      aria-label="Usuario logado"
+    >
+      <span class="user-avatar" aria-hidden="true">{{ userInitials }}</span>
+      <span class="user-name">{{ userName }}</span>
+      <mat-icon aria-hidden="true">expand_more</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>

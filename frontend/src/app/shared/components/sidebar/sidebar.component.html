@@ -1,0 +1,19 @@
+<nav class="sidebar-nav" aria-label="Menu principal">
+  <mat-nav-list>
+    @for (item of menuItems; track item.route) {
+      <a
+        mat-list-item
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+        [matTooltip]="collapsed ? item.label : ''"
+        matTooltipPosition="right"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">{{ item.icon }}</mat-icon>
+        @if (!collapsed) {
+          <span matListItemTitle>{{ item.label }}</span>
+        }
+      </a>
+    }
+  </mat-nav-list>
+</nav>

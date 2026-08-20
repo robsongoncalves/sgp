@@ -1,0 +1,20 @@
+<section class="layout" [class.menu-collapsed]="isMenuCollapsed">
+  <app-header (menuToggle)="toggleMenu()" />
+
+  <mat-sidenav-container class="layout-body">
+    <mat-sidenav
+      class="app-sidenav"
+      mode="side"
+      opened
+      [fixedInViewport]="false"
+    >
+      <app-sidebar [collapsed]="isMenuCollapsed" />
+    </mat-sidenav>
+
+    <mat-sidenav-content class="app-content">
+      <main class="page-shell">
+        <router-outlet />
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</section>

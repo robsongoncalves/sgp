@@ -1,0 +1,43 @@
+.page-header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 8px;
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+.page-header h1,
+.page-header p,
+.content-panel h2,
+.content-panel p {
+  margin: 0;
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 500;
+}
+
+.page-header p {
+  margin-top: 4px;
+  color: #667085;
+}
+
+.content-panel {
+  display: grid;
+  gap: 8px;
+  padding: 24px;
+  border: 1px solid #d9dee5;
+  border-radius: 8px;
+  background: #ffffff;
+}
