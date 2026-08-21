@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -9,9 +11,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   selector: 'app-header',
   standalone: true,
   imports: [
+    RouterLink,
     MatBadgeModule,
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     MatToolbarModule,
     MatTooltipModule
   ],

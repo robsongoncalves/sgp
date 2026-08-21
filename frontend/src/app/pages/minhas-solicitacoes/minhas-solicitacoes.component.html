@@ -1,0 +1,71 @@
+<section class="filters-panel">
+  <h1>Selecione os filtros desejados:</h1>
+
+  <form [formGroup]="filterForm" (ngSubmit)="pesquisar()">
+    <div class="filters-grid">
+      <mat-form-field appearance="fill">
+        <mat-label>Número da Solicitação</mat-label>
+        <input matInput formControlName="numero" type="text">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Criado a partir de</mat-label>
+        <input matInput formControlName="criadoAPartirDe" type="date">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-row">
+        <mat-label>Tipo de Solicitação</mat-label>
+        <mat-select formControlName="tipo">
+          @for (tipo of tipos; track tipo) {
+            <mat-option [value]="tipo">{{ tipo }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-row">
+        <mat-label>Situação</mat-label>
+        <mat-select formControlName="situacao">
+          @for (situacao of situacoes; track situacao) {
+            <mat-option [value]="situacao">{{ situacao }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="filter-actions">
+      <button mat-stroked-button color="primary" type="button" (click)="limpar()">
+        <mat-icon aria-hidden="true">cleaning_services</mat-icon>
+        Limpar
+      </button>
+
+      <button mat-flat-button color="primary" type="submit">
+        <mat-icon aria-hidden="true">search</mat-icon>
+        Pesquisar
+      </button>
+    </div>
+  </form>
+</section>
+
+<section class="requests-list" aria-label="Solicitações encontradas">
+  @for (solicitacao of filteredSolicitacoes; track solicitacao.numero) {
+    <article class="request-card">
+      <div class="status-pill">{{ solicitacao.situacao }}</div>
+
+      <h2>{{ solicitacao.tipo }}</h2>
+
+      <p>Criada em {{ solicitacao.criadaEm }}</p>
+      <p>Última movimentação em {{ solicitacao.ultimaMovimentacao }}</p>
+
+      <span class="request-number">{{ solicitacao.numero }}</span>
+
+      <button mat-button color="primary" class="details-button" type="button">
+        Ver detalhes
+        <mat-icon aria-hidden="true">chevron_right</mat-icon>
+      </button>
+    </article>
+  } @empty {
+    <article class="empty-card">
+      Nenhuma solicitação encontrada.
+    </article>
+  }
+</section>

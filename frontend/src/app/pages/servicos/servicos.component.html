@@ -1,0 +1,83 @@
+<section class="services-panel">
+  <label class="service-search" aria-label="Buscar serviços">
+    <mat-icon aria-hidden="true">search</mat-icon>
+    <input
+      type="search"
+      placeholder="Buscar nos serviços"
+      [(ngModel)]="searchTerm"
+    >
+  </label>
+
+  <header class="services-header">
+    <h1>Serviços Disponíveis</h1>
+
+    <button
+      mat-button
+      color="primary"
+      type="button"
+      class="all-services-button"
+      routerLink="/todos-servicos"
+    >
+      Todos os Serviços
+      <mat-icon aria-hidden="true">chevron_right</mat-icon>
+    </button>
+  </header>
+
+  <div class="services-grid">
+    @for (service of filteredServices; track service.label) {
+      <button class="service-card" type="button" [routerLink]="service.route || null">
+        <mat-icon aria-hidden="true">{{ service.icon }}</mat-icon>
+        <span>{{ service.label }}</span>
+      </button>
+    } @empty {
+      <p class="empty-services">Nenhum serviço encontrado.</p>
+    }
+  </div>
+</section>
+
+<section class="rating-panel">
+  <h2>Avalie a nova tela inicial</h2>
+
+  <div class="stars" role="radiogroup" aria-label="Nota da tela inicial">
+    @for (option of ratingOptions; track option) {
+      <button
+        class="star-button"
+        type="button"
+        role="radio"
+        [class.active]="option <= (hoveredRating || rating)"
+        [attr.aria-checked]="rating === option"
+        [attr.aria-label]="option + ' estrela'"
+        (click)="setRating(option)"
+        (mouseenter)="hoveredRating = option"
+        (mouseleave)="hoveredRating = 0"
+      >
+        <mat-icon aria-hidden="true">
+          {{ option <= (hoveredRating || rating) ? 'star' : 'star_outline' }}
+        </mat-icon>
+      </button>
+    }
+  </div>
+
+  <label class="comment-label" for="servicos-rating-comment">
+    Deixe aqui seu comentário sobre a nota atribuída. Para atendimento, use nossos canais oficiais.
+  </label>
+
+  <textarea
+    id="servicos-rating-comment"
+    class="comment-field"
+    rows="4"
+    [(ngModel)]="comment"
+  ></textarea>
+
+  <button
+    mat-flat-button
+    color="primary"
+    class="rating-submit"
+    type="button"
+    [disabled]="!rating"
+    (click)="submitRating()"
+  >
+    <mat-icon aria-hidden="true">check</mat-icon>
+    Enviar Avaliação
+  </button>
+</section>

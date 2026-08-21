@@ -1,36 +1,32 @@
 import { Routes } from '@angular/router';
 
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { LoginComponent } from './pages/login/login.component';
+import { MinhasSolicitacoesComponent } from './pages/minhas-solicitacoes/minhas-solicitacoes.component';
 import { PlaceholderPageComponent } from './pages/placeholder/placeholder-page.component';
+import { ProgressaoDocenteComponent } from './pages/progressao-docente/progressao-docente.component';
+import { ServicosComponent } from './pages/servicos/servicos.component';
+import { TodosServicosComponent } from './pages/todos-servicos/todos-servicos.component';
 
 export const routes: Routes = [
   {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
     path: '',
-    component: DashboardComponent
+    component: ServicosComponent
   },
   {
-    path: 'clientes',
-    component: PlaceholderPageComponent,
-    data: {
-      title: 'Clientes',
-      icon: 'groups'
-    }
+    path: 'minhas-solicitacoes',
+    component: MinhasSolicitacoesComponent
   },
   {
-    path: 'produtos',
-    component: PlaceholderPageComponent,
-    data: {
-      title: 'Produtos',
-      icon: 'inventory_2'
-    }
+    path: 'todos-servicos',
+    component: TodosServicosComponent
   },
   {
-    path: 'vendas',
-    component: PlaceholderPageComponent,
-    data: {
-      title: 'Vendas',
-      icon: 'receipt_long'
-    }
+    path: 'progressao-docente',
+    component: ProgressaoDocenteComponent
   },
   {
     path: 'configuracoes',

@@ -26,30 +26,23 @@ interface MenuItem {
 export class SidebarComponent {
   @Input() collapsed = false;
 
-  menuItems: MenuItem[] = [
+  mainMenuItems: MenuItem[] = [
     {
-      icon: 'dashboard',
-      label: 'Dashboard',
+      icon: 'apps',
+      label: 'Serviços',
       route: '/'
     },
     {
-      icon: 'groups',
-      label: 'Clientes',
-      route: '/clientes'
-    },
-    {
-      icon: 'inventory_2',
-      label: 'Produtos',
-      route: '/produtos'
-    },
-    {
-      icon: 'receipt_long',
-      label: 'Vendas',
-      route: '/vendas'
-    },
+      icon: 'assignment_turned_in',
+      label: 'Minhas Solicitações',
+      route: '/minhas-solicitacoes'
+    }
+  ];
+
+  restrictedMenuItems: MenuItem[] = [
     {
       icon: 'settings',
-      label: 'Configuracoes',
+      label: 'Configurações',
       route: '/configuracoes'
     }
   ];

@@ -14,7 +14,25 @@ a[mat-list-item].active {
   color: #1a73e8;
 }
 
+.menu-section {
+  margin: 14px 8px 8px;
+  padding-top: 12px;
+  border-top: 1px solid #d9dee5;
+}
+
+.section-title {
+  color: #667085;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
 :host-context(.menu-collapsed) .sidebar-nav {
   padding-right: 6px;
   padding-left: 6px;
+}
+
+:host-context(.menu-collapsed) .menu-section {
+  margin-right: 6px;
+  margin-left: 6px;
 }

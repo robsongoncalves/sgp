@@ -1,0 +1,132 @@
+.filters-panel {
+  margin-bottom: 22px;
+  padding: 14px 16px 18px;
+  border: 1px solid #d5dfef;
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.14);
+}
+
+h1 {
+  margin: 0 0 14px;
+  color: #0b57d0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 6px 18px;
+}
+
+.filters-grid mat-form-field {
+  min-width: 0;
+}
+
+.full-row {
+  grid-column: 1 / -1;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 28px;
+  justify-content: center;
+  margin-top: 26px;
+}
+
+.filter-actions button {
+  min-width: 128px;
+  border-radius: 999px;
+}
+
+.requests-list {
+  display: grid;
+  gap: 16px;
+}
+
+.request-card,
+.empty-card {
+  position: relative;
+  min-height: 154px;
+  padding: 28px 16px 18px;
+  border: 1px solid #d5dfef;
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.12);
+}
+
+.status-pill {
+  width: min(450px, 52%);
+  margin: -18px auto 18px;
+  border-radius: 999px;
+  background: #158a24;
+  color: #ffffff;
+  font-weight: 700;
+  line-height: 24px;
+  text-align: center;
+}
+
+h2 {
+  margin: 0 0 18px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+p {
+  margin: 0 0 8px;
+  color: #344054;
+  font-size: 0.8rem;
+}
+
+.request-number {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 3px;
+  background: #9e9e9e;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.details-button {
+  position: absolute;
+  right: 10px;
+  bottom: 12px;
+}
+
+.empty-card {
+  min-height: auto;
+  padding: 22px;
+}
+
+@media (max-width: 699px) {
+  .filters-panel {
+    padding: 12px;
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .status-pill {
+    width: 100%;
+  }
+
+  .details-button {
+    position: static;
+    margin-top: 16px;
+  }
+
+  .request-card,
+  .empty-card {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+}

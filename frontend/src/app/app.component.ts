@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, HostListener } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
 
 import { HeaderComponent } from './shared/components/header/header.component';
@@ -18,9 +18,26 @@ import { SidebarComponent } from './shared/components/sidebar/sidebar.component'
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  isMenuCollapsed = false;
+  isMenuCollapsed = this.isMobileViewport();
+
+  constructor(private readonly router: Router) {}
+
+  get isAuthLayout(): boolean {
+    return this.router.url.startsWith('/login');
+  }
 
   toggleMenu(): void {
     this.isMenuCollapsed = !this.isMenuCollapsed;
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (this.isMobileViewport()) {
+      this.isMenuCollapsed = true;
+    }
+  }
+
+  private isMobileViewport(): boolean {
+    return typeof window !== 'undefined' && window.innerWidth < 700;
   }
 }

@@ -39,10 +39,18 @@
       type="button"
       matTooltip="Usuario logado"
       aria-label="Usuario logado"
+      [matMenuTriggerFor]="userMenu"
     >
       <span class="user-avatar" aria-hidden="true">{{ userInitials }}</span>
       <span class="user-name">{{ userName }}</span>
       <mat-icon aria-hidden="true">expand_more</mat-icon>
     </button>
+
+    <mat-menu #userMenu="matMenu" xPosition="before">
+      <button mat-menu-item type="button" routerLink="/login">
+        <mat-icon aria-hidden="true">logout</mat-icon>
+        <span>Sair</span>
+      </button>
+    </mat-menu>
   </div>
 </mat-toolbar>

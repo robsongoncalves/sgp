@@ -1,0 +1,32 @@
+<section class="services-list-page">
+  <h1>Pesquisar Serviços</h1>
+
+  <label class="search-field" aria-label="Pesquisar serviços">
+    <input type="search" placeholder="Buscar" [(ngModel)]="searchTerm">
+    <mat-icon aria-hidden="true">search</mat-icon>
+  </label>
+
+  <div class="list-actions" aria-label="Ordenação">
+    <button mat-icon-button type="button" aria-label="Ordenar alfabeticamente">
+      <mat-icon aria-hidden="true">sort_by_alpha</mat-icon>
+    </button>
+
+    <button mat-icon-button type="button" aria-label="Ordenar por lista">
+      <mat-icon aria-hidden="true">sort</mat-icon>
+    </button>
+  </div>
+
+  <div class="services-list">
+    @for (servico of filteredServicos; track servico.label) {
+      <button class="service-row" type="button">
+        <span class="service-name">
+          <mat-icon aria-hidden="true">{{ servico.icon }}</mat-icon>
+          <span>{{ servico.label }}</span>
+        </span>
+        <mat-icon aria-hidden="true">chevron_right</mat-icon>
+      </button>
+    } @empty {
+      <p class="empty-message">Nenhum serviço encontrado.</p>
+    }
+  </div>
+</section>

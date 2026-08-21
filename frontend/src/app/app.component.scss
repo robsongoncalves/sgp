@@ -28,6 +28,10 @@
   min-height: calc(100vh - 64px);
 }
 
+:host ::ng-deep .menu-collapsed .mat-drawer-content {
+  margin-left: 72px !important;
+}
+
 .page-shell {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
@@ -47,8 +51,12 @@
     width: 64px;
   }
 
+  :host ::ng-deep .menu-collapsed .mat-drawer-content {
+    margin-left: 64px !important;
+  }
+
   .page-shell {
-    width: calc(100% - 24px);
-    padding: 24px 0;
+    width: calc(100% - 16px);
+    padding: 16px 0;
   }
 }

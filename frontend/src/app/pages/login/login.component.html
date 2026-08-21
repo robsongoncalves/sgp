@@ -1,0 +1,74 @@
+<main class="login-page">
+  <section class="login-panel">
+    <div class="brand">
+      <span class="brand-mark">
+        <mat-icon aria-hidden="true">apps</mat-icon>
+      </span>
+      <div>
+        <h1>Sistema de Gestão</h1>
+        <p>Acesso corporativo</p>
+      </div>
+    </div>
+
+    <mat-card appearance="outlined" class="login-card">
+      <mat-card-header>
+        <mat-card-title>Entrar</mat-card-title>
+        <mat-card-subtitle>Use suas credenciais de rede.</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form class="login-form" [formGroup]="loginForm" (ngSubmit)="submit()">
+          <mat-form-field appearance="outline">
+            <mat-label>Usuario</mat-label>
+            <input
+              matInput
+              formControlName="username"
+              autocomplete="username"
+              type="text"
+            >
+            <mat-icon matPrefix aria-hidden="true">person</mat-icon>
+            @if (loginForm.controls.username.hasError('required')) {
+              <mat-error>Informe o usuario.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Senha</mat-label>
+            <input
+              matInput
+              formControlName="password"
+              autocomplete="current-password"
+              [type]="hidePassword ? 'password' : 'text'"
+            >
+            <mat-icon matPrefix aria-hidden="true">lock</mat-icon>
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              [attr.aria-label]="hidePassword ? 'Mostrar senha' : 'Ocultar senha'"
+              (click)="hidePassword = !hidePassword"
+            >
+              <mat-icon aria-hidden="true">
+                {{ hidePassword ? 'visibility' : 'visibility_off' }}
+              </mat-icon>
+            </button>
+            @if (loginForm.controls.password.hasError('required')) {
+              <mat-error>Informe a senha.</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="form-options">
+            <mat-checkbox formControlName="remember">Manter conectado</mat-checkbox>
+          </div>
+
+          <button mat-flat-button color="primary" class="submit-button" type="submit">
+            <mat-icon aria-hidden="true">login</mat-icon>
+            Entrar
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <a routerLink="/" class="back-link">Voltar ao sistema</a>
+  </section>
+</main>
