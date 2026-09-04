@@ -25,8 +25,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class HeaderComponent {
   @Output() menuToggle = new EventEmitter<void>();
 
-  appName = 'Sistema de Gestão';
-  userName = 'Robson';
+  appName = 'Sistema Gestão de Pessoas (UNIPAMPA-PROGEPE)';
+  userName = 'Robson (1754763)';
   userInitials = 'RG';
   unreadMessages = 3;
 

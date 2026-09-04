@@ -10,6 +10,11 @@ interface MenuItem {
   route: string;
 }
 
+interface MenuSection {
+  title?: string;
+  items: MenuItem[];
+}
+
 @Component({
   selector: 'app-sidebar',
   standalone: true,
@@ -26,24 +31,65 @@ interface MenuItem {
 export class SidebarComponent {
   @Input() collapsed = false;
 
-  mainMenuItems: MenuItem[] = [
+  menuSections: MenuSection[] = [
     {
-      icon: 'apps',
-      label: 'Serviços',
-      route: '/'
+      items: [
+        {
+          icon: 'apps',
+          label: 'Serviços Disponíveis',
+          route: '/'
+        },
+        {
+          icon: 'assignment_turned_in',
+          label: 'Minhas Solicitações',
+          route: '/minhas-solicitacoes'
+        }
+      ]
     },
     {
-      icon: 'assignment_turned_in',
-      label: 'Minhas Solicitações',
-      route: '/minhas-solicitacoes'
-    }
-  ];
-
-  restrictedMenuItems: MenuItem[] = [
+      title: 'Gestão de Pessoas',
+      items: [
+        {
+          icon: 'inbox',
+          label: 'Solicitações Recebidas',
+          route: '/solicitacoes-recebidas'
+        },
+        {
+          icon: 'bar_chart',
+          label: 'Relatórios',
+          route: '/relatorios'
+        }
+      ]
+    },
     {
-      icon: 'settings',
-      label: 'Configurações',
-      route: '/configuracoes'
+      title: 'Área Restrita',
+      items: [
+        {
+          icon: 'manage_search',
+          label: 'Serviços',
+          route: '/admin/servicos'
+        },
+        {
+          icon: 'category',
+          label: 'Tipos de Solicitação',
+          route: '/admin/tipos-solicitacao'
+        },
+        {
+          icon: 'fact_check',
+          label: 'Situações',
+          route: '/admin/situacoes'
+        },
+        {
+          icon: 'groups',
+          label: 'Equipes',
+          route: '/admin/equipes'
+        },
+        {
+          icon: 'settings',
+          label: 'Configurações',
+          route: '/configuracoes'
+        }
+      ]
     }
   ];
 }

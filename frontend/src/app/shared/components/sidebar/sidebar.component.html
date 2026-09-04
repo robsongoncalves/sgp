@@ -1,42 +1,29 @@
 <nav class="sidebar-nav" aria-label="Menu principal">
-  <mat-nav-list>
-    @for (item of mainMenuItems; track item.route) {
-      <a
-        mat-list-item
-        [routerLink]="item.route"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-        [matTooltip]="collapsed ? item.label : ''"
-        matTooltipPosition="right"
-      >
-        <mat-icon matListItemIcon aria-hidden="true">{{ item.icon }}</mat-icon>
-        @if (!collapsed) {
-          <span matListItemTitle>{{ item.label }}</span>
+  @for (section of menuSections; track section.title || 'principal'; let first = $first) {
+    @if (!first) {
+      <div class="menu-section">
+        @if (!collapsed && section.title) {
+          <span class="section-title">{{ section.title }}</span>
         }
-      </a>
+      </div>
     }
-  </mat-nav-list>
 
-  <div class="menu-section">
-    @if (!collapsed) {
-      <span class="section-title">Área Restrita</span>
-    }
-  </div>
-
-  <mat-nav-list>
-    @for (item of restrictedMenuItems; track item.route) {
-      <a
-        mat-list-item
-        [routerLink]="item.route"
-        routerLinkActive="active"
-        [matTooltip]="collapsed ? item.label : ''"
-        matTooltipPosition="right"
-      >
-        <mat-icon matListItemIcon aria-hidden="true">{{ item.icon }}</mat-icon>
-        @if (!collapsed) {
-          <span matListItemTitle>{{ item.label }}</span>
-        }
-      </a>
-    }
-  </mat-nav-list>
+    <mat-nav-list>
+      @for (item of section.items; track item.route) {
+        <a
+          mat-list-item
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+          [matTooltip]="collapsed ? item.label : ''"
+          matTooltipPosition="right"
+        >
+          <mat-icon matListItemIcon aria-hidden="true">{{ item.icon }}</mat-icon>
+          @if (!collapsed) {
+            <span matListItemTitle>{{ item.label }}</span>
+          }
+        </a>
+      }
+    </mat-nav-list>
+  }
 </nav>

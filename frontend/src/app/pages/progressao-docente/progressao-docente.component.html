@@ -1,3 +1,242 @@
 <section class="page">
-  <h1>Progressão Docente</h1>
+  <header class="page-header">
+    <h1>Progressão Docente</h1>
+  </header>
+
+  <nav class="steps" aria-label="Etapas do serviço">
+    @for (step of steps; track step.id; let index = $index) {
+      <button
+        class="step-button"
+        type="button"
+        [class.active]="currentStep === step.id"
+        [class.done]="isStepDone(index)"
+        (click)="selectStep(step.id)"
+      >
+        <span class="step-index">{{ index + 1 }}</span>
+        <span class="step-label">{{ step.label }}</span>
+      </button>
+    }
+  </nav>
+
+  @switch (currentStep) {
+    @case ('solicitacao') {
+      <section class="step-page">
+        <h2>Solicitação</h2>
+
+        <form class="request-form" [formGroup]="solicitacaoForm">
+          <div class="form-section">
+            <h3>Identificação</h3>
+
+            <div class="form-grid">
+              <mat-form-field appearance="outline" class="full-row">
+                <mat-label>Nome</mat-label>
+                <input matInput formControlName="nome" type="text">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>SIAPE</mat-label>
+                <input matInput formControlName="siape" type="text">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Cargo</mat-label>
+                <input matInput formControlName="cargo" type="text">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Classe/Nível</mat-label>
+                <input matInput formControlName="classeNivel" type="text">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-row">
+                <mat-label>Local de Exercício</mat-label>
+                <input matInput formControlName="localExercicio" type="text">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Email Institucional</mat-label>
+                <input matInput formControlName="emailInstitucional" type="email">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Telefone</mat-label>
+                <input matInput formControlName="telefone" type="tel">
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Tipo de solicitação</h3>
+
+            <mat-radio-group class="request-types" formControlName="tipoSolicitacao">
+              <mat-radio-button value="progressao">
+                Progressão
+              </mat-radio-button>
+              <mat-radio-button value="promocao-b">
+                Promoção para Classe B - Professor Assistente
+              </mat-radio-button>
+              <mat-radio-button value="promocao-c">
+                Promoção para Classe C - Professor Adjunto
+              </mat-radio-button>
+            </mat-radio-group>
+
+            <mat-form-field appearance="outline" class="date-field">
+              <mat-label>Data da última promoção ou progressão</mat-label>
+              <input matInput formControlName="dataUltimaPromocaoProgressao" type="date">
+            </mat-form-field>
+          </div>
+
+          <div class="step-actions">
+            <button mat-flat-button color="primary" type="button" (click)="nextStep()">
+              Próxima etapa
+              <mat-icon aria-hidden="true">chevron_right</mat-icon>
+            </button>
+          </div>
+        </form>
+      </section>
+    }
+
+    @case ('pontuacao') {
+      <section class="step-page score-page">
+        <h2>Planilha de pontuação</h2>
+
+        <section class="score-intro">
+          <p>
+            Para solicitar Promoção ou Progressão preencha os campos da tabela com as atividades realizadas nos últimos 24 meses de permanência no nível atual. Caso o docente não tenha exercido a atividade, deverá deixar o campo em branco. Todas as atividades informadas devem ser devidamente comprovadas. O Docente deve atingir o valor mínimo de 14 pontos para Promoção ou Progressão, sendo que, pelo menos, 8 (oito) pontos devem ser obtidos no item I - Atividades de Ensino na Educação Superior, conforme art. 7º da Resolução CONSUNI nº 80/2014.
+          </p>
+        </section>
+
+        <section class="score-highlights" aria-label="Indicadores gerais da pontuação">
+          @for (highlight of scoreHighlights; track highlight.label) {
+            <article class="highlight-card">
+              <span>{{ highlight.label }}</span>
+              <strong>{{ highlight.value }}</strong>
+            </article>
+          }
+        </section>
+
+        <section class="score-summary" aria-label="Resumo de pontuação">
+          @for (total of requisitoTotals; track total.label) {
+            <article class="summary-card">
+              <span>{{ total.label }}</span>
+              <strong>{{ total.value }}</strong>
+              <small>{{ total.items }}</small>
+              <div class="summary-progress" aria-hidden="true">
+                <span [style.width.%]="total.progress"></span>
+              </div>
+            </article>
+          }
+        </section>
+
+        <section class="score-tools" aria-label="Filtros da planilha">
+          <label class="score-search" aria-label="Buscar critério, requisito, unidade ou item">
+            <mat-icon aria-hidden="true">search</mat-icon>
+            <input type="search" placeholder="Buscar critério, requisito, unidade ou item">
+          </label>
+
+          <mat-checkbox class="scored-only">Somente pontuados</mat-checkbox>
+        </section>
+
+        <section class="requirement-filters" aria-label="Filtrar por requisito">
+          @for (filter of requisitoFilters; track filter) {
+            <button
+              mat-stroked-button
+              type="button"
+              [class.active]="filter === 'Todos'"
+            >
+              {{ filter }}
+            </button>
+          }
+        </section>
+
+        <section class="requirements-list">
+          @for (requisito of pontuacaoRequisitos; track requisito.code) {
+            <article class="requirement-card">
+              <header class="requirement-header">
+                <div>
+                  <span class="requirement-code">Requisito {{ requisito.code }}</span>
+                  <h3>{{ requisito.title }}</h3>
+                  <p>{{ requisito.description }}</p>
+                </div>
+
+                <div class="requirement-status">
+                  {{ requisito.displayed }} critério(s) exibido(s) · {{ requisito.scored }} pontuado(s) · {{ requisito.total }}
+                </div>
+              </header>
+
+              <div class="score-items">
+                @for (item of requisito.items; track item.label; let index = $index) {
+                  <article class="score-item">
+                    <div class="item-main">
+                      <div class="item-title">
+                        <span>Item {{ index + 1 }}</span>
+                        <h4>{{ item.label }}</h4>
+                      </div>
+
+                      <div class="item-tags">
+                        <span>Req. {{ requisito.code }}</span>
+                        <span>{{ item.measure }}</span>
+                        <span>{{ item.limit }}</span>
+                      </div>
+                    </div>
+
+                    <div class="item-score">
+                      <label>
+                        Pontuação
+                        <input type="text" [value]="item.points" readonly>
+                      </label>
+                      <label>
+                        Quantidade
+                        <input type="text">
+                      </label>
+                      <label>
+                        Total
+                        <input type="text" value="0 pts" readonly>
+                      </label>
+                    </div>
+
+                    <div class="item-docs">
+                      <button mat-stroked-button color="primary" type="button">
+                        <mat-icon aria-hidden="true">add</mat-icon>
+                        Anexar documentação
+                      </button>
+
+                      <button mat-stroked-button color="primary" type="button">
+                        <mat-icon aria-hidden="true">upload_file</mat-icon>
+                        Importar dados
+                      </button>
+                    </div>
+                  </article>
+                }
+              </div>
+            </article>
+          }
+        </section>
+
+        <div class="step-actions">
+          <button mat-stroked-button color="primary" type="button" (click)="previousStep()">
+            <mat-icon aria-hidden="true">chevron_left</mat-icon>
+            Voltar
+          </button>
+
+          <button mat-flat-button color="primary" type="button" (click)="nextStep()">
+            Próxima etapa
+            <mat-icon aria-hidden="true">chevron_right</mat-icon>
+          </button>
+        </div>
+      </section>
+    }
+
+    @case ('confirmacao') {
+      <section class="step-page blank-page">
+        <h2>Confirmação</h2>
+      </section>
+    }
+
+    @case ('enviar') {
+      <section class="step-page blank-page">
+        <h2>Enviar</h2>
+      </section>
+    }
+  }
 </section>

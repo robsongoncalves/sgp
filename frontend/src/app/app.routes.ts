@@ -29,6 +29,54 @@ export const routes: Routes = [
     component: ProgressaoDocenteComponent
   },
   {
+    path: 'solicitacoes-recebidas',
+    component: PlaceholderPageComponent,
+    data: {
+      title: 'Solicitações Recebidas',
+      icon: 'inbox'
+    }
+  },
+  {
+    path: 'relatorios',
+    component: PlaceholderPageComponent,
+    data: {
+      title: 'Relatórios',
+      icon: 'bar_chart'
+    }
+  },
+  {
+    path: 'admin/servicos',
+    component: PlaceholderPageComponent,
+    data: {
+      title: 'Serviços',
+      icon: 'manage_search'
+    }
+  },
+  {
+    path: 'admin/tipos-solicitacao',
+    component: PlaceholderPageComponent,
+    data: {
+      title: 'Tipos de Solicitação',
+      icon: 'category'
+    }
+  },
+  {
+    path: 'admin/situacoes',
+    component: PlaceholderPageComponent,
+    data: {
+      title: 'Situações',
+      icon: 'fact_check'
+    }
+  },
+  {
+    path: 'admin/equipes',
+    component: PlaceholderPageComponent,
+    data: {
+      title: 'Equipes',
+      icon: 'groups'
+    }
+  },
+  {
     path: 'configuracoes',
     component: PlaceholderPageComponent,
     data: {

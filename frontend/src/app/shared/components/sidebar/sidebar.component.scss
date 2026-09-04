@@ -9,6 +9,20 @@ a[mat-list-item] {
   border-radius: 8px;
 }
 
+:host ::ng-deep a[mat-list-item] .mat-mdc-list-item-icon {
+  width: 22px;
+  margin-right: 8px;
+}
+
+:host ::ng-deep a[mat-list-item] .mdc-list-item__start {
+  margin-left: 0;
+  margin-right: 8px;
+}
+
+:host ::ng-deep a[mat-list-item] .mdc-list-item__content {
+  min-width: 0;
+}
+
 a[mat-list-item].active {
   background: #e8f0fe;
   color: #1a73e8;
