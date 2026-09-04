@@ -85,6 +85,11 @@ export class SidebarComponent {
           route: '/admin/equipes'
         },
         {
+          icon: 'person',
+          label: 'Usuarios',
+          route: '/admin/usuarios'
+        },
+        {
           icon: 'settings',
           label: 'Configurações',
           route: '/configuracoes'

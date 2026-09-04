@@ -1,0 +1,163 @@
+<section class="page-header">
+  <div class="page-title">
+    <mat-icon aria-hidden="true">person</mat-icon>
+    <div>
+      <h1>Usuarios</h1>
+      <p>Cadastro base para autenticacao LDAP futura e vinculo aos grupos do sistema.</p>
+    </div>
+  </div>
+
+  @if (!isFormVisible) {
+    <button mat-flat-button color="primary" type="button" (click)="createUser()">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      Novo usuario
+    </button>
+  }
+</section>
+
+@if (!isFormVisible) {
+  <section class="content-panel users-list" aria-label="Usuarios cadastrados">
+    <header class="table-toolbar">
+      <label class="table-filter" for="users-filter">
+        <mat-icon aria-hidden="true">search</mat-icon>
+        <input
+          id="users-filter"
+          type="search"
+          placeholder="Filtrar por nome, email ou status"
+          [ngModel]="filterTerm"
+          (ngModelChange)="applyFilter($event)"
+        >
+      </label>
+
+      <button mat-stroked-button type="button" (click)="loadUsers()" [disabled]="isLoading">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        Atualizar
+      </button>
+    </header>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="feedback success">{{ successMessage }}</p>
+    }
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <mat-spinner diameter="28" />
+        <span>Carregando usuarios</span>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+            <td mat-cell *matCellDef="let user">{{ user.name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+            <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef aria-label="Acoes"></th>
+            <td mat-cell *matCellDef="let user" class="actions">
+              <button mat-icon-button type="button" aria-label="Editar usuario" (click)="editUser(user)">
+                <mat-icon aria-hidden="true">edit</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Alterar status" (click)="toggleUserStatus(user)">
+                <mat-icon aria-hidden="true">{{ user.active ? 'block' : 'check_circle' }}</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Remover usuario" (click)="deleteUser(user)">
+                <mat-icon aria-hidden="true">delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let user; columns: displayedColumns;"
+            class="data-row"
+            [class.inactive-row]="!user.active"
+            (dblclick)="editUser(user)"
+          ></tr>
+          <tr class="mat-row empty-row" *matNoDataRow>
+            <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+              Nenhum usuario encontrado.
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25]"
+        showFirstLastButtons
+        aria-label="Paginacao de usuarios"
+      />
+    }
+  </section>
+} @else {
+  <form class="content-panel user-form" (ngSubmit)="saveUser()">
+    <h2>{{ isEditing ? 'Editar usuario' : 'Novo usuario' }}</h2>
+
+    <label for="user-name">
+      Nome
+      <input
+        id="user-name"
+        name="name"
+        type="text"
+        autocomplete="name"
+        [(ngModel)]="form.name"
+      >
+    </label>
+
+    <label for="user-email">
+      Email
+      <input
+        id="user-email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        [(ngModel)]="form.email"
+      >
+    </label>
+
+    <label for="user-password">
+      Senha{{ isEditing ? ' nova' : '' }}
+      <input
+        id="user-password"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+        [(ngModel)]="form.password"
+      >
+    </label>
+
+    <mat-checkbox name="active" [(ngModel)]="form.active">
+      Usuario ativo
+    </mat-checkbox>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="feedback success">{{ successMessage }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+        <mat-icon aria-hidden="true">save</mat-icon>
+        {{ isSaving ? 'Salvando' : 'Salvar' }}
+      </button>
+
+      <button mat-button type="button" (click)="closeForm()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+}

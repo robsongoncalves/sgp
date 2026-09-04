@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Administrador do Sistema",
+    "email": "admin@unipampa.edu.br",
+    "password_hash": "",
+    "active": true
+  },
+  {
+    "id": 2,
+    "name": "Maria CPPD",
+    "email": "maria.cppd@unipampa.edu.br",
+    "password_hash": "",
+    "active": false
+  },
+  {
+    "id": 3,
+    "name": "Joao Docente",
+    "email": "joao.docente@unipampa.edu.br",
+    "password_hash": "",
+    "active": true
+  }
+]

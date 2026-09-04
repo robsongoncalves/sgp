@@ -77,6 +77,13 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'admin/usuarios',
+    loadComponent: () =>
+      import('./pages/admin/usuarios/usuarios.component').then(
+        (component) => component.UsuariosComponent
+      )
+  },
+  {
     path: 'configuracoes',
     component: PlaceholderPageComponent,
     data: {
