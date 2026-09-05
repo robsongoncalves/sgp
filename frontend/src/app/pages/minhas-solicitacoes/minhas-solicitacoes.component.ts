@@ -1,18 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { RouterLink } from '@angular/router';
 
-interface Solicitacao {
-  numero: string;
-  tipo: string;
-  situacao: string;
-  criadaEm: string;
-  ultimaMovimentacao: string;
-}
+import { ServiceRequest } from '../../core/models/service-request';
+import { ServiceRequestService } from '../../core/services/service-request.service';
+
+const DEV_REQUESTER_USER_ID = 3;
 
 @Component({
   selector: 'app-minhas-solicitacoes',
@@ -23,44 +21,22 @@ interface Solicitacao {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    RouterLink
   ],
   templateUrl: './minhas-solicitacoes.component.html',
   styleUrl: './minhas-solicitacoes.component.scss'
 })
-export class MinhasSolicitacoesComponent {
-  readonly tipos = [
-    'Todos',
-    'Licença para Capacitação',
-    'Pagamento de Substituição',
-    'Promoção e Progressão Docente'
-  ];
+export class MinhasSolicitacoesComponent implements OnInit {
+  readonly tipoTodos = 'Todos';
+  readonly situacaoTodas = 'Todas';
 
-  readonly situacoes = [
-    'Todas',
-    'Finalizado',
-    'Em análise',
-    'Pendente'
-  ];
-
-  readonly solicitacoes: Solicitacao[] = [
-    {
-      numero: '7591790',
-      tipo: 'Licença para Capacitação',
-      situacao: 'Finalizado',
-      criadaEm: '17/11/2025 - 12:27:10',
-      ultimaMovimentacao: '02/12/2025 - 08:55:59'
-    },
-    {
-      numero: '5941697',
-      tipo: 'Pagamento de Substituição',
-      situacao: 'Finalizado',
-      criadaEm: '03/10/2024 - 15:34:28',
-      ultimaMovimentacao: '03/10/2024 - 15:39:22'
-    }
-  ];
-
-  filteredSolicitacoes = [...this.solicitacoes];
+  tipos = [this.tipoTodos];
+  situacoes = [this.situacaoTodas];
+  solicitacoes: ServiceRequest[] = [];
+  filteredSolicitacoes: ServiceRequest[] = [];
+  isLoading = false;
+  errorMessage = '';
 
   filterForm = this.formBuilder.nonNullable.group({
     numero: [''],
@@ -69,7 +45,32 @@ export class MinhasSolicitacoesComponent {
     situacao: ['Todas']
   });
 
-  constructor(private readonly formBuilder: FormBuilder) {}
+  constructor(
+    private readonly formBuilder: FormBuilder,
+    private readonly serviceRequestService: ServiceRequestService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadSolicitacoes();
+  }
+
+  loadSolicitacoes(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.serviceRequestService.list(DEV_REQUESTER_USER_ID).subscribe({
+      next: (solicitacoes) => {
+        this.solicitacoes = solicitacoes;
+        this.filteredSolicitacoes = [...solicitacoes];
+        this.updateFilterOptions();
+        this.isLoading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Nao foi possivel carregar suas solicitacoes.';
+        this.isLoading = false;
+      }
+    });
+  }
 
   pesquisar(): void {
     const filters = this.filterForm.getRawValue();
@@ -77,10 +78,10 @@ export class MinhasSolicitacoesComponent {
     const criadoAPartirDe = filters.criadoAPartirDe;
 
     this.filteredSolicitacoes = this.solicitacoes.filter((solicitacao) => {
-      const matchesNumero = !numero || solicitacao.numero.includes(numero);
-      const matchesTipo = filters.tipo === 'Todos' || solicitacao.tipo === filters.tipo;
-      const matchesSituacao = filters.situacao === 'Todas' || solicitacao.situacao === filters.situacao;
-      const matchesData = !criadoAPartirDe || this.toDate(solicitacao.criadaEm) >= criadoAPartirDe;
+      const matchesNumero = !numero || solicitacao.number.includes(numero);
+      const matchesTipo = filters.tipo === this.tipoTodos || solicitacao.service_name === filters.tipo;
+      const matchesSituacao = filters.situacao === this.situacaoTodas || solicitacao.status === filters.situacao;
+      const matchesData = !criadoAPartirDe || this.toDate(solicitacao.created_at) >= criadoAPartirDe;
 
       return matchesNumero && matchesTipo && matchesSituacao && matchesData;
     });
@@ -90,16 +91,44 @@ export class MinhasSolicitacoesComponent {
     this.filterForm.reset({
       numero: '',
       criadoAPartirDe: '',
-      tipo: 'Todos',
-      situacao: 'Todas'
+      tipo: this.tipoTodos,
+      situacao: this.situacaoTodas
     });
     this.filteredSolicitacoes = [...this.solicitacoes];
   }
 
-  private toDate(value: string): string {
-    const [date] = value.split(' - ');
-    const [day, month, year] = date.split('/');
+  formatDate(value: string): string {
+    const date = new Date(value);
 
-    return `${year}-${month}-${day}`;
+    if (Number.isNaN(date.getTime())) {
+      return '-';
+    }
+
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).format(date);
+  }
+
+  private toDate(value: string): string {
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    return date.toISOString().slice(0, 10);
+  }
+
+  private updateFilterOptions(): void {
+    const tipos = new Set(this.solicitacoes.map((solicitacao) => solicitacao.service_name));
+    const situacoes = new Set(this.solicitacoes.map((solicitacao) => solicitacao.status));
+
+    this.tipos = [this.tipoTodos, ...[...tipos].sort((first, second) => first.localeCompare(second, 'pt-BR'))];
+    this.situacoes = [this.situacaoTodas, ...[...situacoes].sort((first, second) => first.localeCompare(second, 'pt-BR'))];
   }
 }

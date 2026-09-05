@@ -1,0 +1,168 @@
+<section class="page-header">
+  <div class="page-title">
+    <mat-icon aria-hidden="true">folder</mat-icon>
+    <div>
+      <h1>Categorias de Servico</h1>
+      <p>Organize os servicos por grandes areas institucionais.</p>
+    </div>
+  </div>
+
+  @if (!isFormVisible) {
+    <button mat-flat-button color="primary" type="button" (click)="createCategory()">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      Nova categoria
+    </button>
+  }
+</section>
+
+@if (!isFormVisible) {
+  <section class="content-panel categories-list" aria-label="Categorias cadastradas">
+    <header class="table-toolbar">
+      <label class="table-filter" for="categories-filter">
+        <mat-icon aria-hidden="true">search</mat-icon>
+        <input
+          id="categories-filter"
+          type="search"
+          placeholder="Filtrar por nome, descricao, ordem ou status"
+          [ngModel]="filterTerm"
+          (ngModelChange)="applyFilter($event)"
+        >
+      </label>
+
+      <button mat-stroked-button type="button" (click)="loadCategories()" [disabled]="isLoading">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        Atualizar
+      </button>
+    </header>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="feedback success">{{ successMessage }}</p>
+    }
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <mat-spinner diameter="28" />
+        <span>Carregando categorias</span>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="display_order">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Ordem</th>
+            <td mat-cell *matCellDef="let category">{{ category.display_order }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+            <td mat-cell *matCellDef="let category">{{ category.name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Descricao</th>
+            <td mat-cell *matCellDef="let category">{{ category.description || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef aria-label="Acoes"></th>
+            <td mat-cell *matCellDef="let category" class="actions">
+              <button mat-icon-button type="button" aria-label="Editar categoria" (click)="editCategory(category)">
+                <mat-icon aria-hidden="true">edit</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Alterar status" (click)="toggleCategoryStatus(category)">
+                <mat-icon aria-hidden="true">{{ category.active ? 'block' : 'check_circle' }}</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Remover categoria" (click)="deleteCategory(category)">
+                <mat-icon aria-hidden="true">delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let category; columns: displayedColumns;"
+            class="data-row"
+            [class.inactive-row]="!category.active"
+            (dblclick)="editCategory(category)"
+          ></tr>
+          <tr class="mat-row empty-row" *matNoDataRow>
+            <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+              Nenhuma categoria encontrada.
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25]"
+        showFirstLastButtons
+        aria-label="Paginacao de categorias"
+      />
+    }
+  </section>
+} @else {
+  <form class="content-panel category-form" (ngSubmit)="saveCategory()">
+    <h2>{{ isEditing ? 'Editar categoria' : 'Nova categoria' }}</h2>
+
+    <label for="category-name">
+      Nome
+      <input
+        id="category-name"
+        name="name"
+        type="text"
+        autocomplete="off"
+        [(ngModel)]="form.name"
+      >
+    </label>
+
+    <label for="category-description">
+      Descricao
+      <textarea
+        id="category-description"
+        name="description"
+        rows="4"
+        [(ngModel)]="form.description"
+      ></textarea>
+    </label>
+
+    <label for="category-display-order">
+      Ordem de exibicao
+      <input
+        id="category-display-order"
+        name="displayOrder"
+        type="number"
+        min="0"
+        step="1"
+        [(ngModel)]="form.display_order"
+      >
+    </label>
+
+    <mat-checkbox name="active" [(ngModel)]="form.active">
+      Categoria ativa
+    </mat-checkbox>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="feedback success">{{ successMessage }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+        <mat-icon aria-hidden="true">save</mat-icon>
+        {{ isSaving ? 'Salvando' : 'Salvar' }}
+      </button>
+
+      <button mat-button type="button" (click)="closeForm()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+}

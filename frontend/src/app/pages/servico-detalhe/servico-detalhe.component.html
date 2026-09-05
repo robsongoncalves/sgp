@@ -1,0 +1,85 @@
+<section class="service-detail">
+  @if (isLoading) {
+    <p class="state-message">Carregando servico.</p>
+  } @else if (errorMessage && !service) {
+    <p class="state-message error-message">{{ errorMessage }}</p>
+  } @else if (service) {
+    <div class="service-heading">
+      <div class="service-main">
+        <h1>{{ service.name }}</h1>
+
+        <div class="rating-line" aria-label="Avaliacao do servico">
+          <span>Avaliacao:</span>
+          <strong>{{ rating }}</strong>
+          <span class="stars" aria-hidden="true">
+            @for (star of starOptions; track star) {
+              <mat-icon>{{ star < 5 ? 'star' : 'star_half' }}</mat-icon>
+            }
+          </span>
+          <span>({{ ratingCount }})</span>
+        </div>
+      </div>
+
+      <div class="start-shell">
+        <button
+          mat-flat-button
+          type="button"
+          class="start-button"
+          [disabled]="!moduleRoute || isStarting"
+          (click)="startService()"
+        >
+          {{ isStarting ? 'Iniciando' : 'Iniciar' }}
+        </button>
+      </div>
+    </div>
+
+    @if (service.description) {
+      <p class="service-description">{{ service.description }}</p>
+    }
+
+    <footer class="service-meta">
+      <span>
+        Ultima Modificacao:
+        <strong>{{ updatedAt ? (updatedAt | date: 'dd/MM/yyyy') : '-' }}</strong>
+      </span>
+
+      <div class="meta-actions">
+        @if (service.documentation_url) {
+          <a
+            class="icon-link"
+            [href]="service.documentation_url"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Abrir documentacao"
+          >
+            <mat-icon aria-hidden="true">menu_book</mat-icon>
+          </a>
+        }
+
+        <button class="icon-link" type="button" aria-label="Imprimir pagina">
+          <mat-icon aria-hidden="true">print</mat-icon>
+        </button>
+
+        <span>Compartilhe:</span>
+        <button class="icon-link" type="button" aria-label="Compartilhar por WhatsApp">
+          <mat-icon aria-hidden="true">chat</mat-icon>
+        </button>
+        <button class="icon-link text-icon" type="button" aria-label="Compartilhar no Facebook">f</button>
+        <button class="icon-link text-icon" type="button" aria-label="Compartilhar no X">X</button>
+        <button class="icon-link text-icon" type="button" aria-label="Compartilhar no LinkedIn">in</button>
+        <button class="icon-link" type="button" aria-label="Copiar link">
+          <mat-icon aria-hidden="true">link</mat-icon>
+        </button>
+      </div>
+    </footer>
+
+    @if (errorMessage) {
+      <p class="state-message error-message">{{ errorMessage }}</p>
+    }
+
+    <a class="back-link" routerLink="/">
+      <mat-icon aria-hidden="true">chevron_left</mat-icon>
+      Voltar para servicos
+    </a>
+  }
+</section>

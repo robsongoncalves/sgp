@@ -58,6 +58,10 @@ h1 {
   text-align: left;
 }
 
+.service-row.disabled {
+  cursor: default;
+}
+
 .service-name {
   display: flex;
   gap: 18px;
@@ -74,6 +78,10 @@ h1 {
 .empty-message {
   margin: 0;
   padding: 18px 16px;
+}
+
+.error-message {
+  color: #9f1c1c;
 }
 
 @media (max-width: 599px) {

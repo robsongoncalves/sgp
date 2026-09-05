@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "CPPD",
+    "description": "Comissao Permanente de Pessoal Docente",
+    "active": true
+  },
+  {
+    "id": 2,
+    "name": "PROGEPE",
+    "description": "Pro-Reitoria de Gestao de Pessoas",
+    "active": true
+  },
+  {
+    "id": 3,
+    "name": "Administradores de Servicos",
+    "description": "Usuarios responsaveis por configurar categorias, tipos e fluxos",
+    "active": true
+  }
+]

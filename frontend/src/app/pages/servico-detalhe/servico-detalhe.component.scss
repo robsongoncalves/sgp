@@ -1,0 +1,179 @@
+.service-detail {
+  display: grid;
+  gap: 24px;
+  padding: 22px 24px;
+  background: #ffffff;
+}
+
+.service-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: start;
+}
+
+.service-main {
+  display: grid;
+  gap: 18px;
+}
+
+h1 {
+  max-width: 760px;
+  margin: 0;
+  color: #193878;
+  font-size: 2.05rem;
+  font-weight: 600;
+  line-height: 1.18;
+}
+
+.rating-line {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #4f5b6b;
+  font-size: 0.92rem;
+}
+
+.rating-line strong {
+  font-weight: 500;
+}
+
+.stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.stars mat-icon {
+  width: 22px;
+  height: 22px;
+  color: #f2c94c;
+  font-size: 22px;
+}
+
+.start-shell {
+  display: grid;
+  min-width: 210px;
+  min-height: 82px;
+  place-items: center;
+  border-radius: 999px;
+  background: #ededed;
+}
+
+.start-button {
+  min-width: 180px;
+  height: 52px;
+  border-radius: 999px;
+  background: #4d874d;
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.start-button:disabled {
+  background: #9fa8a0;
+  color: #ffffff;
+}
+
+.service-description {
+  max-width: 820px;
+  margin: -8px 0 0;
+  color: #4f5b6b;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.service-meta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid #dcdfe5;
+  color: #4f5b6b;
+  font-size: 0.9rem;
+}
+
+.service-meta strong {
+  font-weight: 500;
+}
+
+.meta-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.icon-link {
+  display: grid;
+  min-width: 28px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid transparent;
+  background: transparent;
+  color: #536dfe;
+  cursor: pointer;
+  font: inherit;
+  text-decoration: none;
+}
+
+.icon-link:hover {
+  color: #193878;
+}
+
+.text-icon {
+  font-weight: 700;
+}
+
+.back-link {
+  display: inline-flex;
+  width: fit-content;
+  gap: 4px;
+  align-items: center;
+  color: #193878;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.state-message {
+  margin: 0;
+  color: #4f5b6b;
+}
+
+.error-message {
+  color: #9f1c1c;
+}
+
+@media (max-width: 760px) {
+  .service-detail {
+    padding: 18px 14px;
+  }
+
+  .service-heading {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 1.55rem;
+  }
+
+  .start-shell {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .start-button {
+    width: calc(100% - 28px);
+    min-width: 0;
+  }
+
+  .service-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .meta-actions {
+    flex-wrap: wrap;
+  }
+}

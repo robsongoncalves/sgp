@@ -1,0 +1,366 @@
+<section class="page-header">
+  <div class="page-title">
+    <mat-icon aria-hidden="true">category</mat-icon>
+    <div>
+      <h1>Servicos</h1>
+      <p>Configure servicos, categorias, grupos responsaveis e situacoes do fluxo.</p>
+    </div>
+  </div>
+
+  @if (!isFormVisible) {
+    <button mat-flat-button color="primary" type="button" (click)="createService()">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      Novo servico
+    </button>
+  }
+</section>
+
+@if (!isFormVisible) {
+  <section class="content-panel services-list" aria-label="Servicos cadastrados">
+    <header class="table-toolbar">
+      <label class="table-filter" for="services-filter">
+        <mat-icon aria-hidden="true">search</mat-icon>
+        <input
+          id="services-filter"
+          type="search"
+          placeholder="Filtrar por nome, slug, categoria, grupo ou status"
+          [ngModel]="filterTerm"
+          (ngModelChange)="applyFilter($event)"
+        >
+      </label>
+
+      <button mat-stroked-button type="button" (click)="loadServices()" [disabled]="isLoading">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        Atualizar
+      </button>
+    </header>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="feedback success">{{ successMessage }}</p>
+    }
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <mat-spinner diameter="28" />
+        <span>Carregando servicos</span>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+            <td mat-cell *matCellDef="let service">
+              <strong>{{ service.name }}</strong>
+              <small>{{ service.slug }}</small>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="implementation_mode">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Modo</th>
+            <td mat-cell *matCellDef="let service">{{ implementationModeLabel(service) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="categories">
+            <th mat-header-cell *matHeaderCellDef>Categorias</th>
+            <td mat-cell *matCellDef="let service">{{ categoryNames(service.category_ids) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="groups">
+            <th mat-header-cell *matHeaderCellDef>Grupos</th>
+            <td mat-cell *matCellDef="let service">{{ groupNames(service.group_ids) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef aria-label="Acoes"></th>
+            <td mat-cell *matCellDef="let service" class="actions">
+              <button mat-icon-button type="button" aria-label="Editar servico" (click)="editService(service)">
+                <mat-icon aria-hidden="true">edit</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Alterar status" (click)="toggleServiceStatus(service)">
+                <mat-icon aria-hidden="true">{{ service.active ? 'block' : 'check_circle' }}</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Remover servico" (click)="deleteService(service)">
+                <mat-icon aria-hidden="true">delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let service; columns: displayedColumns;"
+            class="data-row"
+            [class.inactive-row]="!service.active"
+            (dblclick)="editService(service)"
+          ></tr>
+          <tr class="mat-row empty-row" *matNoDataRow>
+            <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+              Nenhum servico encontrado.
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25]"
+        showFirstLastButtons
+        aria-label="Paginacao de servicos"
+      />
+    }
+  </section>
+} @else {
+  <form class="content-panel service-form" (ngSubmit)="saveService()">
+    <section class="form-section">
+      <h2>{{ isEditing ? 'Editar servico' : 'Novo servico' }}</h2>
+
+      <div class="form-grid">
+        <label for="service-name">
+          Nome
+          <input
+            id="service-name"
+            name="name"
+            type="text"
+            autocomplete="off"
+            [(ngModel)]="form.name"
+            (blur)="syncSlugFromName()"
+          >
+        </label>
+
+        <label for="service-slug">
+          Slug
+          <input
+            id="service-slug"
+            name="slug"
+            type="text"
+            autocomplete="off"
+            [(ngModel)]="form.slug"
+            (blur)="syncModuleKey()"
+          >
+        </label>
+
+        <label for="service-mode">
+          Modo de implementacao
+          <select
+            id="service-mode"
+            name="implementationMode"
+            [(ngModel)]="form.implementation_mode"
+            (ngModelChange)="syncModuleKey()"
+          >
+            <option value="custom_module">Modulo especifico</option>
+            <option value="standard">Servico padrao</option>
+          </select>
+        </label>
+
+        <label for="service-module-key">
+          Chave do modulo
+          <input
+            id="service-module-key"
+            name="moduleKey"
+            type="text"
+            autocomplete="off"
+            [(ngModel)]="form.module_key"
+          >
+        </label>
+
+        <label for="service-documentation-url" class="full-field">
+          URL da documentacao
+          <input
+            id="service-documentation-url"
+            name="documentationUrl"
+            type="url"
+            autocomplete="off"
+            placeholder="https://..."
+            [(ngModel)]="form.documentation_url"
+          >
+        </label>
+      </div>
+
+      <label for="service-description">
+        Descricao
+        <textarea
+          id="service-description"
+          name="description"
+          rows="4"
+          [(ngModel)]="form.description"
+        ></textarea>
+      </label>
+
+      <div class="flag-options">
+        <mat-checkbox name="active" [(ngModel)]="form.active">
+          Servico ativo
+        </mat-checkbox>
+
+        <mat-checkbox name="featured" [(ngModel)]="form.featured">
+          Destaque
+        </mat-checkbox>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2>Categorias</h2>
+      <div class="check-grid">
+        @for (category of categories; track category.id) {
+          <mat-checkbox
+            [name]="'category-' + category.id"
+            [checked]="form.category_ids.includes(category.id)"
+            (change)="toggleCategory(category.id, $event.checked)"
+          >
+            {{ category.name }}
+          </mat-checkbox>
+        } @empty {
+          <p class="empty-inline">Nenhuma categoria cadastrada.</p>
+        }
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2>Grupos de usuarios associados</h2>
+      <div class="check-grid">
+        @for (group of groups; track group.id) {
+          <mat-checkbox
+            [name]="'group-' + group.id"
+            [checked]="form.group_ids.includes(group.id)"
+            (change)="toggleGroup(group.id, $event.checked)"
+          >
+            {{ group.name }}
+          </mat-checkbox>
+        } @empty {
+          <p class="empty-inline">Nenhum grupo cadastrado.</p>
+        }
+      </div>
+    </section>
+
+    <section class="form-section situations-section">
+      <h2>Situacoes do fluxo</h2>
+
+      <div class="situation-editor">
+        <label for="situation-name">
+          Nova situacao
+          <input
+            id="situation-name"
+            name="situationName"
+            type="text"
+            autocomplete="off"
+            [(ngModel)]="situationDraft.name"
+          >
+        </label>
+
+        <label for="previous-situation">
+          Situacao anterior
+          <select
+            id="previous-situation"
+            name="previousSituation"
+            [disabled]="situationDraft.is_initial || !form.situations.length"
+            [(ngModel)]="situationDraft.previous_situation_id"
+          >
+            <option [ngValue]="null">Nenhuma</option>
+            @for (situation of form.situations; track situation.id) {
+              <option [ngValue]="situation.id">{{ situation.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label for="responsible-group">
+          Grupo responsavel
+          <select
+            id="responsible-group"
+            name="responsibleGroup"
+            [(ngModel)]="situationDraft.responsible_group_id"
+          >
+            <option [ngValue]="null">Nenhum</option>
+            @for (group of groups; track group.id) {
+              <option [ngValue]="group.id">{{ group.name }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="situation-options">
+          <mat-checkbox name="situationInitial" [(ngModel)]="situationDraft.is_initial">
+            Inicial
+          </mat-checkbox>
+          <mat-checkbox name="situationFinal" [(ngModel)]="situationDraft.is_final">
+            Finaliza
+          </mat-checkbox>
+          <mat-checkbox name="situationOpinion" [(ngModel)]="situationDraft.requires_opinion">
+            Exige parecer
+          </mat-checkbox>
+          <mat-checkbox name="situationAttachment" [(ngModel)]="situationDraft.requires_attachment">
+            Exige anexo
+          </mat-checkbox>
+        </div>
+
+        <button mat-stroked-button type="button" (click)="addSituation()">
+          <mat-icon aria-hidden="true">add</mat-icon>
+          Adicionar situacao
+        </button>
+      </div>
+
+      <div class="situations-table-wrap">
+        <table class="situations-table">
+          <thead>
+            <tr>
+              <th>Ordem</th>
+              <th>Situacao</th>
+              <th>Anterior</th>
+              <th>Grupo</th>
+              <th>Regras</th>
+              <th aria-label="Acoes"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (situation of form.situations; track situation.id) {
+              <tr>
+                <td>{{ situation.display_order }}</td>
+                <td>{{ situation.name }}</td>
+                <td>{{ previousSituationName(situation.previous_situation_id) }}</td>
+                <td>{{ responsibleGroupName(situation.responsible_group_id) }}</td>
+                <td>
+                  <span class="rule-chip" [class.active]="situation.is_initial">Inicial</span>
+                  <span class="rule-chip" [class.active]="situation.is_final">Final</span>
+                  <span class="rule-chip" [class.active]="situation.requires_opinion">Parecer</span>
+                  <span class="rule-chip" [class.active]="situation.requires_attachment">Anexo</span>
+                </td>
+                <td class="actions">
+                  <button mat-icon-button type="button" aria-label="Marcar situacao inicial" (click)="markInitialSituation(situation)">
+                    <mat-icon aria-hidden="true">flag</mat-icon>
+                  </button>
+                  <button mat-icon-button type="button" aria-label="Remover situacao" (click)="removeSituation(situation)">
+                    <mat-icon aria-hidden="true">delete</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="empty-state">Nenhuma situacao cadastrada.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="feedback success">{{ successMessage }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+        <mat-icon aria-hidden="true">save</mat-icon>
+        {{ isSaving ? 'Salvando' : 'Salvar' }}
+      </button>
+
+      <button mat-button type="button" (click)="closeForm()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+}

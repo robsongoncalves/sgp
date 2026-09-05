@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Administrativos",
+    "description": "Servicos administrativos institucionais",
+    "display_order": 1,
+    "active": true
+  },
+  {
+    "id": 2,
+    "name": "Gestao de Pessoas",
+    "description": "Servicos relacionados a vida funcional de servidores",
+    "display_order": 2,
+    "active": true
+  },
+  {
+    "id": 3,
+    "name": "Academicos",
+    "description": "Servicos vinculados a atividades academicas",
+    "display_order": 3,
+    "active": true
+  }
+]

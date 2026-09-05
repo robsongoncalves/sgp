@@ -65,24 +65,19 @@ export class SidebarComponent {
       title: 'Área Restrita',
       items: [
         {
-          icon: 'manage_search',
+          icon: 'folder',
+          label: 'Categorias de Servico',
+          route: '/admin/categorias-servico'
+        },
+        {
+          icon: 'category',
           label: 'Serviços',
           route: '/admin/servicos'
         },
         {
-          icon: 'category',
-          label: 'Tipos de Solicitação',
-          route: '/admin/tipos-solicitacao'
-        },
-        {
-          icon: 'fact_check',
-          label: 'Situações',
-          route: '/admin/situacoes'
-        },
-        {
           icon: 'groups',
-          label: 'Equipes',
-          route: '/admin/equipes'
+          label: 'Grupos de Usuarios',
+          route: '/admin/grupos'
         },
         {
           icon: 'person',

@@ -1,12 +1,12 @@
 # Levantamento Inicial do Escopo
 
-Este documento registra as primeiras decisoes de dominio para o Sistema de Gestao de Processos da universidade.
+Este documento registra as primeiras decisoes de dominio para o Sistema de Gestao de Servicos da universidade.
 
 ## Objetivo
 
-O sistema tem como objetivo automatizar processos administrativos, academicos e de gestao de pessoas da universidade.
+O sistema tem como objetivo automatizar servicos administrativos, academicos e de gestao de pessoas da universidade.
 
-Usuarios poderao acessar servicos disponiveis, iniciar solicitacoes individuais e acompanhar seus processos. Grupos responsaveis poderao receber, analisar, tramitar e finalizar solicitacoes conforme regras de permissao e fluxo definidas para cada tipo de processo.
+Usuarios poderao acessar servicos disponiveis, iniciar solicitacoes individuais e acompanhar seus servicos. Grupos responsaveis poderao receber, analisar, tramitar e finalizar solicitacoes conforme regras de permissao e fluxo definidas para cada servico.
 
 ## Perfis e Papeis
 
@@ -18,28 +18,27 @@ Pode:
 
 - gerenciar usuarios;
 - gerenciar grupos de usuarios;
-- gerenciar categorias de processos;
-- gerenciar tipos de processos;
-- gerenciar situacoes/status;
-- gerenciar fluxos;
+- gerenciar categorias de servicos;
+- gerenciar servicoss;
+- gerenciar situacoes/status dentro de cada servico;
+- gerenciar fluxos dentro de cada servico;
 - configurar permissoes;
-- visualizar e administrar todos os processos.
+- visualizar e administrar todos os servicos.
 
-### Administrador de Processos
+### Administrador de Servicos
 
-Usuario responsavel pela configuracao funcional dos processos.
+Usuario responsavel pela configuracao funcional dos servicos.
 
 Pode:
 
-- criar categorias de processos;
-- cadastrar tipos de processos;
-- associar tipos de processos a categorias;
-- definir fluxos;
-- definir situacoes permitidas;
-- configurar transicoes;
-- associar grupos de usuarios a categorias e tipos de processos.
+- criar categorias de servicos;
+- cadastrar servicoss;
+- associar servicoss a categorias;
+- definir situacoes permitidas dentro do servico;
+- configurar transicoes do fluxo dentro do servico;
+- associar grupos de usuarios a categorias e servicoss.
 
-A principio, este papel configura a estrutura dos processos. A atuacao em uma solicitacao real deve depender tambem das permissoes do grupo responsavel pela etapa.
+A principio, este papel configura a estrutura dos servicos. A atuacao em uma solicitacao real deve depender tambem das permissoes do grupo responsavel pela etapa.
 
 ### Usuario Solicitante
 
@@ -55,13 +54,13 @@ Pode:
 
 ### Membro de Grupo
 
-Usuario associado a um grupo responsavel por alguma etapa de processo.
+Usuario associado a um grupo responsavel por alguma etapa de servico.
 
 Pode:
 
 - visualizar solicitacoes recebidas pelo grupo, quando tiver permissao;
-- atuar em processos atribuidos ao grupo;
-- tramitar processos conforme transicoes permitidas.
+- atuar em servicos atribuidos ao grupo;
+- tramitar servicos conforme transicoes permitidas.
 
 ### Administrador de Grupo
 
@@ -69,16 +68,16 @@ Usuario membro de um grupo com permissao administrativa dentro daquele grupo.
 
 Pode:
 
-- visualizar todos os processos relacionados ao grupo;
-- acompanhar processos recebidos pelo grupo;
+- visualizar todos os servicos relacionados ao grupo;
+- acompanhar servicos recebidos pelo grupo;
 - eventualmente gerenciar membros ou distribuicoes internas, caso essa regra seja implementada;
-- atuar conforme permissoes especificas do grupo por categoria ou tipo de processo.
+- atuar conforme permissoes especificas do grupo por categoria ou servico.
 
 ## Conceitos Principais
 
-### Tipo de Processo
+### Servico
 
-Representa o modelo/base de um processo.
+Representa o modelo/base de um servico.
 
 Exemplos:
 
@@ -86,7 +85,11 @@ Exemplos:
 - Licenca de Capacitacao;
 - Afastamento Integral para Qualificacao.
 
-Um tipo de processo pode estar associado a uma ou mais categorias.
+Um servico pode estar associado a uma ou mais categorias.
+
+Cada servico tambem possui suas proprias situacoes e seu proprio fluxo. Nao havera um cadastro geral de situacoes compartilhado entre todos os servicos.
+
+Inicialmente, alguns servicos poderao ter codigo desenvolvido especificamente para eles. O primeiro caso sera o Servico de Progressao Docente. Futuramente, o sistema podera ter uma logica de servico padrao, permitindo configurar formularios e fluxos sem desenvolver uma tela especifica para cada servico.
 
 Campos sugeridos:
 
@@ -94,10 +97,53 @@ Campos sugeridos:
 - chave tecnica/slug;
 - descricao;
 - ativo;
+- modo de implementacao;
 - modulo/tela associada;
-- categorias vinculadas.
+- categorias vinculadas;
+- grupos de usuarios associados;
+- situacoes do servico;
+- transicoes permitidas entre situacoes.
 
-### Processo ou Solicitacao
+Modos de implementacao sugeridos:
+
+- modulo especifico: servico atendido por codigo/tela propria, exemplo Progressao Docente;
+- servico padrao: servico atendido por uma estrutura generica do sistema, a ser implementada futuramente.
+
+Campos tecnicos sugeridos para implementacao:
+
+- slug: chave unica usada em rotas, permissoes e associacoes;
+- implementation_mode: indica se usa modulo especifico ou servico padrao;
+- module_key: chave do modulo especifico quando houver tela/codigo proprio;
+- form_schema: reservado para formularios configuraveis no futuro;
+- active: indica se o tipo aparece ou nao para uso.
+
+### Grupos Associados ao Servico
+
+O Servico deve permitir associar um ou mais grupos de usuarios.
+
+Essa associacao serve para controlar quais grupos podem visualizar, receber, administrar ou tramitar solicitacoes daquele tipo.
+
+Regras sugeridas:
+
+- um servico pode ter varios grupos associados;
+- um grupo pode estar associado a varios servicos;
+- a associacao deve permitir definir permissoes especificas do grupo naquele tipo;
+- membros do grupo podem visualizar areas de menu conforme as permissoes recebidas;
+- administradores do grupo podem acompanhar todos os servicos vinculados ao grupo, conforme regra definida para aquela associacao.
+
+Permissoes sugeridas na associacao entre Servico e Grupo:
+
+- visualizar servico;
+- iniciar solicitacao em nome proprio, quando aplicavel;
+- receber solicitacoes;
+- visualizar solicitacoes do grupo;
+- tramitar solicitacoes;
+- administrar solicitacoes do grupo;
+- configurar fluxo do servico, quando aplicavel.
+
+Na primeira implementacao, essa associacao pode comecar simples, apenas vinculando grupos ao servico. Em seguida, pode evoluir para permissoes detalhadas por grupo.
+
+### Servico ou Solicitacao
 
 Representa uma instancia real iniciada por um usuario.
 
@@ -107,7 +153,7 @@ Uma solicitacao de Progressao Docente aberta pelo professor Joao.
 
 Campos sugeridos:
 
-- tipo de processo;
+- servico;
 - solicitante;
 - situacao atual;
 - grupo responsavel atual;
@@ -122,9 +168,9 @@ Status geral sugerido:
 - cancelado;
 - finalizado.
 
-### Categoria de Processo
+### Categoria de Servico
 
-Organiza processos por grandes areas.
+Organiza servicos por grandes areas.
 
 Exemplos:
 
@@ -140,9 +186,11 @@ Campos sugeridos:
 - ativo;
 - ordem de exibicao.
 
-### Situacao
+### Situacao do Servico
 
-Representa um status possivel dentro de um processo.
+Representa um status possivel dentro de um servico especifico.
+
+Situacoes nao sao cadastradas em uma tela global. Elas sao cadastradas dentro da tela de Servico, pois cada tipo pode ter seu conjunto proprio de status.
 
 Exemplos para Progressao Docente:
 
@@ -156,6 +204,8 @@ Campos sugeridos:
 - nome;
 - descricao;
 - tipo;
+- situacao anterior;
+- ordem no fluxo;
 - ativo.
 
 Tipos sugeridos:
@@ -167,20 +217,20 @@ Tipos sugeridos:
 
 ### Fluxo e Transicao
 
-O fluxo define as situacoes possiveis e a sequencia permitida para cada tipo de processo.
+O fluxo pertence ao Servico e define as situacoes possiveis e a sequencia permitida para aquele tipo.
 
 A transicao define uma passagem permitida de uma situacao para outra.
 
 Campos sugeridos:
 
-- tipo de processo;
+- servico;
 - situacao origem;
 - situacao destino;
 - grupo responsavel pela acao;
 - exige parecer;
 - permite anexo;
 - exige anexo;
-- finaliza processo;
+- finaliza servico;
 - ordem.
 
 Regras:
@@ -191,9 +241,35 @@ Regras:
 - cada transicao pode ter um grupo autorizado;
 - transicoes finais encerram a solicitacao.
 
+### Cadastro de Situacoes no Servico
+
+Na tela de Servico deve existir uma area para configuracao das situacoes e do fluxo.
+
+Modelo inicial simples:
+
+- campo de texto para informar a nova situacao;
+- select para escolher a situacao anterior;
+- opcao para marcar se a situacao e inicial;
+- opcao para marcar se a situacao finaliza o servico;
+- opcao para marcar se a transicao exige parecer;
+- opcao para marcar se a transicao exige anexo;
+- grupo responsavel pela etapa/transicao, quando aplicavel.
+
+Ao adicionar uma nova situacao, o sistema deve criar a situacao e, quando houver situacao anterior selecionada, tambem criar a transicao entre elas.
+
+Sugestao de interface:
+
+- manter uma lista/tabela de situacoes ja cadastradas para o servico;
+- exibir colunas como ordem, situacao anterior, situacao atual, grupo responsavel, exige parecer, exige anexo e finaliza;
+- permitir reordenar ou editar cada situacao;
+- impedir mais de uma situacao inicial para o mesmo servico;
+- permitir multiplas transicoes saindo da mesma situacao quando o servico puder seguir caminhos alternativos, por exemplo "Aprovar" ou "Devolver para ajuste".
+
+Esse modelo e melhor que apenas uma lista linear, porque deixa espaco para fluxos com bifurcacoes sem complicar a primeira implementacao.
+
 ### Grupo de Usuarios
 
-Agrupa usuarios para permissao, recebimento e tramitacao de processos.
+Agrupa usuarios para permissao, recebimento e tramitacao de servicos.
 
 Campos sugeridos:
 
@@ -293,19 +369,17 @@ Menu administrativo sugerido:
 - Usuarios;
 - Grupos;
 - Categorias;
-- Tipos de Processo;
-- Situacoes;
-- Fluxos;
+- Servicos;
 - Permissoes;
 - Configuracoes.
 
 Regras:
 
-- "Servicos Disponiveis" mostra processos que o usuario pode iniciar;
-- "Minhas Solicitacoes" mostra processos iniciados pelo usuario;
-- "Solicitacoes Recebidas" aparece quando o usuario pertence a grupo com permissao de receber ou tramitar processos;
-- permissoes devem ser especificas por categoria e/ou tipo de processo;
-- um grupo pode ter permissoes diferentes em tipos de processos diferentes.
+- "Servicos Disponiveis" mostra servicos que o usuario pode iniciar;
+- "Minhas Solicitacoes" mostra servicos iniciados pelo usuario;
+- "Solicitacoes Recebidas" aparece quando o usuario pertence a grupo com permissao de receber ou tramitar servicos;
+- permissoes devem ser especificas por categoria e/ou servico;
+- um grupo pode ter permissoes diferentes em servicoss diferentes.
 
 Permissoes sugeridas:
 
@@ -314,22 +388,24 @@ Permissoes sugeridas:
 - receber solicitacoes;
 - visualizar solicitacoes do grupo;
 - tramitar solicitacoes;
-- administrar processos do grupo;
+- administrar servicos do grupo;
 - configurar categoria;
-- configurar tipo de processo;
+- configurar servico;
 - configurar fluxo;
 - configurar usuarios;
 - configurar grupos.
+
+As permissoes por grupo poderao ser configuradas por Servico. Em uma etapa inicial, o vinculo simples entre grupo e tipo ja permite controlar menus e responsabilidades basicas. Em uma etapa posterior, cada vinculo podera guardar permissoes especificas.
 
 ## Regras de Negocio Iniciais
 
 ### Abertura de Solicitacao
 
-- Um processo sempre nasce de um usuario solicitante.
+- Um servico sempre nasce de um usuario solicitante.
 - O usuario acessa Servicos Disponiveis.
-- O usuario escolhe um tipo de processo.
+- O usuario escolhe um servico.
 - O sistema cria uma solicitacao individual.
-- A solicitacao inicia na situacao inicial configurada para o tipo de processo.
+- A solicitacao inicia na situacao inicial configurada para o servico.
 
 ### Cancelamento
 
@@ -350,22 +426,24 @@ Permissoes sugeridas:
 
 - A solicitacao e individual, mas a responsabilidade por etapa pode ser de um grupo.
 - Membros do grupo responsavel visualizam a solicitacao em Solicitacoes Recebidas.
-- Administradores do grupo podem visualizar todos os processos relacionados ao grupo.
+- Administradores do grupo podem visualizar todos os servicos relacionados ao grupo.
 
 ### Prazos
 
 - Prazos por etapa nao serao tratados inicialmente.
 - A modelagem pode deixar espaco para incluir prazos futuramente.
 
-## Formularios Especificos por Processo
+## Formularios Especificos por Servico
 
-Inicialmente, cada tipo de processo tera telas desenvolvidas especificamente.
+Inicialmente, alguns servicos terao telas desenvolvidas especificamente. O primeiro modulo especifico sera Progressao Docente.
+
+Futuramente, o sistema podera ter um mecanismo de servico padrao, no qual o administrador configura formulario, situacoes e fluxo sem precisar criar codigo especifico para cada novo tipo.
 
 Sugestao de organizacao futura:
 
 ```text
 modules/
-  processos/
+  servicos/
     progressao-docente/
       pages/
       components/
@@ -378,7 +456,7 @@ modules/
       schema/
 ```
 
-Cada tipo de processo devera ter uma chave tecnica/slug.
+Cada servico devera ter uma chave tecnica/slug.
 
 Exemplos:
 
@@ -386,7 +464,9 @@ Exemplos:
 - licenca-capacitacao;
 - afastamento-qualificacao.
 
-Essa chave pode ser usada para associar o cadastro do tipo de processo a tela especifica correspondente.
+Essa chave pode ser usada para associar o cadastro do servico a tela especifica correspondente.
+
+Quando o Servico usar modulo especifico, o campo `module_key` deve apontar para o modulo correspondente. Quando usar servico padrao, o sistema deve usar a estrutura generica de formulario/fluxo.
 
 ## Convencao para Telas CRUD
 
@@ -433,15 +513,14 @@ Ordem sugerida de implementacao:
 1. Usuarios;
 2. Grupos;
 3. Membros de grupos;
-4. Categorias de processos;
-5. Tipos de processos;
-6. Associacao tipos x categorias;
-7. Situacoes;
-8. Fluxos e transicoes;
-9. Permissoes por grupo/categoria/tipo;
-10. Solicitacoes;
-11. Tramitacoes;
-12. Anexos.
+4. Categorias de servicos;
+5. Tipos de servicos;
+6. Situacoes e transicoes dentro de servicoss;
+7. Associacao tipos x categorias;
+8. Permissoes por grupo/categoria/tipo;
+9. Solicitacoes;
+10. Tramitacoes;
+11. Anexos.
 
 ## Implementacao Temporaria para DEV
 
@@ -459,13 +538,17 @@ Senhas nao devem ser persistidas em texto puro. Quando houver senha temporaria p
 
 ## Decisoes Ja Tomadas
 
-- Processos sao sempre iniciados por um usuario individual.
+- Servicos sao sempre iniciados por um usuario individual.
 - Solicitante pode cancelar apenas antes da primeira tramitacao.
 - Prazos por etapa nao serao tratados no inicio.
 - Algumas transicoes exigirao parecer obrigatorio.
-- Formularios serao especificos por tipo de processo inicialmente.
+- Situacoes pertencem ao Servico e nao terao CRUD geral separado.
+- O Servico de Progressao Docente sera o primeiro tipo com modulo/codigo especifico.
+- O sistema podera ter servico padrao configuravel futuramente.
+- Servicos terao grupos de usuarios associados.
+- Formularios poderao ser especificos por servico inicialmente.
 - Login futuro sera integrado com LDAP.
 - Usuarios serao sincronizados com GURI.
 - Grupos podem ter usuarios administradores.
-- Permissoes serao especificas por categoria e/ou tipo de processo.
+- Permissoes serao especificas por categoria e/ou servico.
 - CRUDs iniciam na listagem de registros e abrem o formulario somente para novo registro ou edicao.

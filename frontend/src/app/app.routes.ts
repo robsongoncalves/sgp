@@ -4,6 +4,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { MinhasSolicitacoesComponent } from './pages/minhas-solicitacoes/minhas-solicitacoes.component';
 import { PlaceholderPageComponent } from './pages/placeholder/placeholder-page.component';
 import { ProgressaoDocenteComponent } from './pages/progressao-docente/progressao-docente.component';
+import { ServicoDetalheComponent } from './pages/servico-detalhe/servico-detalhe.component';
 import { ServicosComponent } from './pages/servicos/servicos.component';
 import { TodosServicosComponent } from './pages/todos-servicos/todos-servicos.component';
 
@@ -23,6 +24,10 @@ export const routes: Routes = [
   {
     path: 'todos-servicos',
     component: TodosServicosComponent
+  },
+  {
+    path: 'servicos/:slug',
+    component: ServicoDetalheComponent
   },
   {
     path: 'progressao-docente',
@@ -45,36 +50,30 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'admin/categorias-servico',
+    loadComponent: () =>
+      import('./pages/admin/categorias-servico/categorias-servico.component').then(
+        (component) => component.CategoriasServicoComponent
+      )
+  },
+  {
     path: 'admin/servicos',
-    component: PlaceholderPageComponent,
-    data: {
-      title: 'Serviços',
-      icon: 'manage_search'
-    }
-  },
-  {
-    path: 'admin/tipos-solicitacao',
-    component: PlaceholderPageComponent,
-    data: {
-      title: 'Tipos de Solicitação',
-      icon: 'category'
-    }
-  },
-  {
-    path: 'admin/situacoes',
-    component: PlaceholderPageComponent,
-    data: {
-      title: 'Situações',
-      icon: 'fact_check'
-    }
+    loadComponent: () =>
+      import('./pages/admin/servicos/servicos-admin.component').then(
+        (component) => component.ServicosAdminComponent
+      )
   },
   {
     path: 'admin/equipes',
-    component: PlaceholderPageComponent,
-    data: {
-      title: 'Equipes',
-      icon: 'groups'
-    }
+    redirectTo: 'admin/grupos',
+    pathMatch: 'full'
+  },
+  {
+    path: 'admin/grupos',
+    loadComponent: () =>
+      import('./pages/admin/grupos/grupos.component').then(
+        (component) => component.GruposComponent
+      )
   },
   {
     path: 'admin/usuarios',

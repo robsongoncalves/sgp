@@ -17,16 +17,27 @@
   </div>
 
   <div class="services-list">
-    @for (servico of filteredServicos; track servico.label) {
-      <button class="service-row" type="button">
+    @if (isLoading) {
+      <p class="empty-message">Carregando serviços.</p>
+    } @else if (errorMessage) {
+      <p class="empty-message error-message">{{ errorMessage }}</p>
+    } @else {
+      @for (servico of filteredServicos; track servico.label) {
+      <button
+        class="service-row"
+        type="button"
+        [class.disabled]="!servico.route"
+        [routerLink]="servico.route || null"
+      >
         <span class="service-name">
           <mat-icon aria-hidden="true">{{ servico.icon }}</mat-icon>
           <span>{{ servico.label }}</span>
         </span>
         <mat-icon aria-hidden="true">chevron_right</mat-icon>
       </button>
-    } @empty {
-      <p class="empty-message">Nenhum serviço encontrado.</p>
+      } @empty {
+        <p class="empty-message">Nenhum serviço encontrado.</p>
+      }
     }
   </div>
 </section>
