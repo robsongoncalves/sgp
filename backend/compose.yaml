@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sgp-postgres
+    environment:
+      POSTGRES_DB: sgp
+      POSTGRES_USER: sgp
+      POSTGRES_PASSWORD: sgp
+    ports:
+      - "5432:5432"
+    volumes:
+      - sgp-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sgp -d sgp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  sgp-postgres-data:
+
