@@ -10,6 +10,16 @@ def list_users():
     return jsonify(users_repository.list())
 
 
+@users_bp.get("/users/<int:user_id>")
+def get_user(user_id: int):
+    user = users_repository.get_public(user_id)
+
+    if user is None:
+        return jsonify({"message": "Usuario nao encontrado."}), 404
+
+    return jsonify(user)
+
+
 @users_bp.post("/users")
 def create_user():
     user, error = users_repository.create(request.get_json(silent=True) or {})
@@ -29,6 +39,16 @@ def update_user(user_id: int):
         return jsonify({"message": error}), status_code
 
     return jsonify(user)
+
+
+@users_bp.get("/users/<int:user_id>/groups")
+def list_user_groups(user_id: int):
+    groups = users_repository.list_groups(user_id)
+
+    if groups is None:
+        return jsonify({"message": "Usuario nao encontrado."}), 404
+
+    return jsonify(groups)
 
 
 @users_bp.delete("/users/<int:user_id>")

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -6,6 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
+
+import { User } from '../../core/models/user';
+import { AuthService } from '../../core/services/auth.service';
+import { UserService } from '../../core/services/user.service';
 
 interface ProgressaoStep {
   id: 'solicitacao' | 'pontuacao' | 'confirmacao' | 'enviar';
@@ -44,7 +48,7 @@ interface PontuacaoRequisito {
   templateUrl: './progressao-docente.component.html',
   styleUrl: './progressao-docente.component.scss'
 })
-export class ProgressaoDocenteComponent {
+export class ProgressaoDocenteComponent implements OnInit {
   readonly steps: ProgressaoStep[] = [
     {
       id: 'solicitacao',
@@ -344,7 +348,37 @@ export class ProgressaoDocenteComponent {
     dataUltimaPromocaoProgressao: ['']
   });
 
-  constructor(private readonly formBuilder: FormBuilder) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly formBuilder: FormBuilder,
+    private readonly userService: UserService
+  ) {}
+
+  ngOnInit(): void {
+    const currentUser = this.authService.currentUser;
+
+    if (!currentUser) {
+      return;
+    }
+
+    this.fillIdentification(currentUser);
+
+    this.userService.get(currentUser.id).subscribe({
+      next: (user) => this.fillIdentification(user)
+    });
+  }
+
+  private fillIdentification(user: User): void {
+    this.solicitacaoForm.patchValue({
+      nome: user.name,
+      siape: user.siape || '',
+      cargo: user.cargo || '',
+      classeNivel: user.classe_nivel || '',
+      localExercicio: user.local_exercicio || '',
+      emailInstitucional: user.email,
+      telefone: user.telefone || ''
+    });
+  }
 
   selectStep(step: ProgressaoStep['id']): void {
     this.currentStep = step;

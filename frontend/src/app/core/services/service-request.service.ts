@@ -4,6 +4,11 @@ import { Observable } from 'rxjs';
 
 import { CreateServiceRequestPayload, ServiceRequest } from '../models/service-request';
 
+export interface ServiceRequestListFilters {
+  requesterUserId?: number;
+  groupId?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,10 +17,20 @@ export class ServiceRequestService {
 
   constructor(private readonly http: HttpClient) {}
 
-  list(requesterUserId?: number): Observable<ServiceRequest[]> {
-    const params = requesterUserId
-      ? new HttpParams().set('requester_user_id', requesterUserId)
-      : undefined;
+  list(filters?: number | ServiceRequestListFilters): Observable<ServiceRequest[]> {
+    let params = new HttpParams();
+
+    if (typeof filters === 'number') {
+      params = params.set('requester_user_id', filters);
+    } else {
+      if (filters?.requesterUserId) {
+        params = params.set('requester_user_id', filters.requesterUserId);
+      }
+
+      if (filters?.groupId) {
+        params = params.set('group_id', filters.groupId);
+      }
+    }
 
     return this.http.get<ServiceRequest[]>(this.apiUrl, { params });
   }

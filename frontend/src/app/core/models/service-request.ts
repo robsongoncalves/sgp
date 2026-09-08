@@ -6,6 +6,8 @@ export interface ServiceRequest {
   service_slug: string;
   module_key: string;
   requester_user_id: number;
+  requester_name: string;
+  requester_email: string;
   current_situation_id: number | null;
   current_situation_name: string;
   status: string;

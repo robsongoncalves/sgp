@@ -16,6 +16,14 @@ class UsersRepository:
     def get(self, user_id: int) -> User | None:
         return db.session.get(User, user_id)
 
+    def get_public(self, user_id: int) -> dict | None:
+        user = self.get(user_id)
+
+        if user is None:
+            return None
+
+        return self._to_public_dict(user)
+
     def create(self, data: dict) -> tuple[dict | None, str | None]:
         error = self._validate(data, require_password=True)
         if error:
@@ -30,6 +38,11 @@ class UsersRepository:
             name=str(data["name"]).strip(),
             email=email,
             password_hash=self._hash_password(str(data["password"])),
+            siape=str(data.get("siape", "")).strip(),
+            cargo=str(data.get("cargo", "")).strip(),
+            classe_nivel=str(data.get("classe_nivel", data.get("classeNivel", ""))).strip(),
+            local_exercicio=str(data.get("local_exercicio", data.get("localExercicio", ""))).strip(),
+            telefone=str(data.get("telefone", "")).strip(),
             active=bool_value(data.get("active", True)),
         )
         db.session.add(user)
@@ -53,6 +66,11 @@ class UsersRepository:
 
         user.name = str(data["name"]).strip()
         user.email = email
+        user.siape = str(data.get("siape", "")).strip()
+        user.cargo = str(data.get("cargo", "")).strip()
+        user.classe_nivel = str(data.get("classe_nivel", data.get("classeNivel", ""))).strip()
+        user.local_exercicio = str(data.get("local_exercicio", data.get("localExercicio", ""))).strip()
+        user.telefone = str(data.get("telefone", "")).strip()
         if str(data.get("password", "")).strip():
             user.password_hash = self._hash_password(str(data["password"]))
         user.active = bool_value(data.get("active", True))
@@ -69,6 +87,40 @@ class UsersRepository:
         db.session.delete(user)
         db.session.commit()
         return True
+
+    def authenticate(self, email: str, password: str) -> tuple[dict | None, str | None]:
+        normalized_email = str(email).strip().lower()
+        normalized_password = str(password)
+
+        if not normalized_email or not normalized_password:
+            return None, "Informe email e senha."
+
+        user = User.query.filter(User.email == normalized_email).first()
+
+        if user is None or not self._verify_password(normalized_password, user.password_hash):
+            return None, "Email ou senha invalidos."
+
+        if not user.active:
+            return None, "Usuario inativo."
+
+        return self._to_public_dict(user), None
+
+    def list_groups(self, user_id: int) -> list[dict] | None:
+        user = self.get(user_id)
+
+        if user is None:
+            return None
+
+        groups = sorted(user.groups, key=lambda group: group.name.lower())
+        return [
+            {
+                "id": group.id,
+                "name": group.name,
+                "description": group.description,
+                "active": group.active,
+            }
+            for group in groups
+        ]
 
     def _validate(self, data: dict, require_password: bool) -> str | None:
         name = str(data.get("name", "")).strip()
@@ -102,6 +154,11 @@ class UsersRepository:
             "id": user.id,
             "name": user.name,
             "email": user.email,
+            "siape": user.siape,
+            "cargo": user.cargo,
+            "classe_nivel": user.classe_nivel,
+            "local_exercicio": user.local_exercicio,
+            "telefone": user.telefone,
             "active": user.active,
         }
 
@@ -115,6 +172,24 @@ class UsersRepository:
         ).hex()
 
         return f"pbkdf2_sha256$100000${salt}${password_hash}"
+
+    def _verify_password(self, password: str, stored_hash: str) -> bool:
+        if not stored_hash:
+            return True
+
+        parts = stored_hash.split("$")
+        if len(parts) != 4 or parts[0] != "pbkdf2_sha256":
+            return False
+
+        _, iterations, salt, password_hash = parts
+        candidate_hash = hashlib.pbkdf2_hmac(
+            "sha256",
+            password.encode("utf-8"),
+            salt.encode("utf-8"),
+            int(iterations),
+        ).hex()
+
+        return candidate_hash == password_hash
 
 
 users_repository = UsersRepository()

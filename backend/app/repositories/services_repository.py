@@ -13,6 +13,13 @@ class ServicesRepository:
         services = Service.query.order_by(Service.name.asc()).all()
         return [self._to_dict(service) for service in services]
 
+    def list_public(self) -> list[dict]:
+        services = Service.query.filter(Service.active.is_(True)).order_by(
+            Service.featured.desc(),
+            Service.name.asc(),
+        ).all()
+        return [self._to_public_dict(service) for service in services]
+
     def get(self, service_id: int) -> Service | None:
         return db.session.get(Service, service_id)
 
@@ -247,6 +254,30 @@ class ServicesRepository:
                     "display_order": situation.display_order,
                 }
                 for situation in situations
+            ],
+        }
+
+    def _to_public_dict(self, service: Service) -> dict:
+        categories = sorted(
+            (category for category in service.categories if category.active),
+            key=lambda category: (category.display_order, category.name.lower()),
+        )
+        return {
+            "id": service.id,
+            "name": service.name,
+            "slug": service.slug,
+            "description": service.description,
+            "documentation_url": service.documentation_url,
+            "featured": service.featured,
+            "updated_at": date_to_api(service.updated_at),
+            "categories": [
+                {
+                    "id": category.id,
+                    "name": category.name,
+                    "description": category.description,
+                    "display_order": category.display_order,
+                }
+                for category in categories
             ],
         }
 

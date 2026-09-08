@@ -1,0 +1,196 @@
+---
+import PublicLayout from '@/layouts/PublicLayout.astro';
+import { getPublicServices, groupServicesByCategory } from '@/lib/catalog';
+
+const services = await getPublicServices();
+const categories = groupServicesByCategory(services);
+---
+
+<PublicLayout title="Servicos">
+  <section class="page-shell catalog-page">
+    <div class="hero compact">
+      <p class="eyebrow">Catalogo</p>
+      <h1>Servicos</h1>
+      <p class="lead">Busque por nome, categoria ou descricao e acesse a pagina publica do servico.</p>
+    </div>
+
+    <label class="search-box">
+      <span>Buscar</span>
+      <input id="service-search" type="search" placeholder="Buscar nos servicos" autocomplete="off" />
+    </label>
+
+    <div class="catalog-list" id="catalog-list">
+      {categories.map((category, index) => (
+        <details class="category-group" open={index < 3}>
+          <summary>
+            <span>{category.name}</span>
+            <small>{category.services.length} servicos</small>
+          </summary>
+          <div class="service-list">
+            {category.services.map((service) => (
+              <article
+                class="service-row"
+                data-search={`${service.name} ${service.description} ${category.name}`.toLowerCase()}
+              >
+                <a href={`/servicos/${service.slug}`}>
+                  <h2>{service.name}</h2>
+                  <p>{service.description || 'Consulte os detalhes deste servico.'}</p>
+                </a>
+                {service.documentation_url && (
+                  <a
+                    class="doc-link"
+                    href={service.documentation_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Abrir documentacao de ${service.name}`}
+                  >
+                    Documentacao
+                  </a>
+                )}
+              </article>
+            ))}
+          </div>
+        </details>
+      ))}
+    </div>
+
+    {!services.length && (
+      <p class="empty-state">Nenhum servico publico foi encontrado. Confira se o backend esta em execucao.</p>
+    )}
+  </section>
+
+  <script>
+    const search = document.querySelector<HTMLInputElement>('#service-search');
+    const rows = [...document.querySelectorAll<HTMLElement>('.service-row')];
+    const groups = [...document.querySelectorAll<HTMLDetailsElement>('.category-group')];
+
+    search?.addEventListener('input', () => {
+      const term = search.value.trim().toLowerCase();
+
+      for (const row of rows) {
+        row.hidden = term.length > 0 && !row.dataset.search?.includes(term);
+      }
+
+      for (const group of groups) {
+        const visibleRows = [...group.querySelectorAll<HTMLElement>('.service-row')].filter((row) => !row.hidden);
+        group.hidden = visibleRows.length === 0;
+        if (term) {
+          group.open = true;
+        }
+      }
+    });
+  </script>
+</PublicLayout>
+
+<style>
+  .compact {
+    margin-bottom: 22px;
+  }
+
+  .search-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    display: grid;
+    gap: 8px;
+    margin-bottom: 22px;
+    padding: 14px 16px;
+  }
+
+  .search-box span {
+    color: var(--brand);
+    font-size: 0.84rem;
+    font-weight: 800;
+  }
+
+  .search-box input {
+    border: 0;
+    color: var(--text);
+    font: inherit;
+    font-size: 1rem;
+    outline: 0;
+  }
+
+  .catalog-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .category-group {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .category-group summary {
+    align-items: center;
+    background: var(--muted-surface);
+    color: var(--brand);
+    cursor: pointer;
+    display: flex;
+    font-size: 1.1rem;
+    font-weight: 800;
+    justify-content: space-between;
+    list-style: none;
+    padding: 18px 20px;
+  }
+
+  .category-group summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .category-group small {
+    color: var(--muted);
+    font-size: 0.84rem;
+    font-weight: 700;
+  }
+
+  .service-list {
+    padding: 6px 20px;
+  }
+
+  .service-row {
+    align-items: flex-start;
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 1fr auto;
+    padding: 16px 0;
+  }
+
+  .service-row:last-child {
+    border-bottom: 0;
+  }
+
+  .service-row h2 {
+    color: var(--brand);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 7px;
+  }
+
+  .service-row p {
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+
+  .doc-link {
+    color: var(--accent);
+    font-size: 0.88rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .empty-state {
+    color: var(--muted);
+  }
+
+  @media (max-width: 720px) {
+    .service-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

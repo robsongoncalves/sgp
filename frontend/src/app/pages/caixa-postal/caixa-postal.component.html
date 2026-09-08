@@ -1,0 +1,129 @@
+<section class="page-header">
+  <div class="page-title">
+    <mat-icon aria-hidden="true">inbox</mat-icon>
+    <div>
+      <h1>Caixa Postal</h1>
+      <p>Consulte solicitacoes recebidas conforme os grupos associados ao usuario.</p>
+    </div>
+  </div>
+</section>
+
+<section class="content-panel filters-panel">
+  <form [formGroup]="filterForm" (ngSubmit)="consultar()">
+    <div class="filters-grid">
+      <mat-form-field appearance="fill">
+        <mat-label>Grupo</mat-label>
+        <mat-select formControlName="groupId" [disabled]="isLoadingGroups || !groups.length">
+          @for (group of groups; track group.id) {
+            <mat-option [value]="group.id">{{ group.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Filtrar resultados</mat-label>
+        <input matInput formControlName="term" type="search" placeholder="Numero, servico, solicitante ou situacao">
+      </mat-form-field>
+    </div>
+
+    <div class="filter-actions">
+      <button mat-stroked-button color="primary" type="button" (click)="limpar()">
+        <mat-icon aria-hidden="true">cleaning_services</mat-icon>
+        Limpar
+      </button>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="isLoadingGroups || isLoadingRequests || !groups.length">
+        <mat-icon aria-hidden="true">search</mat-icon>
+        Consultar
+      </button>
+    </div>
+  </form>
+</section>
+
+<section class="content-panel" aria-label="Solicitacoes recebidas">
+  @if (errorMessage) {
+    <p class="feedback error">{{ errorMessage }}</p>
+  }
+
+  @if (isLoadingGroups || isLoadingRequests) {
+    <div class="loading-state">
+      <mat-spinner diameter="28" />
+      <span>Carregando solicitacoes</span>
+    </div>
+  } @else if (!groups.length) {
+    <p class="empty-state">O usuario atual nao faz parte de nenhum grupo ativo.</p>
+  } @else {
+    <div class="table-wrap">
+      <table mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Numero</th>
+          <td mat-cell *matCellDef="let request">
+            <strong>{{ request.number }}</strong>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="service_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Servico</th>
+          <td mat-cell *matCellDef="let request">
+            <strong>{{ request.service_name }}</strong>
+            <small>{{ request.service_slug }}</small>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="requester_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Solicitante</th>
+          <td mat-cell *matCellDef="let request">
+            <strong>{{ request.requester_name || '-' }}</strong>
+            <small>{{ request.requester_email }}</small>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Situacao</th>
+          <td mat-cell *matCellDef="let request">
+            <span class="status-pill">{{ request.current_situation_name || request.status }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="created_at">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Criada em</th>
+          <td mat-cell *matCellDef="let request">{{ formatDate(request.created_at) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="updated_at">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Atualizada em</th>
+          <td mat-cell *matCellDef="let request">{{ formatDate(request.updated_at) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef aria-label="Acoes"></th>
+          <td mat-cell *matCellDef="let request" class="actions">
+            <button
+              mat-icon-button
+              type="button"
+              aria-label="Abrir solicitacao"
+              [routerLink]="['/servicos', request.service_slug]"
+            >
+              <mat-icon aria-hidden="true">open_in_new</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let request; columns: displayedColumns;" class="data-row"></tr>
+        <tr class="mat-row empty-row" *matNoDataRow>
+          <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+            Nenhuma solicitacao encontrada para o grupo selecionado.
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 25]"
+      showFirstLastButtons
+      aria-label="Paginacao da caixa postal"
+    />
+  }
+</section>

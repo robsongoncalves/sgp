@@ -8,9 +8,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 
 import { ServiceRequest } from '../../core/models/service-request';
+import { AuthService } from '../../core/services/auth.service';
 import { ServiceRequestService } from '../../core/services/service-request.service';
-
-const DEV_REQUESTER_USER_ID = 3;
 
 @Component({
   selector: 'app-minhas-solicitacoes',
@@ -47,6 +46,7 @@ export class MinhasSolicitacoesComponent implements OnInit {
 
   constructor(
     private readonly formBuilder: FormBuilder,
+    private readonly authService: AuthService,
     private readonly serviceRequestService: ServiceRequestService
   ) {}
 
@@ -57,8 +57,15 @@ export class MinhasSolicitacoesComponent implements OnInit {
   loadSolicitacoes(): void {
     this.isLoading = true;
     this.errorMessage = '';
+    const currentUser = this.authService.currentUser;
 
-    this.serviceRequestService.list(DEV_REQUESTER_USER_ID).subscribe({
+    if (!currentUser) {
+      this.errorMessage = 'Usuario nao autenticado.';
+      this.isLoading = false;
+      return;
+    }
+
+    this.serviceRequestService.list(currentUser.id).subscribe({
       next: (solicitacoes) => {
         this.solicitacoes = solicitacoes;
         this.filteredSolicitacoes = [...solicitacoes];

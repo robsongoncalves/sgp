@@ -51,6 +51,11 @@ class User(db.Model, TimestampMixin):
     name: Mapped[str] = mapped_column(String(160), nullable=False)
     email: Mapped[str] = mapped_column(String(180), nullable=False, unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False, default="")
+    siape: Mapped[str] = mapped_column(String(20), nullable=False, default="")
+    cargo: Mapped[str] = mapped_column(String(140), nullable=False, default="")
+    classe_nivel: Mapped[str] = mapped_column(String(80), nullable=False, default="")
+    local_exercicio: Mapped[str] = mapped_column(String(180), nullable=False, default="")
+    telefone: Mapped[str] = mapped_column(String(40), nullable=False, default="")
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     groups: Mapped[list["UserGroup"]] = relationship(
@@ -219,4 +224,3 @@ class ServiceRequestAttachment(db.Model, TimestampMixin):
 
     service_request: Mapped[ServiceRequest] = relationship(back_populates="attachments")
     uploaded_by: Mapped[User] = relationship()
-

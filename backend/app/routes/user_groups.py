@@ -7,6 +7,16 @@ user_groups_bp = Blueprint("user_groups", __name__)
 
 @user_groups_bp.get("/user-groups")
 def list_user_groups():
+    user_id = request.args.get("user_id", type=int)
+
+    if user_id is not None:
+        groups = user_groups_repository.list_by_user(user_id)
+
+        if groups is None:
+            return jsonify({"message": "Usuario nao encontrado."}), 404
+
+        return jsonify(groups)
+
     return jsonify(user_groups_repository.list())
 
 

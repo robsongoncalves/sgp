@@ -19,16 +19,19 @@
       <mat-card-content>
         <form class="login-form" [formGroup]="loginForm" (ngSubmit)="submit()">
           <mat-form-field appearance="outline">
-            <mat-label>Usuario</mat-label>
+            <mat-label>Email</mat-label>
             <input
               matInput
-              formControlName="username"
+              formControlName="email"
               autocomplete="username"
-              type="text"
+              type="email"
             >
             <mat-icon matPrefix aria-hidden="true">person</mat-icon>
-            @if (loginForm.controls.username.hasError('required')) {
-              <mat-error>Informe o usuario.</mat-error>
+            @if (loginForm.controls.email.hasError('required')) {
+              <mat-error>Informe o email.</mat-error>
+            }
+            @if (loginForm.controls.email.hasError('email')) {
+              <mat-error>Informe um email valido.</mat-error>
             }
           </mat-form-field>
 
@@ -61,9 +64,13 @@
             <mat-checkbox formControlName="remember">Manter conectado</mat-checkbox>
           </div>
 
-          <button mat-flat-button color="primary" class="submit-button" type="submit">
+          @if (errorMessage) {
+            <p class="login-error">{{ errorMessage }}</p>
+          }
+
+          <button mat-flat-button color="primary" class="submit-button" type="submit" [disabled]="isLoading">
             <mat-icon aria-hidden="true">login</mat-icon>
-            Entrar
+            {{ isLoading ? 'Entrando' : 'Entrar' }}
           </button>
         </form>
       </mat-card-content>

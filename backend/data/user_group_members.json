@@ -2,17 +2,55 @@
   {
     "group_id": 1,
     "user_ids": [
-      2
+      2,
+      10,
+      12
     ]
   },
   {
     "group_id": 2,
-    "user_ids": []
+    "user_ids": [
+      4,
+      7,
+      11
+    ]
   },
   {
     "group_id": 3,
     "user_ids": [
       1
+    ]
+  },
+  {
+    "group_id": 4,
+    "user_ids": [
+      9
+    ]
+  },
+  {
+    "group_id": 5,
+    "user_ids": [
+      5,
+      6,
+      8,
+      10,
+      12
+    ]
+  },
+  {
+    "group_id": 6,
+    "user_ids": [
+      4,
+      7,
+      9,
+      11
+    ]
+  },
+  {
+    "group_id": 7,
+    "user_ids": [
+      8,
+      12
     ]
   }
 ]

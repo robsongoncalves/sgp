@@ -12,6 +12,23 @@ class UserGroupsRepository:
         groups = UserGroup.query.order_by(UserGroup.name.asc()).all()
         return [self._to_dict(group) for group in groups]
 
+    def list_by_user(self, user_id: int) -> list[dict] | None:
+        user = db.session.get(User, user_id)
+
+        if user is None:
+            return None
+
+        if user.email == "admin@unipampa.edu.br":
+            return [
+                self._to_dict(group)
+                for group in UserGroup.query.filter(UserGroup.active.is_(True))
+                .order_by(UserGroup.name.asc())
+                .all()
+            ]
+
+        groups = sorted(user.groups, key=lambda group: group.name.lower())
+        return [self._to_dict(group) for group in groups if group.active]
+
     def get(self, group_id: int) -> UserGroup | None:
         return db.session.get(UserGroup, group_id)
 

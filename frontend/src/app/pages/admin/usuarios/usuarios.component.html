@@ -104,42 +104,147 @@
   <form class="content-panel user-form" (ngSubmit)="saveUser()">
     <h2>{{ isEditing ? 'Editar usuario' : 'Novo usuario' }}</h2>
 
-    <label for="user-name">
-      Nome
-      <input
-        id="user-name"
-        name="name"
-        type="text"
-        autocomplete="name"
-        [(ngModel)]="form.name"
-      >
-    </label>
+    <div class="form-grid">
+      <label for="user-name" class="full-field">
+        Nome
+        <input
+          id="user-name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          [(ngModel)]="form.name"
+        >
+      </label>
 
-    <label for="user-email">
-      Email
-      <input
-        id="user-email"
-        name="email"
-        type="email"
-        autocomplete="email"
-        [(ngModel)]="form.email"
-      >
-    </label>
+      <label for="user-email">
+        Email
+        <input
+          id="user-email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          [(ngModel)]="form.email"
+        >
+      </label>
 
-    <label for="user-password">
-      Senha{{ isEditing ? ' nova' : '' }}
-      <input
-        id="user-password"
-        name="password"
-        type="password"
-        autocomplete="new-password"
-        [(ngModel)]="form.password"
-      >
-    </label>
+      <label for="user-siape">
+        SIAPE
+        <input
+          id="user-siape"
+          name="siape"
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="form.siape"
+        >
+      </label>
+
+      <label for="user-cargo">
+        Cargo
+        <input
+          id="user-cargo"
+          name="cargo"
+          type="text"
+          autocomplete="organization-title"
+          [(ngModel)]="form.cargo"
+        >
+      </label>
+
+      <label for="user-classe-nivel">
+        Classe/Nivel
+        <input
+          id="user-classe-nivel"
+          name="classeNivel"
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="form.classe_nivel"
+        >
+      </label>
+
+      <label for="user-local-exercicio">
+        Local de Exercicio
+        <input
+          id="user-local-exercicio"
+          name="localExercicio"
+          type="text"
+          autocomplete="organization"
+          [(ngModel)]="form.local_exercicio"
+        >
+      </label>
+
+      <label for="user-telefone">
+        Telefone
+        <input
+          id="user-telefone"
+          name="telefone"
+          type="tel"
+          autocomplete="tel"
+          [(ngModel)]="form.telefone"
+        >
+      </label>
+
+      <label for="user-password" class="full-field">
+        Senha{{ isEditing ? ' nova' : '' }}
+        <input
+          id="user-password"
+          name="password"
+          type="password"
+          autocomplete="new-password"
+          [(ngModel)]="form.password"
+        >
+      </label>
+    </div>
 
     <mat-checkbox name="active" [(ngModel)]="form.active">
       Usuario ativo
     </mat-checkbox>
+
+    <section class="groups-section" aria-label="Grupos associados ao usuario">
+      <div class="section-heading">
+        <h3>Grupos do usuario</h3>
+        @if (isLoadingGroups) {
+          <span>Carregando grupos</span>
+        }
+      </div>
+
+      @if (!isEditing) {
+        <p class="empty-inline">Salve o usuario para associar grupos pelo cadastro de Grupos de Usuarios.</p>
+      } @else if (isLoadingGroups) {
+        <div class="loading-state compact">
+          <mat-spinner diameter="24" />
+          <span>Carregando grupos do usuario</span>
+        </div>
+      } @else if (selectedUserGroups.length) {
+        <div class="table-wrap">
+          <table mat-table [dataSource]="selectedUserGroups" class="groups-table">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Grupo</th>
+              <td mat-cell *matCellDef="let group">
+                <strong>{{ group.name }}</strong>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Descricao</th>
+              <td mat-cell *matCellDef="let group">{{ group.description || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="active">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let group">
+                <span class="status-chip" [class.inactive]="!group.active">
+                  {{ group.active ? 'Ativo' : 'Inativo' }}
+                </span>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="userGroupColumns"></tr>
+            <tr mat-row *matRowDef="let group; columns: userGroupColumns;"></tr>
+          </table>
+        </div>
+      } @else {
+        <p class="empty-inline">Usuario sem grupos associados.</p>
+      }
+    </section>
 
     @if (errorMessage) {
       <p class="feedback error">{{ errorMessage }}</p>

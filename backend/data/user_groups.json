@@ -16,5 +16,29 @@
     "name": "Administradores de Servicos",
     "description": "Usuarios responsaveis por configurar categorias, tipos e fluxos",
     "active": true
+  },
+  {
+    "id": 4,
+    "name": "DTIC",
+    "description": "Diretoria de Tecnologia da Informacao e Comunicacao",
+    "active": true
+  },
+  {
+    "id": 5,
+    "name": "DOCENTE",
+    "description": "Usuarios docentes",
+    "active": true
+  },
+  {
+    "id": 6,
+    "name": "TECNICO ADM",
+    "description": "Usuarios tecnico-administrativos",
+    "active": true
+  },
+  {
+    "id": 7,
+    "name": "CAMPUS ALEGRETE",
+    "description": "Usuarios vinculados ao Campus Alegrete",
+    "active": true
   }
 ]

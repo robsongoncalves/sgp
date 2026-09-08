@@ -3,18 +3,27 @@ from __future__ import annotations
 from datetime import datetime
 
 from app.extensions import db
-from app.models import Service, ServiceRequest, User
+from app.models import Service, ServiceRequest, User, UserGroup
 from app.repositories.utils import datetime_to_api, optional_int
 
 DEV_REQUESTER_USER_ID = 3
 
 
 class ServiceRequestsRepository:
-    def list(self, requester_user_id: int | None = None) -> list[dict]:
+    def list(
+        self,
+        requester_user_id: int | None = None,
+        group_id: int | None = None,
+    ) -> list[dict]:
         query = ServiceRequest.query
 
         if requester_user_id is not None:
             query = query.filter(ServiceRequest.requester_user_id == requester_user_id)
+
+        if group_id is not None:
+            query = query.filter(
+                ServiceRequest.service.has(Service.groups.any(UserGroup.id == group_id))
+            )
 
         requests = query.order_by(ServiceRequest.created_at.desc()).all()
         return [self._to_dict(service_request) for service_request in requests]
@@ -77,6 +86,8 @@ class ServiceRequestsRepository:
             "service_slug": service.slug if service else "",
             "module_key": service.module_key if service else "",
             "requester_user_id": service_request.requester_user_id,
+            "requester_name": service_request.requester.name if service_request.requester else "",
+            "requester_email": service_request.requester.email if service_request.requester else "",
             "current_situation_id": service_request.current_situation_id,
             "current_situation_name": current_situation.name if current_situation else service_request.status,
             "status": service_request.status,

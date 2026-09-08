@@ -71,6 +71,11 @@ def _seed_users() -> None:
         user.name = item["name"]
         user.email = item["email"]
         user.password_hash = item.get("password_hash", "")
+        user.siape = item.get("siape", "")
+        user.cargo = item.get("cargo", "")
+        user.classe_nivel = item.get("classe_nivel", "")
+        user.local_exercicio = item.get("local_exercicio", "")
+        user.telefone = item.get("telefone", "")
         user.active = item.get("active", True)
         db.session.add(user)
 

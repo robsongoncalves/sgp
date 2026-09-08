@@ -43,11 +43,6 @@
                 <input matInput formControlName="cargo" type="text">
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Classe/Nível</mat-label>
-                <input matInput formControlName="classeNivel" type="text">
-              </mat-form-field>
-
               <mat-form-field appearance="outline" class="full-row">
                 <mat-label>Local de Exercício</mat-label>
                 <input matInput formControlName="localExercicio" type="text">
@@ -65,25 +60,33 @@
             </div>
           </div>
 
-          <div class="form-section">
-            <h3>Tipo de solicitação</h3>
+          <div class="level-grid">
+            <div class="form-section">
+              <h3>Classe/Nível atual</h3>
 
-            <mat-radio-group class="request-types" formControlName="tipoSolicitacao">
-              <mat-radio-button value="progressao">
-                Progressão
-              </mat-radio-button>
-              <mat-radio-button value="promocao-b">
-                Promoção para Classe B - Professor Assistente
-              </mat-radio-button>
-              <mat-radio-button value="promocao-c">
-                Promoção para Classe C - Professor Adjunto
-              </mat-radio-button>
-            </mat-radio-group>
+              <mat-form-field appearance="outline">
+                <mat-label>Classe/Nível atual</mat-label>
+                <input matInput formControlName="classeNivel" type="text">
+              </mat-form-field>
 
-            <mat-form-field appearance="outline" class="date-field">
-              <mat-label>Data da última promoção ou progressão</mat-label>
-              <input matInput formControlName="dataUltimaPromocaoProgressao" type="date">
-            </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Data da última promoção ou progressão</mat-label>
+                <input matInput formControlName="dataUltimaPromocaoProgressao" type="date">
+              </mat-form-field>
+            </div>
+
+            <div class="form-section">
+              <h3>Classe/Nível desejado</h3>
+
+              <mat-radio-group class="request-types" formControlName="tipoSolicitacao">
+                <mat-radio-button value="promocao-b">
+                  Promoção para Classe B - Professor Assistente
+                </mat-radio-button>
+                <mat-radio-button value="promocao-c">
+                  Promoção para Classe C - Professor Adjunto
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
           </div>
 
           <div class="step-actions">

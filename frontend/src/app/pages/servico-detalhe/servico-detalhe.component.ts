@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Service } from '../../core/models/service';
+import { AuthService } from '../../core/services/auth.service';
 import { ServiceRequestService } from '../../core/services/service-request.service';
 import { ServiceService } from '../../core/services/service.service';
 
@@ -32,6 +33,7 @@ export class ServicoDetalheComponent implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly authService: AuthService,
     private readonly serviceRequestService: ServiceRequestService,
     private readonly serviceService: ServiceService
   ) {}
@@ -68,9 +70,18 @@ export class ServicoDetalheComponent implements OnInit {
 
     this.isStarting = true;
     this.errorMessage = '';
+    const currentUser = this.authService.currentUser;
+
+    if (!currentUser) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
 
     this.serviceRequestService.create({
-      service_id: this.service.id
+      service_id: this.service.id,
+      requester_user_id: currentUser.id
     }).subscribe({
       next: (serviceRequest) => {
         this.router.navigate([this.moduleRoute], {

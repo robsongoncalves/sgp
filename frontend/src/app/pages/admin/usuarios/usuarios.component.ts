@@ -9,6 +9,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
 import { User, UserPayload } from '../../../core/models/user';
+import { UserGroup } from '../../../core/models/user-group';
 import { UserService } from '../../../core/services/user.service';
 
 @Component({
@@ -31,10 +32,13 @@ export class UsuariosComponent implements OnInit, AfterViewInit {
   users: User[] = [];
   dataSource = new MatTableDataSource<User>([]);
   displayedColumns = ['name', 'email', 'actions'];
+  userGroupColumns = ['name', 'description', 'active'];
+  selectedUserGroups: UserGroup[] = [];
   isFormVisible = false;
   filterTerm = '';
   editingUserId: number | null = null;
   isLoading = false;
+  isLoadingGroups = false;
   isSaving = false;
   errorMessage = '';
   successMessage = '';
@@ -90,6 +94,11 @@ export class UsuariosComponent implements OnInit, AfterViewInit {
     const payload: UserPayload = {
       name: this.form.name.trim(),
       email: this.form.email.trim().toLowerCase(),
+      siape: this.form.siape.trim(),
+      cargo: this.form.cargo.trim(),
+      classe_nivel: this.form.classe_nivel.trim(),
+      local_exercicio: this.form.local_exercicio.trim(),
+      telefone: this.form.telefone.trim(),
       active: this.form.active
     };
 
@@ -126,16 +135,23 @@ export class UsuariosComponent implements OnInit, AfterViewInit {
     this.form = {
       name: user.name,
       email: user.email,
+      siape: user.siape || '',
+      cargo: user.cargo || '',
+      classe_nivel: user.classe_nivel || '',
+      local_exercicio: user.local_exercicio || '',
+      telefone: user.telefone || '',
       password: '',
       active: user.active
     };
     this.errorMessage = '';
     this.successMessage = '';
     this.isFormVisible = true;
+    this.loadUserGroups(user.id);
   }
 
   createUser(): void {
     this.resetForm();
+    this.selectedUserGroups = [];
     this.isFormVisible = true;
   }
 
@@ -152,6 +168,11 @@ export class UsuariosComponent implements OnInit, AfterViewInit {
     this.userService.update(user.id, {
       name: user.name,
       email: user.email,
+      siape: user.siape || '',
+      cargo: user.cargo || '',
+      classe_nivel: user.classe_nivel || '',
+      local_exercicio: user.local_exercicio || '',
+      telefone: user.telefone || '',
       active: !user.active
     }).subscribe({
       next: () => this.loadUsers(),
@@ -186,15 +207,41 @@ export class UsuariosComponent implements OnInit, AfterViewInit {
 
   closeForm(): void {
     this.resetForm();
+    this.selectedUserGroups = [];
     this.errorMessage = '';
     this.isFormVisible = false;
+  }
+
+  private loadUserGroups(userId: number): void {
+    this.isLoadingGroups = true;
+
+    this.userService.listGroups(userId).subscribe({
+      next: (groups) => {
+        this.selectedUserGroups = groups;
+        this.isLoadingGroups = false;
+      },
+      error: () => {
+        this.selectedUserGroups = [];
+        this.errorMessage = 'Nao foi possivel carregar os grupos do usuario.';
+        this.isLoadingGroups = false;
+      }
+    });
   }
 
   private configureDataTable(): void {
     this.dataSource.paginator = this.paginator || null;
     this.dataSource.sort = this.sort || null;
     this.dataSource.filterPredicate = (user, filter) => {
-      const content = `${user.name} ${user.email} ${user.active ? 'ativo' : 'inativo'}`;
+      const content = [
+        user.name,
+        user.email,
+        user.siape,
+        user.cargo,
+        user.classe_nivel,
+        user.local_exercicio,
+        user.telefone,
+        user.active ? 'ativo' : 'inativo'
+      ].join(' ');
       return content.toLowerCase().includes(filter);
     };
   }
@@ -203,6 +250,11 @@ export class UsuariosComponent implements OnInit, AfterViewInit {
     return {
       name: '',
       email: '',
+      siape: '',
+      cargo: '',
+      classe_nivel: '',
+      local_exercicio: '',
+      telefone: '',
       password: '',
       active: true
     };

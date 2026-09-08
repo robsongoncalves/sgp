@@ -1,0 +1,150 @@
+---
+import PublicLayout from '@/layouts/PublicLayout.astro';
+import { getPublicServices, groupServicesByCategory, sortServices } from '@/lib/catalog';
+
+const services = await getPublicServices();
+const featuredServices = [...services].filter((service) => service.featured).sort(sortServices).slice(0, 6);
+const categories = groupServicesByCategory(services);
+---
+
+<PublicLayout title="Catalogo de Servicos">
+  <section class="page-shell">
+    <div class="hero">
+      <p class="eyebrow">Universidade</p>
+      <h1>Catalogo publico de servicos</h1>
+      <p class="lead">
+        Consulte servicos disponiveis, acesse documentacoes e inicie solicitacoes pelo sistema autenticado.
+      </p>
+      <div class="button-row">
+        <a class="button primary" href="/servicos">Ver todos os servicos</a>
+        <a class="button secondary" href={import.meta.env.PUBLIC_APP_BASE_URL || 'http://localhost:4200'}>Entrar no sistema</a>
+      </div>
+    </div>
+
+    <section class="stats" aria-label="Resumo do catalogo">
+      <article>
+        <strong>{services.length}</strong>
+        <span>servicos ativos</span>
+      </article>
+      <article>
+        <strong>{categories.length}</strong>
+        <span>categorias</span>
+      </article>
+      <article>
+        <strong>{featuredServices.length}</strong>
+        <span>em destaque</span>
+      </article>
+    </section>
+
+    <section class="section-block" aria-labelledby="featured-title">
+      <div class="section-heading">
+        <h2 id="featured-title">Servicos em destaque</h2>
+        <a href="/servicos">Todos os servicos</a>
+      </div>
+
+      {featuredServices.length ? (
+        <div class="service-grid">
+          {featuredServices.map((service) => (
+            <a class="service-card" href={`/servicos/${service.slug}`}>
+              <span>{service.categories[0]?.name || 'Servico'}</span>
+              <h3>{service.name}</h3>
+              <p>{service.description || 'Consulte os detalhes deste servico.'}</p>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p class="empty-state">Nenhum servico em destaque foi encontrado.</p>
+      )}
+    </section>
+  </section>
+</PublicLayout>
+
+<style>
+  .stats {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-bottom: 34px;
+  }
+
+  .stats article {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px;
+  }
+
+  .stats strong {
+    color: var(--brand);
+    display: block;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .stats span {
+    color: var(--muted);
+    display: block;
+    margin-top: 8px;
+  }
+
+  .section-heading {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .section-heading h2 {
+    color: var(--brand);
+    font-size: 1.35rem;
+    margin: 0;
+  }
+
+  .section-heading a {
+    color: var(--brand);
+    font-weight: 800;
+  }
+
+  .service-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .service-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    display: block;
+    min-height: 190px;
+    padding: 20px;
+  }
+
+  .service-card span {
+    color: var(--accent);
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .service-card h3 {
+    color: var(--brand);
+    font-size: 1.05rem;
+    line-height: 1.35;
+    margin-bottom: 10px;
+  }
+
+  .service-card p,
+  .empty-state {
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .service-grid,
+    .stats {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

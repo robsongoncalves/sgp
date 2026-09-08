@@ -41,6 +41,12 @@ h2 {
   font-weight: 700;
 }
 
+h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
 .page-title p {
   margin-top: 4px;
   color: #5f6b7a;
@@ -57,7 +63,17 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 560px;
+  max-width: 860px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+.full-field {
+  grid-column: 1 / -1;
 }
 
 label {
@@ -104,6 +120,50 @@ input:focus {
 .feedback.success {
   background: #e9f7ef;
   color: #17663a;
+}
+
+.groups-section {
+  display: grid;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.section-heading {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-heading span,
+.empty-inline {
+  color: #5f6b7a;
+  font-size: 0.86rem;
+}
+
+.groups-table {
+  border: 1px solid #edf0f5;
+}
+
+td strong {
+  display: block;
+}
+
+.status-chip {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: #e9f7ef;
+  color: #17663a;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.status-chip.inactive {
+  background: #eef1f5;
+  color: #7a8491;
 }
 
 .table-toolbar {
@@ -211,6 +271,10 @@ th {
   padding: 22px;
 }
 
+.loading-state.compact {
+  padding: 10px 0;
+}
+
 .empty-state {
   padding: 28px 16px;
   text-align: center;
@@ -232,6 +296,10 @@ th {
     flex-direction: column;
   }
 
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
   .table-toolbar {
     align-items: stretch;
     flex-direction: column;
@@ -242,6 +310,10 @@ th {
   }
 
   .mat-column-email {
+    display: none;
+  }
+
+  .groups-table .mat-column-description {
     display: none;
   }
 }

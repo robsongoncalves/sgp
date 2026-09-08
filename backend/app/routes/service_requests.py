@@ -8,7 +8,13 @@ service_requests_bp = Blueprint("service_requests", __name__)
 @service_requests_bp.get("/service-requests")
 def list_service_requests():
     requester_user_id = request.args.get("requester_user_id", type=int)
-    return jsonify(service_requests_repository.list(requester_user_id=requester_user_id))
+    group_id = request.args.get("group_id", type=int)
+    return jsonify(
+        service_requests_repository.list(
+            requester_user_id=requester_user_id,
+            group_id=group_id,
+        )
+    )
 
 
 @service_requests_bp.post("/service-requests")

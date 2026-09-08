@@ -1,0 +1,176 @@
+---
+import PublicLayout from '@/layouts/PublicLayout.astro';
+import { getPublicServices } from '@/lib/catalog';
+import type { PublicService } from '@/lib/catalog';
+
+interface Props {
+  service: PublicService;
+}
+
+export async function getStaticPaths() {
+  const services = await getPublicServices();
+
+  return services.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const appBaseUrl = import.meta.env.PUBLIC_APP_BASE_URL || 'http://localhost:4200';
+const startUrl = `${appBaseUrl}/servicos/${service.slug}`;
+---
+
+<PublicLayout title={service.name} description={service.description || `Servico ${service.name}`}>
+  <section class="page-shell detail-page">
+    <div class="service-hero">
+      <div>
+        <a class="back-link" href="/servicos">Voltar para servicos</a>
+        <h1>{service.name}</h1>
+        <div class="rating-row" aria-label="Avaliacao">
+          <span>Avaliacao:</span>
+          <strong>4.6</strong>
+          <span class="stars">*****</span>
+          <span>(66511)</span>
+        </div>
+      </div>
+      <a class="start-button" href={startUrl}>Iniciar</a>
+    </div>
+
+    <div class="metadata-row">
+      <span>Ultima modificacao: {service.updated_at || 'Nao informada'}</span>
+      {service.documentation_url && (
+        <a href={service.documentation_url} target="_blank" rel="noreferrer">Documentacao</a>
+      )}
+    </div>
+
+    <section class="content-block" aria-labelledby="about-title">
+      <h2 id="about-title">Sobre o servico</h2>
+      <p>{service.description || 'Este servico ainda nao possui descricao publica cadastrada.'}</p>
+    </section>
+
+    {service.categories.length > 0 && (
+      <section class="content-block" aria-labelledby="categories-title">
+        <h2 id="categories-title">Categorias</h2>
+        <div class="tag-list">
+          {service.categories.map((category) => <span>{category.name}</span>)}
+        </div>
+      </section>
+    )}
+  </section>
+</PublicLayout>
+
+<style>
+  .detail-page {
+    padding-top: 44px;
+  }
+
+  .service-hero {
+    align-items: flex-start;
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    gap: 24px;
+    grid-template-columns: 1fr auto;
+    padding-bottom: 26px;
+  }
+
+  .back-link {
+    color: var(--muted);
+    display: inline-flex;
+    font-size: 0.92rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+
+  .rating-row {
+    align-items: center;
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 20px;
+  }
+
+  .rating-row strong {
+    color: var(--brand);
+  }
+
+  .stars {
+    color: var(--warning);
+    letter-spacing: 0.08em;
+  }
+
+  .start-button {
+    align-items: center;
+    background: var(--accent);
+    border-radius: 999px;
+    color: #fff;
+    display: inline-flex;
+    font-size: 1.15rem;
+    font-weight: 800;
+    justify-content: center;
+    min-width: 180px;
+    padding: 18px 34px;
+  }
+
+  .metadata-row {
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    display: flex;
+    gap: 18px;
+    justify-content: space-between;
+    padding: 16px 0;
+  }
+
+  .metadata-row a {
+    color: var(--brand);
+    font-weight: 800;
+  }
+
+  .content-block {
+    margin-top: 34px;
+    max-width: 780px;
+  }
+
+  .content-block h2 {
+    color: var(--brand);
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
+
+  .content-block p {
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .tag-list span {
+    background: var(--accent-soft);
+    border: 1px solid #c4dfca;
+    border-radius: 999px;
+    color: var(--accent);
+    font-weight: 800;
+    padding: 8px 12px;
+  }
+
+  @media (max-width: 720px) {
+    .service-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .start-button {
+      width: 100%;
+    }
+
+    .metadata-row {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>

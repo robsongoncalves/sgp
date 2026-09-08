@@ -16,6 +16,8 @@ OPENAPI_SPEC = {
     ],
     "tags": [
         {"name": "Health"},
+        {"name": "Autenticacao"},
+        {"name": "Catalogo Publico"},
         {"name": "Usuarios"},
         {"name": "Grupos de Usuarios"},
         {"name": "Categorias de Servico"},
@@ -28,6 +30,20 @@ OPENAPI_SPEC = {
                 "tags": ["Health"],
                 "summary": "Verifica se a API esta online",
                 "responses": {"200": {"description": "API online"}},
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": ["Autenticacao"],
+                "summary": "Autentica usuario por email e senha",
+                "responses": {"200": {"description": "Usuario autenticado"}},
+            }
+        },
+        "/public/services": {
+            "get": {
+                "tags": ["Catalogo Publico"],
+                "summary": "Lista servicos ativos para o catalogo publico",
+                "responses": {"200": {"description": "Servicos publicos retornados"}},
             }
         },
         "/users": {
@@ -43,6 +59,12 @@ OPENAPI_SPEC = {
             },
         },
         "/users/{user_id}": {
+            "get": {
+                "tags": ["Usuarios"],
+                "summary": "Consulta usuario",
+                "parameters": [{"name": "user_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"200": {"description": "Usuario retornado"}},
+            },
             "put": {
                 "tags": ["Usuarios"],
                 "summary": "Atualiza usuario",
@@ -56,10 +78,26 @@ OPENAPI_SPEC = {
                 "responses": {"204": {"description": "Usuario removido"}},
             },
         },
+        "/users/{user_id}/groups": {
+            "get": {
+                "tags": ["Usuarios"],
+                "summary": "Lista grupos associados ao usuario",
+                "parameters": [{"name": "user_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"200": {"description": "Grupos do usuario retornados"}},
+            },
+        },
         "/user-groups": {
             "get": {
                 "tags": ["Grupos de Usuarios"],
                 "summary": "Lista grupos de usuarios",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "required": False,
+                        "schema": {"type": "integer"},
+                    }
+                ],
                 "responses": {"200": {"description": "Grupos retornados"}},
             },
             "post": {
@@ -158,6 +196,12 @@ OPENAPI_SPEC = {
                         "in": "query",
                         "required": False,
                         "schema": {"type": "integer"},
+                    },
+                    {
+                        "name": "group_id",
+                        "in": "query",
+                        "required": False,
+                        "schema": {"type": "integer"},
                     }
                 ],
                 "responses": {"200": {"description": "Solicitacoes retornadas"}},
@@ -170,4 +214,3 @@ OPENAPI_SPEC = {
         },
     },
 }
-

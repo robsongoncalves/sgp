@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -18,6 +18,12 @@ export class UserGroupService {
 
   list(): Observable<UserGroup[]> {
     return this.http.get<UserGroup[]>(this.apiUrl);
+  }
+
+  listByUser(userId: number): Observable<UserGroup[]> {
+    const params = new HttpParams().set('user_id', userId);
+
+    return this.http.get<UserGroup[]>(this.apiUrl, { params });
   }
 
   create(payload: UserGroupPayload): Observable<UserGroup> {

@@ -33,21 +33,30 @@
       </mat-icon>
     </button>
 
-    <button
-      mat-button
-      class="user-button"
-      type="button"
-      matTooltip="Usuario logado"
-      aria-label="Usuario logado"
-      [matMenuTriggerFor]="userMenu"
-    >
-      <span class="user-avatar" aria-hidden="true">{{ userInitials }}</span>
-      <span class="user-name">{{ userName }}</span>
-      <mat-icon aria-hidden="true">expand_more</mat-icon>
-    </button>
+    @if (currentUser$ | async; as currentUser) {
+      <button
+        mat-button
+        class="user-button"
+        type="button"
+        matTooltip="Usuario logado"
+        aria-label="Usuario logado"
+        [matMenuTriggerFor]="userMenu"
+      >
+        <span class="user-avatar" aria-hidden="true">{{ initials(currentUser) }}</span>
+        <span class="user-name">{{ currentUser.name }}</span>
+        <mat-icon aria-hidden="true">expand_more</mat-icon>
+      </button>
+    }
 
     <mat-menu #userMenu="matMenu" xPosition="before">
-      <button mat-menu-item type="button" routerLink="/login">
+      @if (currentUser$ | async; as currentUser) {
+        <button mat-menu-item type="button" disabled>
+          <mat-icon aria-hidden="true">account_circle</mat-icon>
+          <span>{{ currentUser.email }}</span>
+        </button>
+      }
+
+      <button mat-menu-item type="button" (click)="logout()">
         <mat-icon aria-hidden="true">logout</mat-icon>
         <span>Sair</span>
       </button>

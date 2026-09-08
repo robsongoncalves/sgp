@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { User, UserPayload } from '../models/user';
+import { UserGroup } from '../models/user-group';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,10 @@ export class UserService {
     return this.http.get<User[]>(this.apiUrl);
   }
 
+  get(userId: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${userId}`);
+  }
+
   create(payload: UserPayload): Observable<User> {
     return this.http.post<User>(this.apiUrl, payload);
   }
@@ -26,5 +31,9 @@ export class UserService {
 
   delete(userId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${userId}`);
+  }
+
+  listGroups(userId: number): Observable<UserGroup[]> {
+    return this.http.get<UserGroup[]>(`${this.apiUrl}/${userId}/groups`);
   }
 }

@@ -4,6 +4,11 @@
     "name": "Administrador do Sistema",
     "email": "admin@unipampa.edu.br",
     "password_hash": "",
+    "siape": "1000001",
+    "cargo": "Administrador",
+    "classe_nivel": "E-404",
+    "local_exercicio": "Reitoria",
+    "telefone": "(53) 3240-0001",
     "active": true
   },
   {
@@ -11,6 +16,11 @@
     "name": "Maria CPPD",
     "email": "maria.cppd@unipampa.edu.br",
     "password_hash": "",
+    "siape": "1000002",
+    "cargo": "Professor do Magisterio Superior",
+    "classe_nivel": "Classe C - Adjunto 2",
+    "local_exercicio": "CPPD",
+    "telefone": "(53) 3240-0002",
     "active": false
   },
   {
@@ -18,6 +28,119 @@
     "name": "Joao Docente",
     "email": "joao.docente@unipampa.edu.br",
     "password_hash": "",
+    "siape": "1000003",
+    "cargo": "Professor do Magisterio Superior",
+    "classe_nivel": "Classe B - Assistente 1",
+    "local_exercicio": "Campus Alegrete",
+    "telefone": "(53) 3240-0003",
+    "active": true
+  },
+  {
+    "id": 4,
+    "name": "Eder Pereira da Silva",
+    "email": "edersilva@unipampa.edu.br",
+    "password_hash": "pbkdf2_sha256$100000$4a561b689d71130529d2292cb71a6e9f$72a3e5498c364d2aef50bbfed451699ae68c61a192d138d4bee1a70b54db8799",
+    "siape": "1000004",
+    "cargo": "Tecnico Administrativo em Educacao",
+    "classe_nivel": "D-303",
+    "local_exercicio": "PROGEPE",
+    "telefone": "(53) 3240-0004",
+    "active": true
+  },
+  {
+    "id": 5,
+    "name": "Charles Quevedo Carpes",
+    "email": "charlescarpes@unipampa.edu.br",
+    "password_hash": "pbkdf2_sha256$100000$89b20e9c6f10b36faca7f06b88fd8dde$66a14b0ee45b7db9235492b9103b2a039c7664b15121cab8f71ed101a822fd2b",
+    "siape": "1000005",
+    "cargo": "Professor do Magisterio Superior",
+    "classe_nivel": "Classe C - Adjunto 3",
+    "local_exercicio": "Campus Alegrete",
+    "telefone": "(53) 3240-0005",
+    "active": true
+  },
+  {
+    "id": 6,
+    "name": "Alexandre Machado Takahama",
+    "email": "alexandretakahama@unipampa.edu.br",
+    "password_hash": "pbkdf2_sha256$100000$000707abe6f07dcf81c921982f58137d$74d5fd91f70079d902b98a75935958ec5a4995210670e0a8d95fa022211ea69d",
+    "siape": "1000006",
+    "cargo": "Professor do Magisterio Superior",
+    "classe_nivel": "Classe C - Adjunto 1",
+    "local_exercicio": "Campus Bage",
+    "telefone": "(53) 3240-0006",
+    "active": true
+  },
+  {
+    "id": 7,
+    "name": "Daniel dos Santos Viegas",
+    "email": "danielviegas@unipampa.edu.br",
+    "password_hash": "pbkdf2_sha256$100000$04af8a42dde7fb50b41e3cb7c041f5e8$693ca6cc380065eea67e99050c245415872e5e4ffeec039dbc7a2f36a6dfbc99",
+    "siape": "1000007",
+    "cargo": "Tecnico Administrativo em Educacao",
+    "classe_nivel": "E-405",
+    "local_exercicio": "PROGEPE",
+    "telefone": "(53) 3240-0007",
+    "active": true
+  },
+  {
+    "id": 8,
+    "name": "Diego Luis Kreutz",
+    "email": "diegokreutz@unipampa.edu.br",
+    "password_hash": "pbkdf2_sha256$100000$030a80b2044ce8d5fbea2a487c2fad43$d1f88b3641504a0bef589d602482d2ebdb2048a2345b4c99d8c157cb9ce3bd11",
+    "siape": "1000008",
+    "cargo": "Professor do Magisterio Superior",
+    "classe_nivel": "Classe D - Associado 1",
+    "local_exercicio": "Campus Alegrete",
+    "telefone": "(53) 3240-0008",
+    "active": true
+  },
+  {
+    "id": 9,
+    "name": "Diego Veneroso Pereira",
+    "email": "diegopereira@unipampa.edu.br",
+    "password_hash": "pbkdf2_sha256$100000$d4297471cde514588d6ff38eb1d661ef$1f8cbbf7561e53e35cab1b93eb31ef24f650f06c1c070b59dea76fb9e6f710de",
+    "siape": "1000009",
+    "cargo": "Tecnico Administrativo em Educacao",
+    "classe_nivel": "D-302",
+    "local_exercicio": "DTIC",
+    "telefone": "(53) 3240-0009",
+    "active": true
+  },
+  {
+    "id": 10,
+    "name": "Paula Ferreira de Araujo Ribeiro",
+    "email": "paularibeiro@unipampa.edu.br",
+    "password_hash": "pbkdf2_sha256$100000$27c2e371f77db3096ff2d2710dbaed61$ce867de524004ef72507475669a515a6d2a41d969b8399390328e5c0fe3c54da",
+    "siape": "1000010",
+    "cargo": "Professor do Magisterio Superior",
+    "classe_nivel": "Classe D - Associado 2",
+    "local_exercicio": "CPPD",
+    "telefone": "(53) 3240-0010",
+    "active": true
+  },
+  {
+    "id": 11,
+    "name": "Robson Romario de Oliveira Goncalves",
+    "email": "robsongoncalves@unipampa.edu.br",
+    "password_hash": "pbkdf2_sha256$100000$92afba053e810ca01323d0284475f537$7f13d64125a05b4e7249b0261dd465232c3d35fd81ac7e411b6a73b54e5a0aa1",
+    "siape": "1000011",
+    "cargo": "Tecnico Administrativo em Educacao",
+    "classe_nivel": "E-406",
+    "local_exercicio": "PROGEPE",
+    "telefone": "(53) 3240-0011",
+    "active": true
+  },
+  {
+    "id": 12,
+    "name": "Telmo Egmar Camilo Deifeld",
+    "email": "telmodeifeld@unipampa.edu.br",
+    "password_hash": "pbkdf2_sha256$100000$4e57a165915bd1ae857729fd851ff911$9d11a174905e6ce48d8a9a180e18c1adc34b74c7012cdc5fd5b630ab86823825",
+    "siape": "1000012",
+    "cargo": "Professor do Magisterio Superior",
+    "classe_nivel": "Classe E - Titular",
+    "local_exercicio": "Campus Alegrete",
+    "telefone": "(53) 3240-0012",
     "active": true
   }
 ]
