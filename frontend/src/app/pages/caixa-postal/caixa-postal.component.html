@@ -3,7 +3,7 @@
     <mat-icon aria-hidden="true">inbox</mat-icon>
     <div>
       <h1>Caixa Postal</h1>
-      <p>Consulte solicitacoes recebidas conforme os grupos associados ao usuario.</p>
+      <p>Consulte solicitacoes recebidas conforme o grupo selecionado.</p>
     </div>
   </div>
 </section>
@@ -102,7 +102,8 @@
               mat-icon-button
               type="button"
               aria-label="Abrir solicitacao"
-              [routerLink]="['/servicos', request.service_slug]"
+              [routerLink]="getOpenRoute(request)"
+              [queryParams]="getOpenQueryParams(request)"
             >
               <mat-icon aria-hidden="true">open_in_new</mat-icon>
             </button>

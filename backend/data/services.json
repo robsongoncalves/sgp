@@ -3789,5 +3789,72 @@
         "display_order": 2
       }
     ]
+  },
+  {
+    "id": 90,
+    "name": "Calculadora de Pontua\u00e7\u00e3o Progress\u00e3o Docente",
+    "slug": "calculadora-de-pontuacao-progressao-docente",
+    "description": "Use esta calculadora para simular a pontuacao de promocao ou progressao docente antes de iniciar uma solicitacao formal. Ela permite registrar atividades, calcular totais por requisito, anexar comprovantes por atividade e, quando os dados estiverem revisados, marcar a pontuacao como pronta para uso em uma solicitacao de Progressao Docente.\n\nRegras gerais: progressao e a passagem de um nivel para o seguinte dentro da mesma classe; promocao e a passagem do ultimo nivel de uma classe para o primeiro nivel da classe seguinte. Em ambos os casos, a regra base exige intersticio minimo de 24 meses e aprovacao em avaliacao de desempenho.\n\nClasses A, B e C: para promocao ou progressao nas classes iniciais da carreira, o docente deve atingir no minimo 14 pontos na planilha, sendo pelo menos 8 pontos no Requisito I, referente a Atividades de Ensino na Educacao Superior.\n\nClasse D - Professor Associado: para progressao na Classe D ou promocao para Professor Associado, tambem sao exigidos no minimo 14 pontos totais e pelo menos 8 pontos no Requisito I. Alem disso, o docente deve pontuar obrigatoriamente nos Requisitos I e II. Para promocao da Classe C para a Classe D, e exigido titulo de doutor.\n\nSomente pontuacoes marcadas como Pronta para uso poderao ser associadas a uma solicitacao formal de Progressao Docente.",
+    "documentation_url": "",
+    "implementation_mode": "custom_module",
+    "module_key": "calculadora-pontuacao-docente",
+    "active": true,
+    "featured": true,
+    "updated_at": "2026-09-08",
+    "category_ids": [
+      2,
+      3
+    ],
+    "group_ids": [
+      1,
+      2,
+      5
+    ],
+    "situations": [
+      {
+        "id": 1,
+        "name": "Simulacao",
+        "previous_situation_id": null,
+        "responsible_group_id": null,
+        "is_initial": true,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 1
+      },
+      {
+        "id": 2,
+        "name": "Pronta para uso",
+        "previous_situation_id": 1,
+        "responsible_group_id": null,
+        "is_initial": false,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 2
+      },
+      {
+        "id": 3,
+        "name": "Vinculada",
+        "previous_situation_id": 2,
+        "responsible_group_id": null,
+        "is_initial": false,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 3
+      },
+      {
+        "id": 4,
+        "name": "Arquivada",
+        "previous_situation_id": 3,
+        "responsible_group_id": null,
+        "is_initial": false,
+        "is_final": true,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 4
+      }
+    ]
   }
 ]

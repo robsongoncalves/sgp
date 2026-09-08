@@ -202,14 +202,135 @@ OPENAPI_SPEC = {
                         "in": "query",
                         "required": False,
                         "schema": {"type": "integer"},
-                    }
+                    },
+                    {
+                        "name": "service_slug",
+                        "in": "query",
+                        "required": False,
+                        "schema": {"type": "string"},
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": False,
+                        "schema": {"type": "string"},
+                    },
                 ],
                 "responses": {"200": {"description": "Solicitacoes retornadas"}},
             },
             "post": {
                 "tags": ["Solicitacoes"],
-                "summary": "Cria solicitacao para um servico",
-                "responses": {"201": {"description": "Solicitacao criada"}},
+                "summary": "Cria ou reutiliza solicitacao inicial para um servico",
+                "responses": {
+                    "200": {"description": "Solicitacao inicial existente reutilizada"},
+                    "201": {"description": "Solicitacao criada"},
+                },
+            },
+        },
+        "/service-requests/{service_request_id}": {
+            "get": {
+                "tags": ["Solicitacoes"],
+                "summary": "Consulta solicitacao",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                ],
+                "responses": {"200": {"description": "Solicitacao retornada"}},
+            },
+        },
+        "/service-requests/{service_request_id}/form-data": {
+            "patch": {
+                "tags": ["Solicitacoes"],
+                "summary": "Atualiza dados preenchidos da solicitacao",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                ],
+                "requestBody": {
+                    "required": True,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "form_data": {"type": "object"},
+                                },
+                                "required": ["form_data"],
+                            }
+                        }
+                    },
+                },
+                "responses": {"200": {"description": "Dados atualizados"}},
+            },
+        },
+        "/service-requests/{service_request_id}/situation": {
+            "patch": {
+                "tags": ["Solicitacoes"],
+                "summary": "Atualiza situacao de uma solicitacao",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                ],
+                "responses": {"200": {"description": "Situacao atualizada"}},
+            },
+        },
+        "/service-requests/{service_request_id}/attachments": {
+            "get": {
+                "tags": ["Solicitacoes"],
+                "summary": "Lista anexos de uma solicitacao",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                    {"name": "context_type", "in": "query", "required": False, "schema": {"type": "string"}},
+                    {"name": "requirement_code", "in": "query", "required": False, "schema": {"type": "string"}},
+                    {"name": "item_index", "in": "query", "required": False, "schema": {"type": "integer"}},
+                ],
+                "responses": {"200": {"description": "Anexos retornados"}},
+            },
+            "post": {
+                "tags": ["Solicitacoes"],
+                "summary": "Envia anexo para uma solicitacao",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                ],
+                "requestBody": {
+                    "required": True,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {"type": "string", "format": "binary"},
+                                    "uploaded_by_user_id": {"type": "integer"},
+                                    "context_type": {"type": "string"},
+                                    "requirement_code": {"type": "string"},
+                                    "item_index": {"type": "integer"},
+                                    "description": {"type": "string"},
+                                },
+                                "required": ["file", "uploaded_by_user_id"],
+                            }
+                        }
+                    },
+                },
+                "responses": {"201": {"description": "Anexo criado"}},
+            },
+        },
+        "/service-requests/{service_request_id}/attachments/{attachment_id}/download": {
+            "get": {
+                "tags": ["Solicitacoes"],
+                "summary": "Baixa anexo de uma solicitacao",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                    {"name": "attachment_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                ],
+                "responses": {"200": {"description": "Arquivo retornado"}},
+            },
+        },
+        "/service-requests/{service_request_id}/attachments/{attachment_id}": {
+            "delete": {
+                "tags": ["Solicitacoes"],
+                "summary": "Remove anexo de uma solicitacao",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                    {"name": "attachment_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                ],
+                "responses": {"204": {"description": "Anexo removido"}},
             },
         },
     },

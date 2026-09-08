@@ -142,6 +142,27 @@ export class CaixaPostalComponent implements OnInit, AfterViewInit {
     }).format(date);
   }
 
+  getOpenRoute(request: ServiceRequest): string[] {
+    const moduleRoutes: Record<string, string> = {
+      'calculadora-pontuacao-docente': '/calculadora-pontuacao-docente',
+      'progressao-docente': '/progressao-docente'
+    };
+
+    const moduleRoute = moduleRoutes[request.module_key];
+    return [moduleRoute || '/servicos', ...(moduleRoute ? [] : [request.service_slug])];
+  }
+
+  getOpenQueryParams(request: ServiceRequest): Record<string, string | number> {
+    if (!this.getOpenRoute(request)[0].startsWith('/servicos')) {
+      return {
+        requestId: request.id,
+        requestNumber: request.number
+      };
+    }
+
+    return {};
+  }
+
   private configureFilter(): void {
     this.dataSource.filterPredicate = (request, filter) => {
       const normalizedFilter = filter.trim().toLowerCase();
@@ -179,4 +200,5 @@ export class CaixaPostalComponent implements OnInit, AfterViewInit {
       this.dataSource.sort = this.sort;
     }
   }
+
 }

@@ -34,7 +34,28 @@
     </div>
 
     @if (service.description) {
-      <p class="service-description">{{ service.description }}</p>
+      <section
+        class="service-description"
+        [class.collapsed]="hasLongDescription && !isDescriptionExpanded"
+      >
+        @for (paragraph of descriptionParagraphs; track paragraph) {
+          <p>{{ paragraph }}</p>
+        }
+      </section>
+
+      @if (hasLongDescription) {
+        <button
+          mat-button
+          type="button"
+          class="description-toggle"
+          (click)="isDescriptionExpanded = !isDescriptionExpanded"
+        >
+          <mat-icon aria-hidden="true">
+            {{ isDescriptionExpanded ? 'expand_less' : 'expand_more' }}
+          </mat-icon>
+          {{ isDescriptionExpanded ? 'Ocultar detalhes' : 'Mostrar detalhes' }}
+        </button>
+      }
     }
 
     <footer class="service-meta">

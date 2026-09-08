@@ -221,6 +221,10 @@ class ServiceRequestAttachment(db.Model, TimestampMixin):
     bucket: Mapped[str] = mapped_column(String(120), nullable=False)
     object_key: Mapped[str] = mapped_column(String(500), nullable=False)
     sha256: Mapped[str] = mapped_column(String(64), nullable=False, default="")
+    context_type: Mapped[str] = mapped_column(String(80), nullable=False, default="")
+    requirement_code: Mapped[str] = mapped_column(String(20), nullable=False, default="")
+    item_index: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
 
     service_request: Mapped[ServiceRequest] = relationship(back_populates="attachments")
     uploaded_by: Mapped[User] = relationship()

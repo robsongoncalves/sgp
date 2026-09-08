@@ -1,22 +1,24 @@
 <section class="page">
   <header class="page-header">
-    <h1>Progressão Docente</h1>
+    <h1>{{ pageTitle }}</h1>
   </header>
 
-  <nav class="steps" aria-label="Etapas do serviço">
-    @for (step of steps; track step.id; let index = $index) {
-      <button
-        class="step-button"
-        type="button"
-        [class.active]="currentStep === step.id"
-        [class.done]="isStepDone(index)"
-        (click)="selectStep(step.id)"
-      >
-        <span class="step-index">{{ index + 1 }}</span>
-        <span class="step-label">{{ step.label }}</span>
-      </button>
-    }
-  </nav>
+  @if (!isCalculatorMode) {
+    <nav class="steps" aria-label="Etapas do serviço">
+      @for (step of steps; track step.id; let index = $index) {
+        <button
+          class="step-button"
+          type="button"
+          [class.active]="currentStep === step.id"
+          [class.done]="isStepDone(index)"
+          (click)="selectStep(step.id)"
+        >
+          <span class="step-index">{{ index + 1 }}</span>
+          <span class="step-label">{{ step.label }}</span>
+        </button>
+      }
+    </nav>
+  }
 
   @switch (currentStep) {
     @case ('solicitacao') {
@@ -101,8 +103,36 @@
 
     @case ('pontuacao') {
       <section class="step-page score-page">
-        <h2>Planilha de pontuação</h2>
+        <div class="score-title-row">
+          <div>
+            <h2>Dados do Serviço</h2>
 
+            @if (isCalculatorMode && autosaveLabel) {
+              <span class="autosave-status" [class.error]="autosaveStatus === 'error'">
+                {{ autosaveLabel }}
+              </span>
+            }
+          </div>
+
+          @if (isCalculatorMode) {
+            <button
+              mat-flat-button
+              color="primary"
+              type="button"
+              [disabled]="!requestId"
+              (click)="markCalculationReady()"
+            >
+              Marcar como pronta para uso
+              <mat-icon aria-hidden="true">check_circle</mat-icon>
+            </button>
+          }
+        </div>
+
+        @if (isCalculatorMode && scoreCalculationMessage) {
+          <p class="calculation-message">{{ scoreCalculationMessage }}</p>
+        }
+
+        @if (isCalculatorMode) {
         <section class="score-intro">
           <p>
             Para solicitar Promoção ou Progressão preencha os campos da tabela com as atividades realizadas nos últimos 24 meses de permanência no nível atual. Caso o docente não tenha exercido a atividade, deverá deixar o campo em branco. Todas as atividades informadas devem ser devidamente comprovadas. O Docente deve atingir o valor mínimo de 14 pontos para Promoção ou Progressão, sendo que, pelo menos, 8 (oito) pontos devem ser obtidos no item I - Atividades de Ensino na Educação Superior, conforme art. 7º da Resolução CONSUNI nº 80/2014.
@@ -134,18 +164,30 @@
         <section class="score-tools" aria-label="Filtros da planilha">
           <label class="score-search" aria-label="Buscar critério, requisito, unidade ou item">
             <mat-icon aria-hidden="true">search</mat-icon>
-            <input type="search" placeholder="Buscar critério, requisito, unidade ou item">
+            <input
+              type="search"
+              placeholder="Buscar critério, requisito, unidade ou item"
+              [value]="scoreSearchTerm"
+              (input)="updateScoreSearch($event)"
+            >
           </label>
 
-          <mat-checkbox class="scored-only">Somente pontuados</mat-checkbox>
+          <mat-checkbox class="scored-only" (change)="toggleScoredOnly($event.checked)">
+            Somente pontuados
+          </mat-checkbox>
         </section>
+
+        @if (attachmentErrorMessage) {
+          <p class="attachment-error">{{ attachmentErrorMessage }}</p>
+        }
 
         <section class="requirement-filters" aria-label="Filtrar por requisito">
           @for (filter of requisitoFilters; track filter) {
             <button
               mat-stroked-button
               type="button"
-              [class.active]="filter === 'Todos'"
+              [class.active]="filter === activeRequirementFilter"
+              (click)="selectRequirementFilter(filter)"
             >
               {{ filter }}
             </button>
@@ -153,7 +195,7 @@
         </section>
 
         <section class="requirements-list">
-          @for (requisito of pontuacaoRequisitos; track requisito.code) {
+          @for (requisito of filteredPontuacaoRequisitos; track requisito.code) {
             <article class="requirement-card">
               <header class="requirement-header">
                 <div>
@@ -163,45 +205,64 @@
                 </div>
 
                 <div class="requirement-status">
-                  {{ requisito.displayed }} critério(s) exibido(s) · {{ requisito.scored }} pontuado(s) · {{ requisito.total }}
+                  {{ requisito.filteredItems.length }} critério(s) exibido(s) · {{ getRequirementScoredCount(requisito) }} pontuado(s) · {{ formatScore(getRequirementTotal(requisito)) }}
                 </div>
               </header>
 
               <div class="score-items">
-                @for (item of requisito.items; track item.label; let index = $index) {
+                @for (entry of requisito.filteredItems; track entry.item.label) {
                   <article class="score-item">
                     <div class="item-main">
                       <div class="item-title">
-                        <span>Item {{ index + 1 }}</span>
-                        <h4>{{ item.label }}</h4>
+                        <span>Item {{ entry.originalIndex + 1 }}</span>
+                        <h4>{{ entry.item.label }}</h4>
                       </div>
 
                       <div class="item-tags">
                         <span>Req. {{ requisito.code }}</span>
-                        <span>{{ item.measure }}</span>
-                        <span>{{ item.limit }}</span>
+                        <span>{{ entry.item.measure }}</span>
+                        <span>{{ entry.item.limit }}</span>
                       </div>
                     </div>
 
                     <div class="item-score">
                       <label>
                         Pontuação
-                        <input type="text" [value]="item.points" readonly>
+                        <input type="text" [value]="entry.item.points" readonly>
                       </label>
                       <label>
                         Quantidade
-                        <input type="text">
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          [value]="getItemQuantity(requisito.code, entry.originalIndex)"
+                          (input)="updateItemQuantity(requisito.code, entry.originalIndex, $event)"
+                        >
                       </label>
                       <label>
                         Total
-                        <input type="text" value="0 pts" readonly>
+                        <input type="text" [value]="formatScore(getItemTotal(requisito.code, entry.originalIndex, entry.item))" readonly>
                       </label>
                     </div>
 
                     <div class="item-docs">
-                      <button mat-stroked-button color="primary" type="button">
+                      <input
+                        #fileInput
+                        class="file-input"
+                        type="file"
+                        (change)="uploadDocumentation(requisito.code, entry.originalIndex, $event)"
+                      >
+
+                      <button
+                        mat-stroked-button
+                        color="primary"
+                        type="button"
+                        [disabled]="!requestId || isItemUploading(requisito.code, entry.originalIndex)"
+                        (click)="fileInput.click()"
+                      >
                         <mat-icon aria-hidden="true">add</mat-icon>
-                        Anexar documentação
+                        {{ isItemUploading(requisito.code, entry.originalIndex) ? 'Anexando...' : 'Anexar documentação' }}
                       </button>
 
                       <button mat-stroked-button color="primary" type="button">
@@ -209,36 +270,105 @@
                         Importar dados
                       </button>
                     </div>
+
+                    @if (getItemAttachments(requisito.code, entry.originalIndex).length) {
+                      <div class="attachment-list">
+                        @for (attachment of getItemAttachments(requisito.code, entry.originalIndex); track attachment.id) {
+                          <article class="attachment-row">
+                            <mat-icon aria-hidden="true">attach_file</mat-icon>
+
+                            <div>
+                              <strong>{{ attachment.original_name }}</strong>
+                              <span>{{ formatFileSize(attachment.size_bytes) }}</span>
+                            </div>
+
+                            <button
+                              mat-icon-button
+                              color="primary"
+                              type="button"
+                              aria-label="Baixar anexo"
+                              (click)="downloadAttachment(attachment)"
+                            >
+                              <mat-icon aria-hidden="true">download</mat-icon>
+                            </button>
+
+                            <button
+                              mat-icon-button
+                              color="warn"
+                              type="button"
+                              aria-label="Remover anexo"
+                              (click)="deleteAttachment(attachment)"
+                            >
+                              <mat-icon aria-hidden="true">delete</mat-icon>
+                            </button>
+                          </article>
+                        }
+                      </div>
+                    }
                   </article>
                 }
               </div>
             </article>
           }
+
+          @if (!filteredPontuacaoRequisitos.length) {
+            <p class="empty-filter">Nenhum critério encontrado para os filtros informados.</p>
+          }
         </section>
 
-        <div class="step-actions">
-          <button mat-stroked-button color="primary" type="button" (click)="previousStep()">
-            <mat-icon aria-hidden="true">chevron_left</mat-icon>
-            Voltar
-          </button>
+        } @else {
+          <section class="calculation-picker">
+            <div>
+              <h3>Calculadora de Pontuação Progressão Docente</h3>
+              <p>
+                Associe uma pontuação marcada como pronta para uso. A validação desta solicitação considerará a pontuação escolhida.
+              </p>
+            </div>
 
-          <button mat-flat-button color="primary" type="button" (click)="nextStep()">
-            Próxima etapa
-            <mat-icon aria-hidden="true">chevron_right</mat-icon>
-          </button>
-        </div>
+            @if (readyScoreCalculations.length) {
+              <div class="calculation-options">
+                @for (calculation of readyScoreCalculations; track calculation.id) {
+                  <button
+                    type="button"
+                    class="calculation-option"
+                    [class.active]="selectedScoreCalculationId === calculation.id"
+                    (click)="selectScoreCalculation(calculation.id)"
+                  >
+                    <strong>{{ calculation.number }}</strong>
+                    <span>{{ calculation.status }}</span>
+                    <small>Atualizada em {{ calculation.updated_at | date:'dd/MM/yyyy HH:mm' }}</small>
+                  </button>
+                }
+              </div>
+            } @else {
+              <p class="empty-filter">Nenhuma pontuação pronta para uso encontrada.</p>
+            }
+          </section>
+
+          <div class="step-actions">
+            <button mat-stroked-button color="primary" type="button" (click)="previousStep()">
+              <mat-icon aria-hidden="true">chevron_left</mat-icon>
+              Voltar
+            </button>
+
+            <button mat-flat-button color="primary" type="button" (click)="nextStep()">
+              Próxima etapa
+              <mat-icon aria-hidden="true">chevron_right</mat-icon>
+            </button>
+          </div>
+        }
       </section>
     }
 
     @case ('confirmacao') {
       <section class="step-page blank-page">
-        <h2>Confirmação</h2>
+        <h2>Validação</h2>
       </section>
     }
 
     @case ('enviar') {
       <section class="step-page blank-page">
-        <h2>Enviar</h2>
+        <h2>Conclusão</h2>
       </section>
     }
   }

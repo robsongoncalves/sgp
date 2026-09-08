@@ -41,6 +41,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'calculadora-pontuacao-docente',
+    component: ProgressaoDocenteComponent,
+    canActivate: [authGuard]
+  },
+  {
     path: 'caixa-postal',
     loadComponent: () =>
       import('./pages/caixa-postal/caixa-postal.component').then(

@@ -68,13 +68,14 @@
       <span class="request-number">{{ solicitacao.number }}</span>
 
       <button
-        mat-button
+        mat-flat-button
         color="primary"
-        class="details-button"
+        class="continue-button"
         type="button"
-        [routerLink]="['/servicos', solicitacao.service_slug]"
+        [routerLink]="getContinueRoute(solicitacao)"
+        [queryParams]="getContinueQueryParams(solicitacao)"
       >
-        Ver detalhes
+        Continuar
         <mat-icon aria-hidden="true">chevron_right</mat-icon>
       </button>
     </article>

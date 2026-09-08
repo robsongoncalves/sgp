@@ -121,6 +121,27 @@ export class MinhasSolicitacoesComponent implements OnInit {
     }).format(date);
   }
 
+  getContinueRoute(solicitacao: ServiceRequest): string[] {
+    const moduleRoutes: Record<string, string> = {
+      'calculadora-pontuacao-docente': '/calculadora-pontuacao-docente',
+      'progressao-docente': '/progressao-docente'
+    };
+
+    const moduleRoute = moduleRoutes[solicitacao.module_key];
+    return [moduleRoute || '/servicos', ...(moduleRoute ? [] : [solicitacao.service_slug])];
+  }
+
+  getContinueQueryParams(solicitacao: ServiceRequest): Record<string, string | number> {
+    if (!this.getContinueRoute(solicitacao)[0].startsWith('/servicos')) {
+      return {
+        requestId: solicitacao.id,
+        requestNumber: solicitacao.number
+      };
+    }
+
+    return {};
+  }
+
   private toDate(value: string): string {
     const date = new Date(value);
 

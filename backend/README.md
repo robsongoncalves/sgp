@@ -55,3 +55,19 @@ flask seed-json --reset
 Swagger UI: `GET http://localhost:5000/api/docs`
 
 OpenAPI JSON: `GET http://localhost:5000/api/openapi.json`
+
+## Armazenamento de anexos
+
+Nesta primeira versao, os anexos serao salvos em repositorio local. A escolha do
+driver fica preparada por variavel de ambiente para permitir evolucao futura para
+MinIO.
+
+```bash
+export ATTACHMENT_STORAGE_DRIVER=local
+export ATTACHMENT_LOCAL_PATH=storage/uploads
+```
+
+Drivers previstos:
+
+- `local`: salva arquivos no caminho configurado em `ATTACHMENT_LOCAL_PATH`.
+- `minio`: reservado para integracao futura com storage S3 compativel.

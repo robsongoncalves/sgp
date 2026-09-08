@@ -25,6 +25,7 @@ export class ServicoDetalheComponent implements OnInit {
   service?: Service;
   isLoading = false;
   isStarting = false;
+  isDescriptionExpanded = false;
   errorMessage = '';
   readonly rating = 4.6;
   readonly ratingCount = 66511;
@@ -44,6 +45,7 @@ export class ServicoDetalheComponent implements OnInit {
 
   get moduleRoute(): string | undefined {
     const moduleRoutes: Record<string, string> = {
+      'calculadora-pontuacao-docente': '/calculadora-pontuacao-docente',
       'progressao-docente': '/progressao-docente'
     };
 
@@ -61,6 +63,17 @@ export class ServicoDetalheComponent implements OnInit {
 
     const date = new Date(`${this.service.updated_at}T00:00:00`);
     return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  get descriptionParagraphs(): string[] {
+    return (this.service?.description || '')
+      .split(/\n+/)
+      .map((paragraph) => paragraph.trim())
+      .filter(Boolean);
+  }
+
+  get hasLongDescription(): boolean {
+    return (this.service?.description || '').length > 360 || this.descriptionParagraphs.length > 2;
   }
 
   startService(): void {
@@ -112,6 +125,7 @@ export class ServicoDetalheComponent implements OnInit {
     this.serviceService.list().subscribe({
       next: (services) => {
         this.service = services.find((service) => service.slug === slug && service.active !== false);
+        this.isDescriptionExpanded = false;
         this.errorMessage = this.service ? '' : 'Servico nao encontrado.';
         this.isLoading = false;
       },
