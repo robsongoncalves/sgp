@@ -18,6 +18,9 @@
 .brand {
   min-width: 0;
   gap: 12px;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .brand-icon {
@@ -28,6 +31,17 @@
   overflow: hidden;
   font-size: 1rem;
   font-weight: 500;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brand-subtitle {
+  overflow: hidden;
+  font-size: 0.56rem;
+  font-weight: 500;
+  line-height: 1.1;
+  opacity: 0.72;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -73,12 +87,17 @@
   }
 
   .brand {
-    gap: 8px;
+    gap: 1px;
   }
 
   .brand-name {
     max-width: 38vw;
     font-size: 0.95rem;
+  }
+
+  .brand-subtitle {
+    max-width: 38vw;
+    font-size: 0.52rem;
   }
 
   .header-actions {

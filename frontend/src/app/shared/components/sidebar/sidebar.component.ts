@@ -84,6 +84,21 @@ export class SidebarComponent {
           route: '/admin/servicos'
         },
         {
+          icon: 'description',
+          label: 'Tipos de Documentos',
+          route: '/admin/tipos-documentos'
+        },
+        {
+          icon: 'dynamic_form',
+          label: 'Formulários',
+          route: '/admin/formularios'
+        },
+        {
+          icon: 'rate_review',
+          label: 'Modelos de Parecer',
+          route: '/admin/modelos-parecer'
+        },
+        {
           icon: 'groups',
           label: 'Grupos de Usuarios',
           route: '/admin/grupos'

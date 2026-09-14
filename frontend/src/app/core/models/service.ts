@@ -9,6 +9,7 @@ export interface ServiceSituation {
   is_final: boolean;
   requires_opinion: boolean;
   requires_attachment: boolean;
+  document_type_ids: number[];
   display_order: number;
 }
 

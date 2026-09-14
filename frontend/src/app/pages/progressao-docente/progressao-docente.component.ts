@@ -1,25 +1,28 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
 
+import { DocumentType } from '../../core/models/document-type';
+import { Service, ServiceSituation } from '../../core/models/service';
 import { User } from '../../core/models/user';
-import { ServiceRequest, ServiceRequestAttachment } from '../../core/models/service-request';
+import {
+  ServiceRequest,
+  ServiceRequestAttachment,
+  ServiceRequestDocument
+} from '../../core/models/service-request';
+import { FormTemplate, TemplateField } from '../../core/models/form-template';
 import { AuthService } from '../../core/services/auth.service';
+import { DocumentTypeService } from '../../core/services/document-type.service';
+import { FormTemplateService } from '../../core/services/form-template.service';
 import { ServiceRequestService } from '../../core/services/service-request.service';
+import { ServiceService } from '../../core/services/service.service';
+import { UserGroupService } from '../../core/services/user-group.service';
 import { UserService } from '../../core/services/user.service';
-
-interface ProgressaoStep {
-  id: 'solicitacao' | 'pontuacao' | 'confirmacao' | 'enviar';
-  label: string;
-}
 
 interface PontuacaoItem {
   label: string;
@@ -69,48 +72,43 @@ interface CalculatorFormData {
   standalone: true,
   imports: [
     DatePipe,
-    ReactiveFormsModule,
+    FormsModule,
     MatButtonModule,
     MatCheckboxModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatRadioModule
+    MatIconModule
   ],
   templateUrl: './progressao-docente.component.html',
   styleUrl: './progressao-docente.component.scss'
 })
 export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
-  readonly steps: ProgressaoStep[] = [
-    {
-      id: 'solicitacao',
-      label: 'Solicitação'
-    },
-    {
-      id: 'pontuacao',
-      label: 'Dados do Serviço'
-    },
-    {
-      id: 'confirmacao',
-      label: 'Validação'
-    },
-    {
-      id: 'enviar',
-      label: 'Conclusão'
-    }
-  ];
-
-  currentStep: ProgressaoStep['id'] = 'solicitacao';
+  currentStep: 'documentos' | 'pontuacao' = 'documentos';
+  selectedSituationId: number | null = null;
 
   readonly requiredScore = 14;
   readonly requiredTeachingScore = 8;
   readonly itemQuantities: Record<string, number> = {};
   requestId: number | null = null;
+  requestedDocumentId: number | null = null;
+  currentService?: Service;
+  services: Service[] = [];
+  currentServiceRequest?: ServiceRequest;
+  documentTypes: DocumentType[] = [];
+  formTemplates: FormTemplate[] = [];
+  users: User[] = [];
+  serviceRequestDocuments: ServiceRequestDocument[] = [];
+  activeServiceDocument?: ServiceRequestDocument;
+  activeDocumentType?: DocumentType;
+  activeDocumentFormData: Record<string, unknown> = {};
+  currentUserGroupIds = new Set<number>();
+  creatingDocumentKeys = new Set<string>();
   attachments: ServiceRequestAttachment[] = [];
   readyScoreCalculations: ServiceRequest[] = [];
+  linkedServiceRequests: Record<number, ServiceRequest[]> = {};
   selectedScoreCalculationId: number | null = null;
   uploadingItemKeys = new Set<string>();
   attachmentErrorMessage = '';
+  documentMessage = '';
+  decisionText = '';
   scoreCalculationMessage = '';
   activeRequirementFilter = 'Todos';
   scoreSearchTerm = '';
@@ -372,28 +370,21 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
     }
   ];
 
-  solicitacaoForm = this.formBuilder.nonNullable.group({
-    nome: ['', Validators.required],
-    siape: ['', Validators.required],
-    cargo: ['', Validators.required],
-    classeNivel: ['', Validators.required],
-    localExercicio: ['', Validators.required],
-    emailInstitucional: ['', [Validators.required, Validators.email]],
-    telefone: [''],
-    tipoSolicitacao: ['', Validators.required],
-    dataUltimaPromocaoProgressao: ['']
-  });
-
   constructor(
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private readonly authService: AuthService,
-    private readonly formBuilder: FormBuilder,
+    private readonly documentTypeService: DocumentTypeService,
+    private readonly formTemplateService: FormTemplateService,
     private readonly serviceRequestService: ServiceRequestService,
+    private readonly serviceService: ServiceService,
+    private readonly userGroupService: UserGroupService,
     private readonly userService: UserService
   ) {}
 
   ngOnInit(): void {
     this.requestId = Number(this.route.snapshot.queryParamMap.get('requestId')) || null;
+    this.requestedDocumentId = Number(this.route.snapshot.queryParamMap.get('documentId')) || null;
 
     if (this.isCalculatorMode) {
       this.currentStep = 'pontuacao';
@@ -405,7 +396,12 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
     if (this.requestId) {
       this.loadServiceRequest();
       this.loadAttachments();
+      this.loadServiceRequestDocuments();
     }
+
+    this.loadDocumentTypes();
+    this.loadFormTemplates();
+    this.loadUsers();
 
     const currentUser = this.authService.currentUser;
 
@@ -413,12 +409,8 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.fillIdentification(currentUser);
+    this.loadCurrentUserGroups(currentUser.id);
     this.loadReadyScoreCalculations(currentUser.id);
-
-    this.userService.get(currentUser.id).subscribe({
-      next: (user) => this.fillIdentification(user)
-    });
   }
 
   ngOnDestroy(): void {
@@ -614,15 +606,510 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
     return `${(sizeBytes / (1024 * 1024)).toFixed(1).replace('.', ',')} MB`;
   }
 
-  private fillIdentification(user: User): void {
-    this.solicitacaoForm.patchValue({
-      nome: user.name,
-      siape: user.siape || '',
-      cargo: user.cargo || '',
-      classeNivel: user.classe_nivel || '',
-      localExercicio: user.local_exercicio || '',
-      emailInstitucional: user.email,
-      telefone: user.telefone || ''
+  get situationSteps(): ServiceSituation[] {
+    return [...(this.currentService?.situations || [])]
+      .sort((first, second) => first.display_order - second.display_order);
+  }
+
+  get selectedSituation(): ServiceSituation | undefined {
+    if (this.selectedSituationId) {
+      return this.situationSteps.find((situation) => situation.id === this.selectedSituationId);
+    }
+
+    return this.getCurrentSituation() || this.situationSteps[0];
+  }
+
+  selectSituation(situationId: number): void {
+    this.selectedSituationId = situationId;
+    this.closeDocumentEditor();
+  }
+
+  getDocumentTypesForSituation(documentTypeIds: number[]): DocumentType[] {
+    return documentTypeIds
+      .map((documentTypeId) => this.documentTypes.find((documentType) => documentType.id === documentTypeId))
+      .filter((documentType): documentType is DocumentType => Boolean(documentType));
+  }
+
+  get activeFormTemplate(): FormTemplate | undefined {
+    if (!this.activeDocumentType?.form_template_id) {
+      return undefined;
+    }
+
+    return this.formTemplates.find((template) => template.id === this.activeDocumentType?.form_template_id);
+  }
+
+  get activeFormFields(): TemplateField[] {
+    return [...(this.activeFormTemplate?.fields_schema || [])]
+      .sort((first, second) => first.order - second.order);
+  }
+
+  getCurrentSituation(): ServiceSituation | undefined {
+    if (!this.currentServiceRequest?.current_situation_id) {
+      return this.currentService?.situations.find((situation) => situation.is_initial);
+    }
+
+    return this.currentService?.situations.find(
+      (situation) => situation.id === this.currentServiceRequest?.current_situation_id
+    );
+  }
+
+  isCurrentSituation(situation: ServiceSituation): boolean {
+    return this.getCurrentSituation()?.id === situation.id;
+  }
+
+  canManageDocument(situation: ServiceSituation, documentType: DocumentType): boolean {
+    if (!this.isCurrentSituation(situation)) {
+      return false;
+    }
+
+    const currentUser = this.authService.currentUser;
+
+    if (!currentUser || !this.currentServiceRequest) {
+      return false;
+    }
+
+    if (documentType.origin === 'system' || documentType.purpose === 'generated') {
+      return false;
+    }
+
+    if (this.getServiceRequestDocuments(situation, documentType).some((document) => document.assigned_to_user_id === currentUser.id)) {
+      return true;
+    }
+
+    if (documentType.origin === 'requester' || documentType.origin === 'external') {
+      return this.currentServiceRequest.requester_user_id === currentUser.id;
+    }
+
+    return Boolean(
+      situation.responsible_group_id
+      && this.currentUserGroupIds.has(situation.responsible_group_id)
+    );
+  }
+
+  getSituationChecklistStatus(situation: ServiceSituation): string {
+    const currentSituation = this.getCurrentSituation();
+
+    if (!currentSituation) {
+      return situation.is_initial ? 'Etapa inicial' : 'Aguardando etapa';
+    }
+
+    if (situation.id === currentSituation.id) {
+      return 'Situação atual';
+    }
+
+    return situation.display_order < currentSituation.display_order
+      ? 'Etapa anterior'
+      : 'Aguardando etapa';
+  }
+
+  getDocumentChecklistStatus(situation: ServiceSituation): string {
+    if (this.isCurrentSituation(situation)) {
+      return 'Pendente';
+    }
+
+    return situation.display_order < (this.getCurrentSituation()?.display_order || 0)
+      ? 'Etapa anterior'
+      : 'Aguardando etapa';
+  }
+
+  getServiceRequestDocuments(
+    situation: ServiceSituation,
+    documentType: DocumentType
+  ): ServiceRequestDocument[] {
+    return this.serviceRequestDocuments.filter((document) => (
+      document.service_situation_id === situation.id
+      && document.document_type_id === documentType.id
+    ));
+  }
+
+  getDocumentInstanceStatus(situation: ServiceSituation, documentType: DocumentType): string {
+    const documents = this.getServiceRequestDocuments(situation, documentType);
+
+    if (documents.length) {
+      if (documentType.purpose === 'linked_service') {
+        return documents[0].linked_service_request_number
+          ? `${documents[0].linked_service_request_number} - ${documents[0].linked_service_request_status}`
+          : 'Serviço vinculado pendente';
+      }
+
+      const withAttachments = documents.find((document) => document.attachments_count > 0);
+
+      return withAttachments
+        ? `${this.documentStatusLabel(withAttachments.status)} com ${withAttachments.attachments_count} anexo(s)`
+        : this.documentStatusLabel(documents[0].status);
+    }
+
+    return this.getDocumentChecklistStatus(situation);
+  }
+
+  isSituationStepDone(situation: ServiceSituation): boolean {
+    const documentTypes = this.getDocumentTypesForSituation(situation.document_type_ids);
+
+    return Boolean(
+      documentTypes.length
+      && documentTypes.every((documentType) => this.isDocumentTypeUsed(situation, documentType))
+    );
+  }
+
+  linkedServiceOptions(documentType: DocumentType): ServiceRequest[] {
+    return this.linkedServiceRequests[documentType.id] || [];
+  }
+
+  linkedServiceRequiredStatusLabel(documentType: DocumentType): string {
+    return documentType.linked_service_required_status || 'qualquer situação';
+  }
+
+  linkedServiceRequestValue(situation: ServiceSituation, documentType: DocumentType): number | string {
+    return this.getServiceRequestDocuments(situation, documentType)[0]?.linked_service_request_id || '';
+  }
+
+  linkServiceRequest(
+    situation: ServiceSituation,
+    documentType: DocumentType,
+    event: Event
+  ): void {
+    const select = event.target as HTMLSelectElement;
+    const linkedServiceRequestId = Number(select.value) || null;
+
+    if (!linkedServiceRequestId) {
+      this.updateLinkedServiceDocument(situation, documentType, null);
+      return;
+    }
+
+    this.updateLinkedServiceDocument(situation, documentType, linkedServiceRequestId);
+  }
+
+  createLinkedServiceRequest(situation: ServiceSituation, documentType: DocumentType): void {
+    const currentUser = this.authService.currentUser;
+
+    if (!currentUser || !documentType.linked_service_id) {
+      this.documentMessage = 'Nao foi possivel identificar o servico vinculado.';
+      return;
+    }
+
+    this.serviceRequestService.create({
+      service_id: documentType.linked_service_id,
+      requester_user_id: currentUser.id
+    }).subscribe({
+      next: (linkedRequest) => {
+        this.linkedServiceRequests = {
+          ...this.linkedServiceRequests,
+          [documentType.id]: [
+            linkedRequest,
+            ...this.linkedServiceOptions(documentType).filter((item) => item.id !== linkedRequest.id)
+          ]
+        };
+        this.updateLinkedServiceDocument(situation, documentType, linkedRequest.id, true);
+      },
+      error: (response) => {
+        this.documentMessage = response?.error?.message || 'Nao foi possivel criar o servico vinculado.';
+      }
+    });
+  }
+
+  openLinkedServiceRequest(document: ServiceRequestDocument): void {
+    if (!document.linked_service_request_id) {
+      return;
+    }
+
+    const route = document.linked_service_request_module_key
+      || document.linked_service_request_service_slug;
+
+    if (!route) {
+      return;
+    }
+
+    this.router.navigate([`/${route}`], {
+      queryParams: {
+        requestId: document.linked_service_request_id,
+        requestNumber: document.linked_service_request_number
+      }
+    });
+  }
+
+  canSubmitActiveDocument(): boolean {
+    return Boolean(
+      this.activeServiceDocument
+      && this.activeDocumentType
+      && ['draft', 'returned'].includes(this.activeServiceDocument.status)
+      && this.resolveAssignedUserIdFromActiveForm()
+    );
+  }
+
+  canDecideActiveDocument(): boolean {
+    const currentUser = this.authService.currentUser;
+
+    return Boolean(
+      currentUser
+      && this.activeServiceDocument?.status === 'submitted'
+      && this.activeServiceDocument.assigned_to_user_id === currentUser.id
+    );
+  }
+
+  canSaveActiveDocumentDraft(): boolean {
+    const currentUser = this.authService.currentUser;
+
+    return Boolean(
+      currentUser
+      && this.activeServiceDocument
+      && ['draft', 'returned'].includes(this.activeServiceDocument.status)
+      && this.activeServiceDocument.created_by_user_id === currentUser.id
+    );
+  }
+
+  canDeleteDocument(documentType: DocumentType): boolean {
+    const currentUser = this.authService.currentUser;
+
+    return Boolean(
+      currentUser
+      && this.currentServiceRequest?.requester_user_id === currentUser.id
+      && documentType.origin !== 'system'
+      && documentType.purpose !== 'generated'
+    );
+  }
+
+  createServiceDocument(situation: ServiceSituation, documentType: DocumentType): void {
+    const existingDocument = this.getServiceRequestDocuments(situation, documentType)[0];
+
+    if (existingDocument) {
+      this.openDocumentEditor(existingDocument, documentType);
+      return;
+    }
+
+    const currentUser = this.authService.currentUser;
+
+    if (!this.requestId || !currentUser) {
+      this.documentMessage = 'Nao foi possivel identificar a solicitacao ou usuario logado.';
+      return;
+    }
+
+    const key = this.documentActionKey(situation, documentType);
+    this.creatingDocumentKeys.add(key);
+    this.documentMessage = '';
+
+    this.serviceRequestService.createDocument(this.requestId, {
+      service_situation_id: situation.id,
+      document_type_id: documentType.id,
+      created_by_user_id: currentUser.id,
+      status: 'draft',
+      content_data: {}
+    }).subscribe({
+      next: (document) => {
+        this.serviceRequestDocuments = [document, ...this.serviceRequestDocuments];
+        this.openDocumentEditor(document, documentType);
+        this.creatingDocumentKeys.delete(key);
+      },
+      error: (response) => {
+        this.documentMessage = response?.error?.message || 'Nao foi possivel criar o documento.';
+        this.creatingDocumentKeys.delete(key);
+      }
+    });
+  }
+
+  uploadServiceDocument(
+    situation: ServiceSituation,
+    documentType: DocumentType,
+    event: Event
+  ): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    const currentUser = this.authService.currentUser;
+
+    if (!this.requestId || !currentUser) {
+      this.documentMessage = 'Nao foi possivel identificar a solicitacao ou usuario logado.';
+      return;
+    }
+
+    const existingDocument = this.getServiceRequestDocuments(situation, documentType)[0];
+
+    if (existingDocument) {
+      this.uploadFileToServiceDocument(existingDocument, currentUser.id, file);
+      return;
+    }
+
+    const key = this.documentActionKey(situation, documentType);
+    this.creatingDocumentKeys.add(key);
+    this.documentMessage = '';
+
+    this.serviceRequestService.createDocument(this.requestId, {
+      service_situation_id: situation.id,
+      document_type_id: documentType.id,
+      created_by_user_id: currentUser.id,
+      status: 'draft',
+      content_data: {}
+    }).subscribe({
+      next: (document) => {
+        this.serviceRequestDocuments = [document, ...this.serviceRequestDocuments];
+        this.creatingDocumentKeys.delete(key);
+        this.uploadFileToServiceDocument(document, currentUser.id, file);
+      },
+      error: (response) => {
+        this.documentMessage = response?.error?.message || 'Nao foi possivel criar o documento.';
+        this.creatingDocumentKeys.delete(key);
+      }
+    });
+  }
+
+  deleteServiceDocument(document: ServiceRequestDocument): void {
+    const currentUser = this.authService.currentUser;
+
+    if (!this.requestId || !currentUser) {
+      return;
+    }
+
+    this.serviceRequestService.deleteDocument(this.requestId, document.id, currentUser.id).subscribe({
+      next: () => {
+        this.serviceRequestDocuments = this.serviceRequestDocuments.filter((item) => item.id !== document.id);
+        if (this.activeServiceDocument?.id === document.id) {
+          this.closeDocumentEditor();
+        }
+      },
+      error: (response) => {
+        this.documentMessage = response?.error?.message || 'Nao foi possivel remover o documento.';
+      }
+    });
+  }
+
+  isCreatingServiceDocument(situation: ServiceSituation, documentType: DocumentType): boolean {
+    return this.creatingDocumentKeys.has(this.documentActionKey(situation, documentType));
+  }
+
+  openDocumentEditor(document: ServiceRequestDocument, documentType: DocumentType): void {
+    this.activeServiceDocument = document;
+    this.activeDocumentType = documentType;
+    this.activeDocumentFormData = { ...(document.content_data || {}) };
+    this.decisionText = document.decision_text || '';
+    this.documentMessage = '';
+  }
+
+  closeDocumentEditor(): void {
+    this.activeServiceDocument = undefined;
+    this.activeDocumentType = undefined;
+    this.activeDocumentFormData = {};
+    this.decisionText = '';
+  }
+
+  updateActiveDocumentField(fieldName: string, event: Event, fieldType = ''): void {
+    const target = event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+    let value: string | boolean | number = target instanceof HTMLInputElement && target.type === 'checkbox'
+      ? target.checked
+      : target.value;
+
+    if (fieldType === 'user') {
+      value = target.value ? Number(target.value) : '';
+    }
+
+    this.activeDocumentFormData = {
+      ...this.activeDocumentFormData,
+      [fieldName]: value
+    };
+  }
+
+  activeDocumentFieldValue(fieldName: string): string {
+    const value = this.activeDocumentFormData[fieldName];
+    return value === undefined || value === null ? '' : String(value);
+  }
+
+  activeDocumentFieldChecked(fieldName: string): boolean {
+    return Boolean(this.activeDocumentFormData[fieldName]);
+  }
+
+  activeUsers(): User[] {
+    return this.users.filter((user) => user.active);
+  }
+
+  saveActiveDocument(): void {
+    const currentUser = this.authService.currentUser;
+
+    if (!this.requestId || !currentUser || !this.activeServiceDocument) {
+      this.documentMessage = 'Nao foi possivel identificar o documento para salvar.';
+      return;
+    }
+
+    this.documentMessage = '';
+
+    this.serviceRequestService.updateDocument(this.requestId, this.activeServiceDocument.id, {
+      updated_by_user_id: currentUser.id,
+      status: 'draft',
+      content_data: this.activeDocumentFormData
+    }).subscribe({
+      next: (document) => {
+        this.serviceRequestDocuments = this.serviceRequestDocuments.map((item) => (
+          item.id === document.id ? document : item
+        ));
+        this.activeServiceDocument = document;
+        this.documentMessage = 'Documento salvo como rascunho.';
+      },
+      error: (response) => {
+        this.documentMessage = response?.error?.message || 'Nao foi possivel salvar o documento.';
+      }
+    });
+  }
+
+  submitActiveDocument(): void {
+    const currentUser = this.authService.currentUser;
+
+    if (!this.requestId || !currentUser || !this.activeServiceDocument) {
+      this.documentMessage = 'Nao foi possivel identificar o documento para enviar.';
+      return;
+    }
+
+    const assignedToUserId = this.resolveAssignedUserIdFromActiveForm();
+
+    if (!assignedToUserId) {
+      this.documentMessage = 'Informe o usuario destinatario antes de enviar.';
+      return;
+    }
+
+    this.serviceRequestService.updateDocument(this.requestId, this.activeServiceDocument.id, {
+      updated_by_user_id: currentUser.id,
+      content_data: this.activeDocumentFormData,
+      assigned_to_user_id: assignedToUserId
+    }).subscribe({
+      next: () => {
+        this.serviceRequestService.submitDocument(
+          this.requestId as number,
+          this.activeServiceDocument?.id as number,
+          currentUser.id,
+          assignedToUserId
+        ).subscribe({
+          next: (document) => this.applyUpdatedActiveDocument(document, 'Documento enviado para análise.'),
+          error: (response) => {
+            this.documentMessage = response?.error?.message || 'Nao foi possivel enviar o documento.';
+          }
+        });
+      },
+      error: (response) => {
+        this.documentMessage = response?.error?.message || 'Nao foi possivel salvar o documento antes do envio.';
+      }
+    });
+  }
+
+  decideActiveDocument(decision: 'approved' | 'rejected' | 'returned'): void {
+    const currentUser = this.authService.currentUser;
+
+    if (!this.requestId || !currentUser || !this.activeServiceDocument) {
+      this.documentMessage = 'Nao foi possivel identificar o documento para decidir.';
+      return;
+    }
+
+    this.serviceRequestService.decideDocument(
+      this.requestId,
+      this.activeServiceDocument.id,
+      currentUser.id,
+      decision,
+      this.decisionText
+    ).subscribe({
+      next: (document) => this.applyUpdatedActiveDocument(document, 'Decisao registrada.'),
+      error: (response) => {
+        this.documentMessage = response?.error?.message || 'Nao foi possivel registrar a decisao.';
+      }
     });
   }
 
@@ -632,7 +1119,11 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
     }
 
     this.serviceRequestService.get(this.requestId).subscribe({
-      next: (serviceRequest) => this.loadCalculatorData(serviceRequest.form_data),
+      next: (serviceRequest) => {
+        this.currentServiceRequest = serviceRequest;
+        this.loadCalculatorData(serviceRequest.form_data);
+        this.loadCurrentService(serviceRequest.service_slug);
+      },
       error: () => {
         this.autosaveStatus = this.isCalculatorMode ? 'error' : this.autosaveStatus;
       }
@@ -781,6 +1272,52 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
     });
   }
 
+  private loadServiceRequestDocuments(): void {
+    if (!this.requestId) {
+      return;
+    }
+
+    this.serviceRequestService.listDocuments(this.requestId).subscribe({
+      next: (documents) => {
+        this.serviceRequestDocuments = documents;
+        this.openRequestedDocumentIfReady();
+      },
+      error: () => {
+        this.documentMessage = 'Nao foi possivel carregar os documentos da solicitacao.';
+      }
+    });
+  }
+
+  private uploadFileToServiceDocument(
+    document: ServiceRequestDocument,
+    uploadedByUserId: number,
+    file: File
+  ): void {
+    if (!this.requestId) {
+      return;
+    }
+
+    this.serviceRequestService.uploadDocumentAttachment(this.requestId, document.id, {
+      uploadedByUserId,
+      contextType: 'documento',
+      requirementCode: String(document.document_type_id),
+      itemIndex: 0,
+      file
+    }).subscribe({
+      next: () => {
+        this.serviceRequestService.updateDocument(this.requestId as number, document.id, {
+          updated_by_user_id: uploadedByUserId,
+          status: 'submitted'
+        }).subscribe({
+          next: () => this.loadServiceRequestDocuments()
+        });
+      },
+      error: (response) => {
+        this.documentMessage = response?.error?.message || 'Nao foi possivel anexar o arquivo ao documento.';
+      }
+    });
+  }
+
   private loadReadyScoreCalculations(userId: number): void {
     if (this.isCalculatorMode) {
       return;
@@ -798,16 +1335,109 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
     });
   }
 
-  selectStep(step: ProgressaoStep['id']): void {
-    if (this.isCalculatorMode) {
+  private loadCurrentUserGroups(userId: number): void {
+    this.userGroupService.listByUser(userId).subscribe({
+      next: (groups) => {
+        this.currentUserGroupIds = new Set(groups.map((group) => group.id));
+      }
+    });
+  }
+
+  private documentStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      draft: 'Rascunho',
+      submitted: 'Enviado',
+      approved: 'Aprovado',
+      rejected: 'Rejeitado',
+      returned: 'Devolvido',
+      canceled: 'Cancelado',
+      pending: 'Pendente'
+    };
+
+    return labels[status] || status;
+  }
+
+  private documentActionKey(situation: ServiceSituation, documentType: DocumentType): string {
+    return `${situation.id}-${documentType.id}`;
+  }
+
+  private openRequestedDocumentIfReady(): void {
+    if (!this.requestedDocumentId || this.activeServiceDocument || !this.documentTypes.length) {
       return;
     }
 
-    this.currentStep = step;
+    const document = this.serviceRequestDocuments.find((item) => item.id === this.requestedDocumentId);
+
+    if (!document) {
+      return;
+    }
+
+    const documentType = this.documentTypes.find((item) => item.id === document.document_type_id);
+
+    if (documentType) {
+      this.openDocumentEditor(document, documentType);
+    }
   }
 
-  isStepDone(index: number): boolean {
-    return this.steps.findIndex((step) => step.id === this.currentStep) > index;
+  private resolveAssignedUserIdFromActiveForm(): number | null {
+    const targetField = this.activeFormFields.find((field) => field.maps_to === 'assigned_to_user_id');
+
+    if (!targetField) {
+      return this.activeServiceDocument?.assigned_to_user_id || null;
+    }
+
+    const value = Number(this.activeDocumentFormData[targetField.name]);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+
+  private applyUpdatedActiveDocument(document: ServiceRequestDocument, message: string): void {
+    this.serviceRequestDocuments = this.serviceRequestDocuments.map((item) => (
+      item.id === document.id ? document : item
+    ));
+    this.activeServiceDocument = document;
+    this.activeDocumentFormData = { ...(document.content_data || {}) };
+    this.documentMessage = message;
+  }
+
+  private loadCurrentService(serviceSlug: string): void {
+    if (!serviceSlug) {
+      return;
+    }
+
+    this.serviceService.list().subscribe({
+      next: (services) => {
+        this.services = services;
+        this.currentService = services.find((service) => service.slug === serviceSlug);
+        this.selectedSituationId = this.getCurrentSituation()?.id || this.situationSteps[0]?.id || null;
+        this.loadLinkedServiceRequests();
+      }
+    });
+  }
+
+  private loadDocumentTypes(): void {
+    this.documentTypeService.list().subscribe({
+      next: (documentTypes) => {
+        this.documentTypes = documentTypes.filter((documentType) => documentType.active);
+        this.openRequestedDocumentIfReady();
+        this.loadLinkedServiceRequests();
+      }
+    });
+  }
+
+  private loadFormTemplates(): void {
+    this.formTemplateService.list().subscribe({
+      next: (templates) => {
+        this.formTemplates = templates.filter((template) => template.active);
+      }
+    });
+  }
+
+  private loadUsers(): void {
+    this.userService.list().subscribe({
+      next: (users) => {
+        this.users = users;
+      }
+    });
   }
 
   nextStep(): void {
@@ -815,11 +1445,11 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const currentIndex = this.steps.findIndex((step) => step.id === this.currentStep);
-    const next = this.steps[currentIndex + 1];
+    const currentIndex = this.situationSteps.findIndex((situation) => situation.id === this.selectedSituation?.id);
+    const next = this.situationSteps[currentIndex + 1];
 
     if (next) {
-      this.currentStep = next.id;
+      this.selectSituation(next.id);
     }
   }
 
@@ -828,11 +1458,118 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const currentIndex = this.steps.findIndex((step) => step.id === this.currentStep);
-    const previous = this.steps[currentIndex - 1];
+    const currentIndex = this.situationSteps.findIndex((situation) => situation.id === this.selectedSituation?.id);
+    const previous = this.situationSteps[currentIndex - 1];
 
     if (previous) {
-      this.currentStep = previous.id;
+      this.selectSituation(previous.id);
     }
+  }
+
+  private isDocumentTypeUsed(situation: ServiceSituation, documentType: DocumentType): boolean {
+    const documents = this.getServiceRequestDocuments(situation, documentType);
+
+    if (documentType.purpose === 'linked_service') {
+      const document = documents[0];
+
+      if (!document?.linked_service_request_id) {
+        return false;
+      }
+
+      return documentType.linked_service_required_status
+        ? document.linked_service_request_status === documentType.linked_service_required_status
+        : true;
+    }
+
+    if (documentType.purpose === 'attachment' || documentType.allow_multiple_files) {
+      return documents.some((document) => document.attachments_count > 0);
+    }
+
+    return documents.length > 0;
+  }
+
+  private updateLinkedServiceDocument(
+    situation: ServiceSituation,
+    documentType: DocumentType,
+    linkedServiceRequestId: number | null,
+    openAfterLink = false
+  ): void {
+    const currentUser = this.authService.currentUser;
+
+    if (!this.requestId || !currentUser) {
+      this.documentMessage = 'Nao foi possivel identificar a solicitacao ou usuario logado.';
+      return;
+    }
+
+    const existingDocument = this.getServiceRequestDocuments(situation, documentType)[0];
+    const payload = {
+      service_situation_id: situation.id,
+      document_type_id: documentType.id,
+      linked_service_request_id: linkedServiceRequestId,
+      content_data: {}
+    };
+
+    const request = existingDocument
+      ? this.serviceRequestService.updateDocument(this.requestId, existingDocument.id, {
+        updated_by_user_id: currentUser.id,
+        linked_service_request_id: linkedServiceRequestId
+      })
+      : this.serviceRequestService.createDocument(this.requestId, {
+        ...payload,
+        created_by_user_id: currentUser.id
+      });
+
+    request.subscribe({
+      next: (document) => {
+        this.applyUpdatedLinkedDocument(document);
+        this.documentMessage = linkedServiceRequestId
+          ? 'Servico vinculado ao documento.'
+          : 'Vinculo removido do documento.';
+
+        if (openAfterLink) {
+          this.openLinkedServiceRequest(document);
+        }
+      },
+      error: (response) => {
+        this.documentMessage = response?.error?.message || 'Nao foi possivel vincular o servico ao documento.';
+      }
+    });
+  }
+
+  private applyUpdatedLinkedDocument(document: ServiceRequestDocument): void {
+    const exists = this.serviceRequestDocuments.some((item) => item.id === document.id);
+    this.serviceRequestDocuments = exists
+      ? this.serviceRequestDocuments.map((item) => item.id === document.id ? document : item)
+      : [document, ...this.serviceRequestDocuments];
+  }
+
+  private loadLinkedServiceRequests(): void {
+    const currentUser = this.authService.currentUser;
+
+    if (!currentUser || !this.currentService || !this.documentTypes.length) {
+      return;
+    }
+
+    const linkedDocumentTypes = this.situationSteps
+      .flatMap((situation) => this.getDocumentTypesForSituation(situation.document_type_ids))
+      .filter((documentType, index, all) => (
+        documentType.purpose === 'linked_service'
+        && Boolean(documentType.linked_service_slug)
+        && all.findIndex((item) => item.id === documentType.id) === index
+      ));
+
+    linkedDocumentTypes.forEach((documentType) => {
+      this.serviceRequestService.list({
+        requesterUserId: currentUser.id,
+        serviceSlug: documentType.linked_service_slug
+      }).subscribe({
+        next: (requests) => {
+          this.linkedServiceRequests = {
+            ...this.linkedServiceRequests,
+            [documentType.id]: requests
+          };
+        }
+      });
+    });
   }
 }

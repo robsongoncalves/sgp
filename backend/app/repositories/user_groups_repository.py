@@ -4,7 +4,7 @@ from sqlalchemy import delete, insert, select
 
 from app.extensions import db
 from app.models import User, UserGroup, user_group_members
-from app.repositories.utils import bool_value
+from app.repositories.utils import bool_value, optional_int
 
 
 class UserGroupsRepository:
@@ -44,6 +44,7 @@ class UserGroupsRepository:
         group = UserGroup(
             name=name,
             description=str(data.get("description", "")).strip(),
+            manager_user_id=self._manager_user_id(data),
             active=bool_value(data.get("active", True)),
         )
         db.session.add(group)
@@ -67,6 +68,7 @@ class UserGroupsRepository:
 
         group.name = name
         group.description = str(data.get("description", "")).strip()
+        group.manager_user_id = self._manager_user_id(data)
         group.active = bool_value(data.get("active", True))
         db.session.commit()
 
@@ -130,6 +132,10 @@ class UserGroupsRepository:
         if not name:
             return "Informe o nome do grupo."
 
+        manager_user_id = self._manager_user_id(data)
+        if manager_user_id is not None and db.session.get(User, manager_user_id) is None:
+            return "Usuario informado como chefia nao encontrado."
+
         return None
 
     def _name_exists(self, name: str, ignore_group_id: int | None = None) -> bool:
@@ -145,8 +151,14 @@ class UserGroupsRepository:
             "id": group.id,
             "name": group.name,
             "description": group.description,
+            "manager_user_id": group.manager_user_id,
+            "manager_name": group.manager.name if group.manager else "",
+            "manager_email": group.manager.email if group.manager else "",
             "active": group.active,
         }
+
+    def _manager_user_id(self, data: dict) -> int | None:
+        return optional_int(data.get("manager_user_id"))
 
 
 user_groups_repository = UserGroupsRepository()

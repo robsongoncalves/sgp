@@ -58,6 +58,32 @@
       }
     }
 
+    @if (serviceSituationsWithDocuments.length) {
+      <section class="documents-checklist" aria-label="Checklist de documentos do serviço">
+        <h2>Documentos do serviço</h2>
+
+        <div class="checklist-flow">
+          @for (situation of serviceSituationsWithDocuments; track situation.id) {
+            <article class="checklist-situation">
+              <header>
+                <span>{{ situation.display_order }}</span>
+                <strong>{{ situation.name }}</strong>
+              </header>
+
+              <ul>
+                @for (documentType of getSituationDocumentTypes(situation.document_type_ids); track documentType.id) {
+                  <li>
+                    <mat-icon aria-hidden="true">check_circle</mat-icon>
+                    <span>{{ documentType.name }}</span>
+                  </li>
+                }
+              </ul>
+            </article>
+          }
+        </div>
+      </section>
+    }
+
     <footer class="service-meta">
       <span>
         Ultima Modificacao:

@@ -84,6 +84,30 @@ export const routes: Routes = [
     canActivate: [systemAdminGuard]
   },
   {
+    path: 'admin/tipos-documentos',
+    loadComponent: () =>
+      import('./pages/admin/tipos-documentos/tipos-documentos.component').then(
+        (component) => component.TiposDocumentosComponent
+      ),
+    canActivate: [systemAdminGuard]
+  },
+  {
+    path: 'admin/formularios',
+    loadComponent: () =>
+      import('./pages/admin/formularios/formularios.component').then(
+        (component) => component.FormulariosComponent
+      ),
+    canActivate: [systemAdminGuard]
+  },
+  {
+    path: 'admin/modelos-parecer',
+    loadComponent: () =>
+      import('./pages/admin/modelos-parecer/modelos-parecer.component').then(
+        (component) => component.ModelosParecerComponent
+      ),
+    canActivate: [systemAdminGuard]
+  },
+  {
     path: 'admin/equipes',
     redirectTo: 'admin/grupos',
     pathMatch: 'full'

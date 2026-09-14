@@ -1,0 +1,158 @@
+<section class="page-header">
+  <div class="page-title">
+    <mat-icon aria-hidden="true">dynamic_form</mat-icon>
+    <div>
+      <h1>Formulários</h1>
+      <p>Configure modelos dinâmicos ou slugs de formulários customizados.</p>
+    </div>
+  </div>
+
+  @if (!isFormVisible) {
+    <button mat-flat-button color="primary" type="button" (click)="createTemplate()">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      Novo formulário
+    </button>
+  }
+</section>
+
+@if (!isFormVisible) {
+  <section class="content-panel" aria-label="Formularios cadastrados">
+    <header class="table-toolbar">
+      <label class="table-filter" for="forms-filter">
+        <mat-icon aria-hidden="true">search</mat-icon>
+        <input
+          id="forms-filter"
+          type="search"
+          placeholder="Filtrar por nome, slug, modo ou status"
+          [ngModel]="filterTerm"
+          (ngModelChange)="applyFilter($event)"
+        >
+      </label>
+
+      <button mat-stroked-button type="button" (click)="loadTemplates()" [disabled]="isLoading">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        Atualizar
+      </button>
+    </header>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="feedback success">{{ successMessage }}</p>
+    }
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <mat-spinner diameter="28" />
+        <span>Carregando formulários</span>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+            <td mat-cell *matCellDef="let template">
+              <strong>{{ template.name }}</strong>
+              <small>{{ template.slug }}</small>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="execution_mode">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Modo</th>
+            <td mat-cell *matCellDef="let template">{{ executionModeLabel(template.execution_mode) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="fields">
+            <th mat-header-cell *matHeaderCellDef>Campos</th>
+            <td mat-cell *matCellDef="let template">{{ template.fields_schema.length }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef aria-label="Acoes"></th>
+            <td mat-cell *matCellDef="let template" class="actions">
+              <button mat-icon-button type="button" aria-label="Editar formulario" (click)="editTemplate(template)">
+                <mat-icon aria-hidden="true">edit</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Alterar status" (click)="toggleTemplateStatus(template)">
+                <mat-icon aria-hidden="true">{{ template.active ? 'block' : 'check_circle' }}</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Remover formulario" (click)="deleteTemplate(template)">
+                <mat-icon aria-hidden="true">delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let template; columns: displayedColumns;"
+            class="data-row"
+            [class.inactive-row]="!template.active"
+            (dblclick)="editTemplate(template)"
+          ></tr>
+          <tr class="mat-row empty-row" *matNoDataRow>
+            <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+              Nenhum formulário encontrado.
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons />
+    }
+  </section>
+} @else {
+  <form class="content-panel template-form" (ngSubmit)="saveTemplate()">
+    <h2>{{ isEditing ? 'Editar formulário' : 'Novo formulário' }}</h2>
+
+    <div class="form-grid">
+      <label for="form-name">
+        Nome
+        <input id="form-name" name="name" type="text" [(ngModel)]="form.name" (blur)="syncSlugFromName()">
+      </label>
+
+      <label for="form-slug">
+        Slug
+        <input id="form-slug" name="slug" type="text" [(ngModel)]="form.slug">
+      </label>
+
+      <label for="form-mode">
+        Modo
+        <select id="form-mode" name="executionMode" [(ngModel)]="form.execution_mode">
+          @for (option of executionModeOptions; track option.value) {
+            <option [ngValue]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <label for="form-description">
+      Descrição
+      <textarea id="form-description" name="description" rows="3" [(ngModel)]="form.description"></textarea>
+    </label>
+
+    <label for="form-fields">
+      Campos do formulário em JSON
+      <textarea id="form-fields" name="fieldsJson" rows="8" [(ngModel)]="fieldsJson"></textarea>
+    </label>
+
+    <div class="flag-options">
+      <mat-checkbox name="active" [(ngModel)]="form.active">Formulário ativo</mat-checkbox>
+    </div>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+        <mat-icon aria-hidden="true">save</mat-icon>
+        {{ isSaving ? 'Salvando' : 'Salvar' }}
+      </button>
+
+      <button mat-button type="button" (click)="closeForm()">Cancelar</button>
+    </div>
+  </form>
+}

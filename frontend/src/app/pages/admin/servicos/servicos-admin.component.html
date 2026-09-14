@@ -294,6 +294,23 @@
           </mat-checkbox>
         </div>
 
+        <section class="situation-documents full-field">
+          <h3>Tipos de documentos da situação</h3>
+          <div class="document-check-grid">
+            @for (documentType of documentTypes; track documentType.id) {
+              <mat-checkbox
+                [name]="'draft-document-type-' + documentType.id"
+                [checked]="situationDraft.document_type_ids.includes(documentType.id)"
+                (change)="toggleDraftDocumentType(documentType.id, $event.checked)"
+              >
+                {{ documentType.name }}
+              </mat-checkbox>
+            } @empty {
+              <p class="empty-inline">Nenhum tipo de documento cadastrado.</p>
+            }
+          </div>
+        </section>
+
         <button mat-stroked-button type="button" (click)="addSituation()">
           <mat-icon aria-hidden="true">add</mat-icon>
           Adicionar situacao
@@ -308,6 +325,7 @@
               <th>Situacao</th>
               <th>Anterior</th>
               <th>Grupo</th>
+              <th>Documentos</th>
               <th>Regras</th>
               <th aria-label="Acoes"></th>
             </tr>
@@ -319,6 +337,21 @@
                 <td>{{ situation.name }}</td>
                 <td>{{ previousSituationName(situation.previous_situation_id) }}</td>
                 <td>{{ responsibleGroupName(situation.responsible_group_id) }}</td>
+                <td class="situation-document-cell">
+                  <div class="document-check-list" [attr.aria-label]="'Documentos da situação ' + situation.name">
+                    @for (documentType of documentTypes; track documentType.id) {
+                      <mat-checkbox
+                        [name]="'situation-' + situation.id + '-document-type-' + documentType.id"
+                        [checked]="(situation.document_type_ids || []).includes(documentType.id)"
+                        (change)="toggleSituationDocumentType(situation, documentType.id, $event.checked)"
+                      >
+                        {{ documentType.name }}
+                      </mat-checkbox>
+                    } @empty {
+                      <span>{{ documentTypeNames(situation.document_type_ids || []) }}</span>
+                    }
+                  </div>
+                </td>
                 <td>
                   <span class="rule-chip" [class.active]="situation.is_initial">Inicial</span>
                   <span class="rule-chip" [class.active]="situation.is_final">Final</span>
@@ -336,7 +369,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="6" class="empty-state">Nenhuma situacao cadastrada.</td>
+                <td colspan="7" class="empty-state">Nenhuma situacao cadastrada.</td>
               </tr>
             }
           </tbody>

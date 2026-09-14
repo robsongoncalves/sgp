@@ -1,0 +1,143 @@
+[
+  {
+    "id": 1,
+    "name": "Formulario de solicitacao",
+    "slug": "formulario-solicitacao",
+    "description": "Modelo dinamico para dados iniciais da solicitacao de progressao docente.",
+    "execution_mode": "dynamic",
+    "fields_schema": [
+      {
+        "name": "siape",
+        "label": "SIAPE",
+        "type": "text",
+        "required": true,
+        "order": 1
+      },
+      {
+        "name": "cargo",
+        "label": "Cargo",
+        "type": "text",
+        "required": true,
+        "order": 2
+      },
+      {
+        "name": "local_exercicio",
+        "label": "Local de Exercício",
+        "type": "text",
+        "required": true,
+        "order": 3
+      },
+      {
+        "name": "email_institucional",
+        "label": "Email Institucional",
+        "type": "email",
+        "required": true,
+        "order": 4
+      },
+      {
+        "name": "telefone",
+        "label": "Telefone",
+        "type": "tel",
+        "required": false,
+        "order": 5
+      },
+      {
+        "name": "secao_classe_nivel_atual",
+        "label": "Classe/Nível atual",
+        "type": "section",
+        "required": false,
+        "order": 6
+      },
+      {
+        "name": "classe_nivel_atual",
+        "label": "Classe/Nível atual",
+        "type": "text",
+        "required": true,
+        "order": 7
+      },
+      {
+        "name": "data_ultima_promocao_progressao",
+        "label": "Data da última promoção ou progressão",
+        "type": "date",
+        "required": true,
+        "order": 8
+      },
+      {
+        "name": "secao_classe_nivel_desejado",
+        "label": "Classe/Nível desejado",
+        "type": "section",
+        "required": false,
+        "order": 9
+      },
+      {
+        "name": "classe_nivel_desejado",
+        "label": "Classe/Nível desejado",
+        "type": "radio",
+        "required": true,
+        "order": 10,
+        "options": [
+          "Promoção para Classe B - Professor Assistente",
+          "Promoção para Classe C - Professor Adjunto"
+        ]
+      }
+    ],
+    "active": true
+  },
+  {
+    "id": 2,
+    "name": "Formulario de autoavaliacao",
+    "slug": "formulario-autoavaliacao",
+    "description": "Modelo para autoavaliacao informada pelo servidor.",
+    "execution_mode": "dynamic",
+    "fields_schema": [
+      {
+        "name": "relato_atividades",
+        "label": "Relato das atividades",
+        "type": "textarea",
+        "required": true,
+        "order": 1
+      }
+    ],
+    "active": true
+  },
+  {
+    "id": 3,
+    "name": "Formulario de avaliacao da chefia imediata",
+    "slug": "formulario-avaliacao-chefia-imediata",
+    "description": "Modelo para avaliacao preenchida pela chefia imediata.",
+    "execution_mode": "dynamic",
+    "fields_schema": [
+      {
+        "name": "chefia_imediata_user_id",
+        "label": "Chefia imediata",
+        "type": "user",
+        "required": true,
+        "order": 1,
+        "data_source": "users",
+        "value_field": "id",
+        "label_field": "name",
+        "maps_to": "assigned_to_user_id",
+        "filters": {
+          "active": true
+        }
+      },
+      {
+        "name": "avaliacao",
+        "label": "Avaliacao",
+        "type": "textarea",
+        "required": true,
+        "order": 2
+      }
+    ],
+    "active": true
+  },
+  {
+    "id": 4,
+    "name": "Planilha de pontuacao docente",
+    "slug": "calculadora-pontuacao-docente",
+    "description": "Formulario customizado da calculadora de pontuacao para progressao docente.",
+    "execution_mode": "custom",
+    "fields_schema": [],
+    "active": true
+  }
+]

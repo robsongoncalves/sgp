@@ -21,6 +21,9 @@ OPENAPI_SPEC = {
         {"name": "Usuarios"},
         {"name": "Grupos de Usuarios"},
         {"name": "Categorias de Servico"},
+        {"name": "Tipos de Documentos"},
+        {"name": "Formularios"},
+        {"name": "Modelos de Parecer"},
         {"name": "Servicos"},
         {"name": "Solicitacoes"},
     ],
@@ -160,6 +163,84 @@ OPENAPI_SPEC = {
                 "responses": {"204": {"description": "Categoria removida"}},
             },
         },
+        "/document-types": {
+            "get": {
+                "tags": ["Tipos de Documentos"],
+                "summary": "Lista tipos de documentos",
+                "responses": {"200": {"description": "Tipos de documentos retornados"}},
+            },
+            "post": {
+                "tags": ["Tipos de Documentos"],
+                "summary": "Cria tipo de documento",
+                "responses": {"201": {"description": "Tipo de documento criado"}},
+            },
+        },
+        "/document-types/{document_type_id}": {
+            "put": {
+                "tags": ["Tipos de Documentos"],
+                "summary": "Atualiza tipo de documento",
+                "parameters": [{"name": "document_type_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"200": {"description": "Tipo de documento atualizado"}},
+            },
+            "delete": {
+                "tags": ["Tipos de Documentos"],
+                "summary": "Remove tipo de documento",
+                "parameters": [{"name": "document_type_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"204": {"description": "Tipo de documento removido"}},
+            },
+        },
+        "/form-templates": {
+            "get": {
+                "tags": ["Formularios"],
+                "summary": "Lista formularios",
+                "responses": {"200": {"description": "Formularios retornados"}},
+            },
+            "post": {
+                "tags": ["Formularios"],
+                "summary": "Cria formulario",
+                "responses": {"201": {"description": "Formulario criado"}},
+            },
+        },
+        "/form-templates/{template_id}": {
+            "put": {
+                "tags": ["Formularios"],
+                "summary": "Atualiza formulario",
+                "parameters": [{"name": "template_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"200": {"description": "Formulario atualizado"}},
+            },
+            "delete": {
+                "tags": ["Formularios"],
+                "summary": "Remove formulario",
+                "parameters": [{"name": "template_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"204": {"description": "Formulario removido"}},
+            },
+        },
+        "/opinion-templates": {
+            "get": {
+                "tags": ["Modelos de Parecer"],
+                "summary": "Lista modelos de parecer",
+                "responses": {"200": {"description": "Modelos de parecer retornados"}},
+            },
+            "post": {
+                "tags": ["Modelos de Parecer"],
+                "summary": "Cria modelo de parecer",
+                "responses": {"201": {"description": "Modelo de parecer criado"}},
+            },
+        },
+        "/opinion-templates/{template_id}": {
+            "put": {
+                "tags": ["Modelos de Parecer"],
+                "summary": "Atualiza modelo de parecer",
+                "parameters": [{"name": "template_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"200": {"description": "Modelo de parecer atualizado"}},
+            },
+            "delete": {
+                "tags": ["Modelos de Parecer"],
+                "summary": "Remove modelo de parecer",
+                "parameters": [{"name": "template_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"204": {"description": "Modelo de parecer removido"}},
+            },
+        },
         "/services": {
             "get": {
                 "tags": ["Servicos"],
@@ -269,6 +350,84 @@ OPENAPI_SPEC = {
                     {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
                 ],
                 "responses": {"200": {"description": "Situacao atualizada"}},
+            },
+        },
+        "/service-requests/{service_request_id}/documents": {
+            "get": {
+                "tags": ["Solicitacoes"],
+                "summary": "Lista documentos da solicitacao",
+                "parameters": [{"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"200": {"description": "Documentos retornados"}},
+            },
+            "post": {
+                "tags": ["Solicitacoes"],
+                "summary": "Cria documento da solicitacao",
+                "parameters": [{"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"201": {"description": "Documento criado"}},
+            },
+        },
+        "/service-request-documents": {
+            "get": {
+                "tags": ["Solicitacoes"],
+                "summary": "Lista documentos atribuidos ao usuario",
+                "parameters": [
+                    {"name": "assigned_to_user_id", "in": "query", "required": True, "schema": {"type": "integer"}},
+                ],
+                "responses": {"200": {"description": "Documentos atribuidos retornados"}},
+            },
+        },
+        "/service-requests/{service_request_id}/documents/{document_id}": {
+            "put": {
+                "tags": ["Solicitacoes"],
+                "summary": "Atualiza documento da solicitacao",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                    {"name": "document_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                ],
+                "responses": {"200": {"description": "Documento atualizado"}},
+            },
+            "delete": {
+                "tags": ["Solicitacoes"],
+                "summary": "Remove documento da solicitacao",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                    {"name": "document_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                    {"name": "user_id", "in": "query", "required": True, "schema": {"type": "integer"}},
+                ],
+                "responses": {"204": {"description": "Documento removido"}},
+            },
+        },
+        "/service-requests/{service_request_id}/documents/{document_id}/submit": {
+            "post": {
+                "tags": ["Solicitacoes"],
+                "summary": "Envia documento para analise",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                    {"name": "document_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                ],
+                "responses": {"200": {"description": "Documento enviado"}},
+            },
+        },
+        "/service-requests/{service_request_id}/documents/{document_id}/decision": {
+            "post": {
+                "tags": ["Solicitacoes"],
+                "summary": "Registra decisao de documento atribuido",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                    {"name": "document_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                ],
+                "responses": {"200": {"description": "Decisao registrada"}},
+            },
+        },
+        "/service-requests/{service_request_id}/documents/{document_id}/attachments": {
+            "post": {
+                "tags": ["Solicitacoes"],
+                "summary": "Anexa arquivo a um documento da solicitacao",
+                "parameters": [
+                    {"name": "service_request_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                    {"name": "document_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                ],
+                "responses": {"201": {"description": "Anexo criado"}},
             },
         },
         "/service-requests/{service_request_id}/attachments": {

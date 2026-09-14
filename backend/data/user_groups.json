@@ -3,42 +3,49 @@
     "id": 1,
     "name": "CPPD",
     "description": "Comissao Permanente de Pessoal Docente",
+    "manager_user_id": null,
     "active": true
   },
   {
     "id": 2,
     "name": "PROGEPE",
     "description": "Pro-Reitoria de Gestao de Pessoas",
+    "manager_user_id": null,
     "active": true
   },
   {
     "id": 3,
     "name": "Administradores de Servicos",
     "description": "Usuarios responsaveis por configurar categorias, tipos e fluxos",
+    "manager_user_id": null,
     "active": true
   },
   {
     "id": 4,
     "name": "DTIC",
     "description": "Diretoria de Tecnologia da Informacao e Comunicacao",
+    "manager_user_id": null,
     "active": true
   },
   {
     "id": 5,
     "name": "DOCENTE",
     "description": "Usuarios docentes",
+    "manager_user_id": null,
     "active": true
   },
   {
     "id": 6,
     "name": "TECNICO ADM",
     "description": "Usuarios tecnico-administrativos",
+    "manager_user_id": null,
     "active": true
   },
   {
     "id": 7,
     "name": "CAMPUS ALEGRETE",
     "description": "Usuarios vinculados ao Campus Alegrete",
+    "manager_user_id": null,
     "active": true
   }
 ]

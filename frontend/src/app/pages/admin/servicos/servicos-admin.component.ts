@@ -9,6 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
+import { DocumentType } from '../../../core/models/document-type';
 import { ServiceCategory } from '../../../core/models/service-category';
 import {
   ServiceSituation,
@@ -17,6 +18,7 @@ import {
   ServicePayload
 } from '../../../core/models/service';
 import { UserGroup } from '../../../core/models/user-group';
+import { DocumentTypeService } from '../../../core/services/document-type.service';
 import { ServiceCategoryService } from '../../../core/services/service-category.service';
 import { ServiceService } from '../../../core/services/service.service';
 import { UserGroupService } from '../../../core/services/user-group.service';
@@ -40,6 +42,7 @@ import { UserGroupService } from '../../../core/services/user-group.service';
 export class ServicosAdminComponent implements OnInit, AfterViewInit {
   services: Service[] = [];
   categories: ServiceCategory[] = [];
+  documentTypes: DocumentType[] = [];
   groups: UserGroup[] = [];
   dataSource = new MatTableDataSource<Service>([]);
   displayedColumns = ['name', 'implementation_mode', 'categories', 'groups', 'actions'];
@@ -60,6 +63,7 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
   constructor(
     private readonly serviceService: ServiceService,
     private readonly serviceCategoryService: ServiceCategoryService,
+    private readonly documentTypeService: DocumentTypeService,
     private readonly userGroupService: UserGroupService
   ) {}
 
@@ -83,14 +87,16 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
   loadReferenceData(): void {
     forkJoin({
       categories: this.serviceCategoryService.list(),
+      documentTypes: this.documentTypeService.list(),
       groups: this.userGroupService.list()
     }).subscribe({
-      next: ({ categories, groups }) => {
+      next: ({ categories, documentTypes, groups }) => {
         this.categories = categories;
+        this.documentTypes = documentTypes.filter((documentType) => documentType.active);
         this.groups = groups;
       },
       error: () => {
-        this.errorMessage = 'Nao foi possivel carregar categorias e grupos.';
+        this.errorMessage = 'Nao foi possivel carregar categorias, documentos e grupos.';
       }
     });
   }
@@ -174,7 +180,10 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
       updated_at: service.updated_at || '',
       category_ids: [...service.category_ids],
       group_ids: [...service.group_ids],
-      situations: service.situations.map((situation) => ({ ...situation }))
+      situations: service.situations.map((situation) => ({
+        ...situation,
+        document_type_ids: [...(situation.document_type_ids || [])]
+      }))
     };
     this.situationDraft = this.createEmptySituationDraft();
     this.errorMessage = '';
@@ -234,6 +243,31 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     this.form.group_ids = this.toggleId(this.form.group_ids, groupId, checked);
   }
 
+  toggleDraftDocumentType(documentTypeId: number, checked: boolean): void {
+    this.situationDraft.document_type_ids = this.toggleId(
+      this.situationDraft.document_type_ids,
+      documentTypeId,
+      checked
+    );
+  }
+
+  toggleSituationDocumentType(
+    situation: ServiceSituation,
+    documentTypeId: number,
+    checked: boolean
+  ): void {
+    this.form.situations = this.form.situations.map((item) => {
+      if (item.id !== situation.id) {
+        return item;
+      }
+
+      return {
+        ...item,
+        document_type_ids: this.toggleId(item.document_type_ids || [], documentTypeId, checked)
+      };
+    });
+  }
+
   addSituation(): void {
     if (!this.situationDraft.name.trim()) {
       this.errorMessage = 'Informe o nome da situacao.';
@@ -251,6 +285,7 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
       is_final: this.situationDraft.is_final,
       requires_opinion: this.situationDraft.requires_opinion,
       requires_attachment: this.situationDraft.requires_attachment,
+      document_type_ids: [...this.situationDraft.document_type_ids],
       display_order: this.form.situations.length + 1
     };
 
@@ -335,6 +370,14 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     return this.groups.find((group) => group.id === groupId)?.name || '-';
   }
 
+  documentTypeNames(documentTypeIds: number[]): string {
+    const names = this.documentTypes
+      .filter((documentType) => documentTypeIds.includes(documentType.id))
+      .map((documentType) => documentType.name);
+
+    return names.length ? names.join(', ') : '-';
+  }
+
   syncSlugFromName(): void {
     if (this.isEditing || this.form.slug.trim()) {
       return;
@@ -383,6 +426,7 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
       group_ids: [...this.form.group_ids],
       situations: this.form.situations.map((situation, index) => ({
         ...situation,
+        document_type_ids: [...(situation.document_type_ids || [])],
         display_order: index + 1
       }))
     };
@@ -414,6 +458,7 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
       is_final: false,
       requires_opinion: false,
       requires_attachment: false,
+      document_type_ids: [],
       display_order: 0
     };
   }

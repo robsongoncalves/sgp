@@ -41,6 +41,13 @@ h2 {
   font-weight: 700;
 }
 
+h3 {
+  margin: 0;
+  color: #374151;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
 .page-title p {
   margin-top: 4px;
   color: #5f6b7a;
@@ -136,6 +143,37 @@ select:disabled {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 4px 10px;
+}
+
+.situation-documents {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #d8dde6;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.document-check-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 12px;
+}
+
+.document-check-list {
+  display: grid;
+  gap: 2px;
+  min-width: 280px;
+  max-height: 184px;
+  overflow: auto;
+  padding: 6px;
+  border: 1px solid #edf0f5;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.situation-document-cell {
+  min-width: 320px;
 }
 
 .flag-options {
@@ -325,7 +363,8 @@ td small {
 @media (max-width: 900px) {
   .form-grid,
   .situation-editor,
-  .check-grid {
+  .check-grid,
+  .document-check-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -1,0 +1,192 @@
+<section class="page-header">
+  <div class="page-title">
+    <mat-icon aria-hidden="true">rate_review</mat-icon>
+    <div>
+      <h1>Modelos de Parecer</h1>
+      <p>Configure pareceres dinâmicos ou customizados usados nas situações dos serviços.</p>
+    </div>
+  </div>
+
+  @if (!isFormVisible) {
+    <button mat-flat-button color="primary" type="button" (click)="createTemplate()">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      Novo parecer
+    </button>
+  }
+</section>
+
+@if (!isFormVisible) {
+  <section class="content-panel" aria-label="Modelos de parecer cadastrados">
+    <header class="table-toolbar">
+      <label class="table-filter" for="opinions-filter">
+        <mat-icon aria-hidden="true">search</mat-icon>
+        <input
+          id="opinions-filter"
+          type="search"
+          placeholder="Filtrar por nome, slug, grupo ou status"
+          [ngModel]="filterTerm"
+          (ngModelChange)="applyFilter($event)"
+        >
+      </label>
+
+      <button mat-stroked-button type="button" (click)="loadData()" [disabled]="isLoading">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        Atualizar
+      </button>
+    </header>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="feedback success">{{ successMessage }}</p>
+    }
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <mat-spinner diameter="28" />
+        <span>Carregando modelos de parecer</span>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+            <td mat-cell *matCellDef="let template">
+              <strong>{{ template.name }}</strong>
+              <small>{{ template.slug }}</small>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="execution_mode">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Modo</th>
+            <td mat-cell *matCellDef="let template">{{ executionModeLabel(template.execution_mode) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="group">
+            <th mat-header-cell *matHeaderCellDef>Grupo padrão</th>
+            <td mat-cell *matCellDef="let template">{{ template.default_responsible_group_name || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="rules">
+            <th mat-header-cell *matHeaderCellDef>Regras</th>
+            <td mat-cell *matCellDef="let template">
+              <span class="rule-chip" [class.active]="template.requires_signature">Assinatura</span>
+              <span class="rule-chip" [class.active]="template.allow_attachments">Anexos</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef aria-label="Acoes"></th>
+            <td mat-cell *matCellDef="let template" class="actions">
+              <button mat-icon-button type="button" aria-label="Editar parecer" (click)="editTemplate(template)">
+                <mat-icon aria-hidden="true">edit</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Alterar status" (click)="toggleTemplateStatus(template)">
+                <mat-icon aria-hidden="true">{{ template.active ? 'block' : 'check_circle' }}</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Remover parecer" (click)="deleteTemplate(template)">
+                <mat-icon aria-hidden="true">delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let template; columns: displayedColumns;"
+            class="data-row"
+            [class.inactive-row]="!template.active"
+            (dblclick)="editTemplate(template)"
+          ></tr>
+          <tr class="mat-row empty-row" *matNoDataRow>
+            <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+              Nenhum modelo de parecer encontrado.
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons />
+    }
+  </section>
+} @else {
+  <form class="content-panel template-form" (ngSubmit)="saveTemplate()">
+    <h2>{{ isEditing ? 'Editar modelo de parecer' : 'Novo modelo de parecer' }}</h2>
+
+    <div class="form-grid">
+      <label for="opinion-name">
+        Nome
+        <input id="opinion-name" name="name" type="text" [(ngModel)]="form.name" (blur)="syncSlugFromName()">
+      </label>
+
+      <label for="opinion-slug">
+        Slug
+        <input id="opinion-slug" name="slug" type="text" [(ngModel)]="form.slug">
+      </label>
+
+      <label for="opinion-mode">
+        Modo
+        <select id="opinion-mode" name="executionMode" [(ngModel)]="form.execution_mode">
+          @for (option of executionModeOptions; track option.value) {
+            <option [ngValue]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </label>
+
+      <label for="opinion-group">
+        Grupo responsável padrão
+        <select id="opinion-group" name="defaultResponsibleGroup" [(ngModel)]="form.default_responsible_group_id">
+          <option [ngValue]="null">Sem grupo padrão</option>
+          @for (group of groups; track group.id) {
+            <option [ngValue]="group.id">{{ group.name }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <label for="opinion-description">
+      Descrição
+      <textarea id="opinion-description" name="description" rows="3" [(ngModel)]="form.description"></textarea>
+    </label>
+
+    <label for="opinion-decisions">
+      Opções de decisão, uma por linha
+      <textarea id="opinion-decisions" name="decisionOptions" rows="4" [(ngModel)]="decisionOptionsText"></textarea>
+    </label>
+
+    <label for="opinion-fields">
+      Campos adicionais em JSON
+      <textarea id="opinion-fields" name="fieldsJson" rows="8" [(ngModel)]="fieldsJson"></textarea>
+    </label>
+
+    <div class="flag-options">
+      <mat-checkbox name="requiresJustification" [(ngModel)]="form.requires_justification">
+        Exige justificativa
+      </mat-checkbox>
+      <mat-checkbox name="requiresSignature" [(ngModel)]="form.requires_signature">
+        Exige assinatura
+      </mat-checkbox>
+      <mat-checkbox name="allowAttachments" [(ngModel)]="form.allow_attachments">
+        Permite anexos
+      </mat-checkbox>
+      <mat-checkbox name="active" [(ngModel)]="form.active">
+        Parecer ativo
+      </mat-checkbox>
+    </div>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+        <mat-icon aria-hidden="true">save</mat-icon>
+        {{ isSaving ? 'Salvando' : 'Salvar' }}
+      </button>
+
+      <button mat-button type="button" (click)="closeForm()">Cancelar</button>
+    </div>
+  </form>
+}

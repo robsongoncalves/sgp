@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 
 from app.extensions import db
-from app.models import Service, ServiceCategory, ServiceSituation, UserGroup
+from app.models import DocumentType, Service, ServiceCategory, ServiceSituation, UserGroup
 from app.repositories.utils import bool_value, date_to_api, optional_int
 
 
@@ -109,6 +109,7 @@ class ServicesRepository:
                 "is_final": bool_value(item.get("is_final", False)),
                 "requires_opinion": bool_value(item.get("requires_opinion", False)),
                 "requires_attachment": bool_value(item.get("requires_attachment", False)),
+                "document_type_ids": sorted(set(self._int_list(item.get("document_type_ids", [])))),
                 "display_order": int(item.get("display_order") or index + 1),
             }
             for index, item in enumerate(data.get("situations", []))
@@ -202,6 +203,9 @@ class ServicesRepository:
             situation.requires_opinion = situation_data["requires_opinion"]
             situation.requires_attachment = situation_data["requires_attachment"]
             situation.display_order = situation_data["display_order"]
+            situation.document_types = DocumentType.query.filter(
+                DocumentType.id.in_(situation_data["document_type_ids"])
+            ).all() if situation_data["document_type_ids"] else []
             situation_by_input_id[situation_data["id"]] = situation
 
         db.session.flush()
@@ -251,6 +255,7 @@ class ServicesRepository:
                     "is_final": situation.is_final,
                     "requires_opinion": situation.requires_opinion,
                     "requires_attachment": situation.requires_attachment,
+                    "document_type_ids": sorted(document_type.id for document_type in situation.document_types),
                     "display_order": situation.display_order,
                 }
                 for situation in situations

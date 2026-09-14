@@ -33,7 +33,7 @@ import { UserGroupService } from '../../../core/services/user-group.service';
 export class GruposComponent implements OnInit, AfterViewInit {
   groups: UserGroup[] = [];
   dataSource = new MatTableDataSource<UserGroup>([]);
-  displayedColumns = ['name', 'description', 'actions'];
+  displayedColumns = ['name', 'description', 'manager', 'actions'];
   isFormVisible = false;
   filterTerm = '';
   editingGroupId: number | null = null;
@@ -125,6 +125,7 @@ export class GruposComponent implements OnInit, AfterViewInit {
     const payload: UserGroupPayload = {
       name: this.form.name.trim(),
       description: this.form.description.trim(),
+      manager_user_id: this.form.manager_user_id,
       active: this.form.active
     };
 
@@ -161,6 +162,7 @@ export class GruposComponent implements OnInit, AfterViewInit {
     this.form = {
       name: group.name,
       description: group.description,
+      manager_user_id: group.manager_user_id,
       active: group.active
     };
     this.errorMessage = '';
@@ -188,6 +190,7 @@ export class GruposComponent implements OnInit, AfterViewInit {
     this.userGroupService.update(group.id, {
       name: group.name,
       description: group.description,
+      manager_user_id: group.manager_user_id,
       active: !group.active
     }).subscribe({
       next: () => this.loadGroups(),
@@ -232,7 +235,8 @@ export class GruposComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort || null;
     this.dataSource.filterPredicate = (group, filter) => {
       const content = `${group.name} ${group.description} ${group.active ? 'ativo' : 'inativo'}`;
-      return content.toLowerCase().includes(filter);
+      const manager = `${group.manager_name || ''} ${group.manager_email || ''}`;
+      return `${content} ${manager}`.toLowerCase().includes(filter);
     };
   }
 
@@ -240,6 +244,7 @@ export class GruposComponent implements OnInit, AfterViewInit {
     return {
       name: '',
       description: '',
+      manager_user_id: null,
       active: true
     };
   }

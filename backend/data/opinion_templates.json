@@ -1,0 +1,59 @@
+[
+  {
+    "id": 1,
+    "name": "Parecer da chefia imediata",
+    "slug": "parecer-chefia-imediata",
+    "description": "Modelo de parecer emitido pela chefia imediata.",
+    "execution_mode": "dynamic",
+    "default_responsible_group_id": null,
+    "decision_options": ["favoravel", "desfavoravel", "diligencia"],
+    "fields_schema": [
+      {
+        "name": "chefia_destinada",
+        "label": "Chefia destinada",
+        "type": "user",
+        "required": true,
+        "order": 1
+      },
+      {
+        "name": "parecer",
+        "label": "Parecer",
+        "type": "textarea",
+        "required": true,
+        "order": 2
+      }
+    ],
+    "requires_justification": true,
+    "requires_signature": true,
+    "allow_attachments": true,
+    "active": true
+  },
+  {
+    "id": 2,
+    "name": "Parecer da Comissao Examinadora Local",
+    "slug": "parecer-comissao-examinadora-local",
+    "description": "Modelo de parecer emitido pela comissao local responsavel pela analise.",
+    "execution_mode": "dynamic",
+    "default_responsible_group_id": null,
+    "decision_options": ["aprovado", "reprovado", "diligencia"],
+    "fields_schema": [],
+    "requires_justification": true,
+    "requires_signature": true,
+    "allow_attachments": true,
+    "active": true
+  },
+  {
+    "id": 3,
+    "name": "Parecer conclusivo da CPPD",
+    "slug": "parecer-conclusivo-cppd",
+    "description": "Modelo de parecer ou despacho conclusivo emitido pela CPPD.",
+    "execution_mode": "dynamic",
+    "default_responsible_group_id": 7,
+    "decision_options": ["aprovado", "indeferido", "diligencia"],
+    "fields_schema": [],
+    "requires_justification": true,
+    "requires_signature": true,
+    "allow_attachments": true,
+    "active": true
+  }
+]

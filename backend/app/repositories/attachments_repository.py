@@ -9,7 +9,7 @@ from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
 from app.extensions import db
-from app.models import ServiceRequest, ServiceRequestAttachment, User
+from app.models import ServiceRequest, ServiceRequestAttachment, ServiceRequestDocument, User
 from app.repositories.utils import datetime_to_api, optional_int
 
 
@@ -23,6 +23,7 @@ class AttachmentsRepository:
         context_type = str(filters.get("context_type", "")).strip()
         requirement_code = str(filters.get("requirement_code", "")).strip()
         item_index = optional_int(filters.get("item_index"))
+        document_id = optional_int(filters.get("service_request_document_id"))
 
         if context_type:
             query = query.filter(ServiceRequestAttachment.context_type == context_type)
@@ -32,6 +33,9 @@ class AttachmentsRepository:
 
         if item_index is not None:
             query = query.filter(ServiceRequestAttachment.item_index == item_index)
+
+        if document_id is not None:
+            query = query.filter(ServiceRequestAttachment.service_request_document_id == document_id)
 
         attachments = query.order_by(ServiceRequestAttachment.created_at.desc()).all()
         return [self._to_dict(attachment) for attachment in attachments]
@@ -55,6 +59,12 @@ class AttachmentsRepository:
 
         if file is None or not file.filename:
             return None, "Arquivo nao informado."
+
+        document_id = optional_int(data.get("service_request_document_id"))
+        document = db.session.get(ServiceRequestDocument, document_id) if document_id else None
+
+        if document_id and (document is None or document.service_request_id != service_request.id):
+            return None, "Documento da solicitacao nao encontrado."
 
         if current_app.config["ATTACHMENT_STORAGE_DRIVER"] != "local":
             return None, "Driver de armazenamento ainda nao suportado."
@@ -81,6 +91,7 @@ class AttachmentsRepository:
 
         attachment = ServiceRequestAttachment(
             service_request_id=service_request.id,
+            service_request_document_id=document.id if document else None,
             uploaded_by_user_id=user.id,
             original_name=original_name,
             mime_type=file.mimetype or "",
@@ -152,6 +163,7 @@ class AttachmentsRepository:
         return {
             "id": attachment.id,
             "service_request_id": attachment.service_request_id,
+            "service_request_document_id": attachment.service_request_document_id,
             "uploaded_by_user_id": attachment.uploaded_by_user_id,
             "uploaded_by_name": attachment.uploaded_by.name if attachment.uploaded_by else "",
             "original_name": attachment.original_name,

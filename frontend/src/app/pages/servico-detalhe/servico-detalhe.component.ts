@@ -4,8 +4,10 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { DocumentType } from '../../core/models/document-type';
 import { Service } from '../../core/models/service';
 import { AuthService } from '../../core/services/auth.service';
+import { DocumentTypeService } from '../../core/services/document-type.service';
 import { ServiceRequestService } from '../../core/services/service-request.service';
 import { ServiceService } from '../../core/services/service.service';
 
@@ -23,6 +25,7 @@ import { ServiceService } from '../../core/services/service.service';
 })
 export class ServicoDetalheComponent implements OnInit {
   service?: Service;
+  documentTypes: DocumentType[] = [];
   isLoading = false;
   isStarting = false;
   isDescriptionExpanded = false;
@@ -35,11 +38,13 @@ export class ServicoDetalheComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly authService: AuthService,
+    private readonly documentTypeService: DocumentTypeService,
     private readonly serviceRequestService: ServiceRequestService,
     private readonly serviceService: ServiceService
   ) {}
 
   ngOnInit(): void {
+    this.loadDocumentTypes();
     this.loadService();
   }
 
@@ -74,6 +79,17 @@ export class ServicoDetalheComponent implements OnInit {
 
   get hasLongDescription(): boolean {
     return (this.service?.description || '').length > 360 || this.descriptionParagraphs.length > 2;
+  }
+
+  get serviceSituationsWithDocuments() {
+    return (this.service?.situations || [])
+      .filter((situation) => this.getSituationDocumentTypes(situation.document_type_ids).length);
+  }
+
+  getSituationDocumentTypes(documentTypeIds: number[]): DocumentType[] {
+    return documentTypeIds
+      .map((documentTypeId) => this.documentTypes.find((documentType) => documentType.id === documentTypeId))
+      .filter((documentType): documentType is DocumentType => Boolean(documentType));
   }
 
   startService(): void {
@@ -132,6 +148,14 @@ export class ServicoDetalheComponent implements OnInit {
       error: () => {
         this.errorMessage = 'Nao foi possivel carregar o servico.';
         this.isLoading = false;
+      }
+    });
+  }
+
+  private loadDocumentTypes(): void {
+    this.documentTypeService.list().subscribe({
+      next: (documentTypes) => {
+        this.documentTypes = documentTypes.filter((documentType) => documentType.active);
       }
     });
   }

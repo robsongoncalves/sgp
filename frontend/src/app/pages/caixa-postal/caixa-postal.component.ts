@@ -11,7 +11,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
-import { ServiceRequest } from '../../core/models/service-request';
+import { ServiceRequest, ServiceRequestDocument } from '../../core/models/service-request';
 import { UserGroup } from '../../core/models/user-group';
 import { AuthService } from '../../core/services/auth.service';
 import { ServiceRequestService } from '../../core/services/service-request.service';
@@ -39,9 +39,12 @@ import { UserGroupService } from '../../core/services/user-group.service';
 export class CaixaPostalComponent implements OnInit, AfterViewInit {
   groups: UserGroup[] = [];
   dataSource = new MatTableDataSource<ServiceRequest>([]);
+  documentsDataSource = new MatTableDataSource<ServiceRequestDocument>([]);
   displayedColumns = ['number', 'service_name', 'requester_name', 'status', 'created_at', 'updated_at', 'actions'];
+  documentColumns = ['document_type_name', 'service_request_id', 'created_by_name', 'status', 'updated_at', 'actions'];
   isLoadingGroups = false;
   isLoadingRequests = false;
+  isLoadingDocuments = false;
   errorMessage = '';
 
   filterForm = this.formBuilder.nonNullable.group({
@@ -62,6 +65,7 @@ export class CaixaPostalComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.configureFilter();
     this.loadGroups();
+    this.loadAssignedDocuments();
   }
 
   ngAfterViewInit(): void {
@@ -121,6 +125,27 @@ export class CaixaPostalComponent implements OnInit, AfterViewInit {
     });
   }
 
+  loadAssignedDocuments(): void {
+    const currentUser = this.authService.currentUser;
+
+    if (!currentUser) {
+      return;
+    }
+
+    this.isLoadingDocuments = true;
+
+    this.serviceRequestService.listAssignedDocuments(currentUser.id).subscribe({
+      next: (documents) => {
+        this.documentsDataSource.data = documents;
+        this.isLoadingDocuments = false;
+      },
+      error: () => {
+        this.errorMessage = 'Nao foi possivel carregar os documentos atribuidos ao usuario.';
+        this.isLoadingDocuments = false;
+      }
+    });
+  }
+
   limpar(): void {
     this.filterForm.patchValue({ term: '' });
     this.applyTableFilter('');
@@ -163,6 +188,29 @@ export class CaixaPostalComponent implements OnInit, AfterViewInit {
     return {};
   }
 
+  getDocumentOpenRoute(document: ServiceRequestDocument): string[] {
+    return ['/progressao-docente'];
+  }
+
+  getDocumentOpenQueryParams(document: ServiceRequestDocument): Record<string, string | number> {
+    return {
+      requestId: document.service_request_id,
+      documentId: document.id
+    };
+  }
+
+  documentStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      draft: 'Rascunho',
+      submitted: 'Enviado',
+      approved: 'Aprovado',
+      rejected: 'Rejeitado',
+      returned: 'Devolvido'
+    };
+
+    return labels[status] || status;
+  }
+
   private configureFilter(): void {
     this.dataSource.filterPredicate = (request, filter) => {
       const normalizedFilter = filter.trim().toLowerCase();
@@ -200,5 +248,4 @@ export class CaixaPostalComponent implements OnInit, AfterViewInit {
       this.dataSource.sort = this.sort;
     }
   }
-
 }

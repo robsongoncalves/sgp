@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "name": "Abono de Perman\u00eancia",
+    "name": "Abono de Permanência",
     "slug": "abono-de-permanencia",
     "description": "descricao...",
     "documentation_url": "https://sites.unipampa.edu.br/dap/abono-de-permanencia/",
@@ -11,8 +11,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      1,
-      2
+      3
     ],
     "group_ids": [
       2
@@ -27,7 +26,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -38,13 +38,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 2,
-    "name": "Acelera\u00e7\u00e3o da Progress\u00e3o por Capacita\u00e7\u00e3o",
+    "name": "Aceleração da Progressão por Capacitação",
     "slug": "aceleracao-da-progressao-por-capacitacao",
     "description": "descricao..",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2025/12/base-de-conhecimento-aceleracao-dezembro-2025.pdf",
@@ -69,7 +70,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -80,13 +82,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 3,
-    "name": "Acelera\u00e7\u00e3o da Promo\u00e7\u00e3o",
+    "name": "Aceleração da Promoção",
     "slug": "aceleracao-da-promocao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2023/04/base-de-conhecimento-aceleracao-da-promocao-docente.pdf",
@@ -96,7 +99,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      6
     ],
     "group_ids": [
       2
@@ -111,7 +114,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -122,13 +126,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 4,
-    "name": "Afastamento do Pa\u00eds",
+    "name": "Afastamento do País",
     "slug": "afastamento-do-pais",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2026/03/base-afastamento-do-pais-revisado-eserv.pdf",
@@ -153,7 +158,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -164,13 +170,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 5,
-    "name": "Afastamento para Colabora\u00e7\u00e3o T\u00e9cnica",
+    "name": "Afastamento para Colaboração Técnica",
     "slug": "afastamento-para-colaboracao-tecnica",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2023/02/base-de-conhecimento-colaboracao-tecnica-de-servidores.pdf",
@@ -180,7 +187,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      7
     ],
     "group_ids": [
       2
@@ -195,7 +202,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -206,13 +214,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 6,
-    "name": "Afastamento para participar de Curso de Forma\u00e7\u00e3o",
+    "name": "Afastamento para participar de Curso de Formação",
     "slug": "afastamento-para-participar-de-curso-de-formacao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2023/07/orientacoes-afastamento-para-participar-de-curso-de-formacao-1.pdf",
@@ -237,7 +246,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -248,13 +258,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 7,
-    "name": "Altera\u00e7\u00e3o de RT",
+    "name": "Alteração de RT",
     "slug": "alteracao-de-rt",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2021/10/base-conhecimento-alteracao-de-retribuicao-por-titulacao.pdf",
@@ -264,8 +275,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      1,
-      2
+      6
     ],
     "group_ids": [
       2
@@ -280,7 +290,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -291,13 +302,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 8,
-    "name": "Acidente em Servi\u00e7o",
+    "name": "Acidente em Serviço",
     "slug": "acidente-em-servico",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2023/04/acidente-em-servico-do-servidor-publico-federal.pdf",
@@ -307,7 +319,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      8
     ],
     "group_ids": [
       2
@@ -322,7 +334,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -333,13 +346,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 9,
-    "name": "Acumula\u00e7\u00e3o de Cargo, Emprego, Fun\u00e7\u00e3o P\u00fablica ou Outros V\u00ednculos",
+    "name": "Acumulação de Cargo, Emprego, Função Pública ou Outros Vínculos",
     "slug": "acumulacao-de-cargo-emprego-funcao-publica-ou-outros-vinculos",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/drmf/acumulacao-de-cargo-emprego-funcao-publica-ou-outros-vinculos/",
@@ -349,7 +363,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      5
     ],
     "group_ids": [
       2
@@ -364,7 +378,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -375,7 +390,8 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
@@ -391,7 +407,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      8
     ],
     "group_ids": [
       2
@@ -406,7 +422,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -417,7 +434,8 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
@@ -433,7 +451,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      4
     ],
     "group_ids": [
       2
@@ -448,7 +466,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -459,13 +478,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 12,
-    "name": "Adicional por Servi\u00e7o Extraordin\u00e1rio",
+    "name": "Adicional por Serviço Extraordinário",
     "slug": "adicional-por-servico-extraordinario",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dcp/adicional-por-servico-extraordinario/",
@@ -475,7 +495,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      4
     ],
     "group_ids": [
       2
@@ -490,7 +510,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -501,7 +522,8 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
@@ -517,7 +539,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      4
     ],
     "group_ids": [
       2
@@ -532,7 +554,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -543,13 +566,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 14,
-    "name": "Altera\u00e7\u00f5es Cadastrais",
+    "name": "Alterações Cadastrais",
     "slug": "alteracoes-cadastrais",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/drmf/atualizacao-cadastral/",
@@ -559,7 +583,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      5
     ],
     "group_ids": [
       2
@@ -574,7 +598,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -585,13 +610,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 15,
-    "name": "Altera\u00e7\u00e3o de Nome, Estado Civil e Uni\u00e3o Est\u00e1vel",
+    "name": "Alteração de Nome, Estado Civil e União Estável",
     "slug": "alteracao-de-nome-estado-civil-e-uniao-estavel",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/drmf/alteracao-de-nome-e-estado-civil/",
@@ -601,8 +627,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      1,
-      2
+      5
     ],
     "group_ids": [
       2
@@ -617,7 +642,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -628,13 +654,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 16,
-    "name": "Altera\u00e7\u00e3o de Conta Sal\u00e1rio",
+    "name": "Alteração de Conta Salário",
     "slug": "alteracao-de-conta-salario",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/drmf/alteracoes-de-conta-salario/",
@@ -644,8 +671,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      1,
-      2
+      5
     ],
     "group_ids": [
       2
@@ -660,7 +686,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -671,13 +698,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 17,
-    "name": "Cadastro e Altera\u00e7\u00e3o de Conta para Recebimento de Di\u00e1rias",
+    "name": "Cadastro e Alteração de Conta para Recebimento de Diárias",
     "slug": "cadastro-e-alteracao-de-conta-para-recebimento-de-diarias",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/drmf/alteracoes-de-conta-para-recebimento-de-diarias/",
@@ -687,8 +715,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      1,
-      2
+      5
     ],
     "group_ids": [
       2
@@ -703,7 +730,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -714,13 +742,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 18,
-    "name": "Aposentadoria Especial do(a) servidor(a) com defici\u00eancia",
+    "name": "Aposentadoria Especial do(a) servidor(a) com deficiência",
     "slug": "aposentadoria-especial-do-a-servidor-a-com-deficiencia",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dap/aposentadoria-voluntaria-especial-doa-servidora-com-deficiencia/",
@@ -730,7 +759,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      3
     ],
     "group_ids": [
       2
@@ -745,7 +774,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -756,13 +786,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 19,
-    "name": "Aposentadoria Especial por exposi\u00e7\u00e3o a agentes prejudiciais \u00e0 sa\u00fade",
+    "name": "Aposentadoria Especial por exposição a agentes prejudiciais à saúde",
     "slug": "aposentadoria-especial-por-exposicao-a-agentes-prejudiciais-a-saude",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dap/aposentadoria-voluntaria-especial-por-exposicao-a-agentes-prejudiciais-de-saude/",
@@ -772,7 +803,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      3
     ],
     "group_ids": [
       2
@@ -787,7 +818,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -798,13 +830,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 20,
-    "name": "Aposentadoria Volunt\u00e1ria",
+    "name": "Aposentadoria Voluntária",
     "slug": "aposentadoria-voluntaria",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dap/aposentadoria-voluntaria-comum/",
@@ -814,7 +847,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      3
     ],
     "group_ids": [
       2
@@ -829,7 +862,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -840,7 +874,8 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
@@ -856,7 +891,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      3
     ],
     "group_ids": [
       2
@@ -871,7 +906,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -882,13 +918,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 22,
-    "name": "Aux\u00edlio Funeral",
+    "name": "Auxílio Funeral",
     "slug": "auxilio-funeral",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dcp/auxilio-funeral/",
@@ -898,7 +935,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      4
     ],
     "group_ids": [
       2
@@ -913,7 +950,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -924,13 +962,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 23,
-    "name": "Aux\u00edlio Moradia",
+    "name": "Auxílio Moradia",
     "slug": "auxilio-moradia",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dcp/auxilio-moradia/",
@@ -940,7 +979,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      4
     ],
     "group_ids": [
       2
@@ -955,7 +994,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -966,13 +1006,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 24,
-    "name": "Aux\u00edlio Natalidade",
+    "name": "Auxílio Natalidade",
     "slug": "auxilio-natalidade",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dcp/auxilio-natalidade/",
@@ -982,7 +1023,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      4
     ],
     "group_ids": [
       2
@@ -997,7 +1038,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1008,13 +1050,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 25,
-    "name": "Aux\u00edlio-Transporte",
+    "name": "Auxílio-Transporte",
     "slug": "auxilio-transporte",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dcp/auxilio-transporte/",
@@ -1024,7 +1067,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      4
     ],
     "group_ids": [
       2
@@ -1039,7 +1082,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1050,13 +1094,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 26,
-    "name": "Avalia\u00e7\u00e3o da Capacidade Laborativa para fins de Restri\u00e7\u00e3o de Atividades ou Readapta\u00e7\u00e3o Funcional",
+    "name": "Avaliação da Capacidade Laborativa para fins de Restrição de Atividades ou Readaptação Funcional",
     "slug": "avaliacao-da-capacidade-laborativa-para-fins-de-restricao-de-atividades-ou-readaptacao-funcional",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2019/07/progepe_avaliacao-da-capacidade-laboral-copia.pdf",
@@ -1066,7 +1111,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      8
     ],
     "group_ids": [
       2
@@ -1081,7 +1126,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1092,13 +1138,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 27,
-    "name": "Avalia\u00e7\u00e3o de Desempenho, Servidores TAE",
+    "name": "Avaliação de Desempenho, Servidores TAE",
     "slug": "avaliacao-de-desempenho-servidores-tae",
     "description": "",
     "documentation_url": "http://sites.unipampa.edu.br/cds/desempenho/",
@@ -1108,7 +1155,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      6
     ],
     "group_ids": [
       2
@@ -1123,7 +1170,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1134,13 +1182,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 28,
-    "name": "Averba\u00e7\u00e3o de Tempo de Contribui\u00e7\u00e3o",
+    "name": "Averbação de Tempo de Contribuição",
     "slug": "averbacao-de-tempo-de-contribuicao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dap/averbacao-de-tempo-de-contribuicao/",
@@ -1150,7 +1199,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      3
     ],
     "group_ids": [
       2
@@ -1165,7 +1214,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1176,13 +1226,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 29,
-    "name": "Averba\u00e7\u00e3o de Tempo de Contribui\u00e7\u00e3o com convers\u00e3o de tempo especial em comum",
+    "name": "Averbação de Tempo de Contribuição com conversão de tempo especial em comum",
     "slug": "averbacao-de-tempo-de-contribuicao-com-conversao-de-tempo-especial-em-comum",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dap/averbacao-de-tempo-de-contribuicao-com-conversao-de-tempo-especial-em-comum/",
@@ -1192,7 +1243,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      3
     ],
     "group_ids": [
       2
@@ -1207,7 +1258,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1218,13 +1270,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 30,
-    "name": "Boletim de Frequ\u00eancia",
+    "name": "Boletim de Frequência",
     "slug": "boletim-de-frequencia",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/drmf/boletim-de-frequencia/",
@@ -1234,7 +1287,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      5
     ],
     "group_ids": [
       2
@@ -1249,7 +1302,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1260,13 +1314,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 31,
-    "name": "Cadastro de Dependentes (Inclus\u00e3o/Exclus\u00e3o)",
+    "name": "Cadastro de Dependentes (Inclusão/Exclusão)",
     "slug": "cadastro-de-dependentes-inclusao-exclusao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dcp/cadastro-de-dependentes/",
@@ -1276,8 +1331,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      1,
-      2
+      4
     ],
     "group_ids": [
       2
@@ -1292,7 +1346,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1303,13 +1358,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 32,
-    "name": "Certid\u00e3o de Tempo de Contribui\u00e7\u00e3o",
+    "name": "Certidão de Tempo de Contribuição",
     "slug": "certidao-de-tempo-de-contribuicao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dap/certidao-de-tempo-de-contribuicao/",
@@ -1319,7 +1375,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      3
     ],
     "group_ids": [
       2
@@ -1334,7 +1390,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1345,13 +1402,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 33,
-    "name": "Cess\u00e3o de Servidor",
+    "name": "Cessão de Servidor",
     "slug": "cessao-de-servidor",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2025/03/base-de-conecimento-cessao-de-servidores-2.pdf",
@@ -1361,7 +1419,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      7
     ],
     "group_ids": [
       2
@@ -1376,7 +1434,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1387,13 +1446,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 34,
-    "name": "Comunica\u00e7\u00e3o de Exerc\u00edcio",
+    "name": "Comunicação de Exercício",
     "slug": "comunicacao-de-exercicio",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/drmf/comunicacao-de-exercicio/",
@@ -1403,7 +1463,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      5
     ],
     "group_ids": [
       2
@@ -1418,7 +1478,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1429,13 +1490,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 35,
-    "name": "Concess\u00e3o de Hor\u00e1rio Especial para Servidor, C\u00f4njuge, Filho ou Dependente com Defici\u00eancia",
+    "name": "Concessão de Horário Especial para Servidor, Cônjuge, Filho ou Dependente com Deficiência",
     "slug": "concessao-de-horario-especial-para-servidor-conjuge-filho-ou-dependente-com-deficiencia",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2019/06/progepe-concessao-de-horario-especial-deficiencia.pdf",
@@ -1445,7 +1507,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      7
     ],
     "group_ids": [
       2
@@ -1460,7 +1522,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1471,13 +1534,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 36,
-    "name": "Concess\u00f5es - Alistamento ou Recadastramento Eleitoral",
+    "name": "Concessões - Alistamento ou Recadastramento Eleitoral",
     "slug": "concessoes-alistamento-ou-recadastramento-eleitoral",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/concessoes-alistamento-ou-recadastramento-eleitoral/",
@@ -1487,7 +1551,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      1
     ],
     "group_ids": [
       2
@@ -1502,7 +1566,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1513,13 +1578,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 37,
-    "name": "Concess\u00f5es - Doa\u00e7\u00e3o de Sangue",
+    "name": "Concessões - Doação de Sangue",
     "slug": "concessoes-doacao-de-sangue",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/concessoes-doacao-de-sangue/",
@@ -1529,7 +1595,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      1
     ],
     "group_ids": [
       2
@@ -1544,7 +1610,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1555,13 +1622,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 38,
-    "name": "Concess\u00f5es - Falecimento de Pessoa da Fam\u00edlia",
+    "name": "Concessões - Falecimento de Pessoa da Família",
     "slug": "concessoes-falecimento-de-pessoa-da-familia",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/concessoes-falecimento-de-pessoa-da-familia-nojo/",
@@ -1571,7 +1639,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      1
     ],
     "group_ids": [
       2
@@ -1586,7 +1654,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1597,13 +1666,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 39,
-    "name": "Concess\u00f5es - Licen\u00e7a para Casamento",
+    "name": "Concessões - Licença para Casamento",
     "slug": "concessoes-licenca-para-casamento",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/concessoes-licenca-para-casamento-gala/",
@@ -1613,7 +1683,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      1
     ],
     "group_ids": [
       2
@@ -1628,7 +1698,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1639,13 +1710,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 40,
-    "name": "Concess\u00f5es - Participa\u00e7\u00e3o em Tribunal do J\u00fari",
+    "name": "Concessões - Participação em Tribunal do Júri",
     "slug": "concessoes-participacao-em-tribunal-do-juri",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/concessoes-participacao-em-tribunal-do-juri/",
@@ -1655,7 +1727,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      1
     ],
     "group_ids": [
       2
@@ -1670,7 +1742,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1681,13 +1754,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 41,
-    "name": "Concess\u00f5es - Requisi\u00e7\u00e3o da Justi\u00e7a Eleitoral (TRE)",
+    "name": "Concessões - Requisição da Justiça Eleitoral (TRE)",
     "slug": "concessoes-requisicao-da-justica-eleitoral-tre",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/concessoes-requisicao-da-justica-eleitoral/",
@@ -1697,7 +1771,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      1
     ],
     "group_ids": [
       2
@@ -1712,7 +1786,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1723,13 +1798,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 42,
-    "name": "Consultas, Exames e Outros Procedimentos de Sa\u00fade Preventiva (Servidor e Dependentes)",
+    "name": "Consultas, Exames e Outros Procedimentos de Saúde Preventiva (Servidor e Dependentes)",
     "slug": "consultas-exames-e-outros-procedimentos-de-saude-preventiva-servidor-e-dependentes",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2024/04/oficio-circular-no-1-2024-dp-unipampa.pdf",
@@ -1739,7 +1815,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      9
     ],
     "group_ids": [
       2
@@ -1754,7 +1830,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1765,13 +1842,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 43,
-    "name": "Consulta necessidade de capacita\u00e7\u00e3o cadastrada no Plano de Desenvolvimento de Pessoas (PDP)",
+    "name": "Consulta necessidade de capacitação cadastrada no Plano de Desenvolvimento de Pessoas (PDP)",
     "slug": "consulta-necessidade-de-capacitacao-cadastrada-no-plano-de-desenvolvimento-de-pessoas-pdp",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/escoladeformacao/processos-base-de-conhecimento/",
@@ -1796,7 +1874,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1807,13 +1886,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 44,
-    "name": "Convers\u00e3o de tempo especial em comum",
+    "name": "Conversão de tempo especial em comum",
     "slug": "conversao-de-tempo-especial-em-comum",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dap/conversao-de-tempo-especial-em-comum/",
@@ -1823,133 +1903,6 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
-    ],
-    "group_ids": [
-      2
-    ],
-    "situations": [
-      {
-        "id": 1,
-        "name": "Solicitado",
-        "previous_situation_id": null,
-        "responsible_group_id": 2,
-        "is_initial": true,
-        "is_final": false,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 1
-      },
-      {
-        "id": 2,
-        "name": "Finalizado",
-        "previous_situation_id": 1,
-        "responsible_group_id": 2,
-        "is_initial": false,
-        "is_final": true,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 2
-      }
-    ]
-  },
-  {
-    "id": 45,
-    "name": "Declara\u00e7\u00e3o de V\u00ednculo",
-    "slug": "declaracao-de-vinculo",
-    "description": "",
-    "documentation_url": "https://sites.unipampa.edu.br/dap/declaracao-de-vinculo/",
-    "implementation_mode": "custom_module",
-    "module_key": "progressao-docente",
-    "active": true,
-    "featured": false,
-    "updated_at": "2026-09-05",
-    "category_ids": [
-      2
-    ],
-    "group_ids": [
-      2
-    ],
-    "situations": [
-      {
-        "id": 1,
-        "name": "Solicitado",
-        "previous_situation_id": null,
-        "responsible_group_id": 2,
-        "is_initial": true,
-        "is_final": false,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 1
-      },
-      {
-        "id": 2,
-        "name": "Finalizado",
-        "previous_situation_id": 1,
-        "responsible_group_id": 2,
-        "is_initial": false,
-        "is_final": true,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 2
-      }
-    ]
-  },
-  {
-    "id": 46,
-    "name": "Desconto de Faltas",
-    "slug": "desconto-de-faltas",
-    "description": "",
-    "documentation_url": "https://sites.unipampa.edu.br/drmf/desconto-de-faltas/",
-    "implementation_mode": "custom_module",
-    "module_key": "progressao-docente",
-    "active": true,
-    "featured": false,
-    "updated_at": "2026-09-05",
-    "category_ids": [
-      2
-    ],
-    "group_ids": [
-      2
-    ],
-    "situations": [
-      {
-        "id": 1,
-        "name": "Solicitado",
-        "previous_situation_id": null,
-        "responsible_group_id": 2,
-        "is_initial": true,
-        "is_final": false,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 1
-      },
-      {
-        "id": 2,
-        "name": "Finalizado",
-        "previous_situation_id": 1,
-        "responsible_group_id": 2,
-        "is_initial": false,
-        "is_final": true,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 2
-      }
-    ]
-  },
-  {
-    "id": 47,
-    "name": "Est\u00e1gio Probat\u00f3rio (TAE e Docentes)",
-    "slug": "estagio-probatorio-tae-e-docentes",
-    "description": "",
-    "documentation_url": "https://sites.unipampa.edu.br/cqvs/",
-    "implementation_mode": "custom_module",
-    "module_key": "progressao-docente",
-    "active": true,
-    "featured": false,
-    "updated_at": "2026-09-05",
-    "category_ids": [
-      2,
       3
     ],
     "group_ids": [
@@ -1965,7 +1918,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -1976,13 +1930,146 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
+      }
+    ]
+  },
+  {
+    "id": 45,
+    "name": "Declaração de Vínculo",
+    "slug": "declaracao-de-vinculo",
+    "description": "",
+    "documentation_url": "https://sites.unipampa.edu.br/dap/declaracao-de-vinculo/",
+    "implementation_mode": "custom_module",
+    "module_key": "progressao-docente",
+    "active": true,
+    "featured": false,
+    "updated_at": "2026-09-05",
+    "category_ids": [
+      3
+    ],
+    "group_ids": [
+      2
+    ],
+    "situations": [
+      {
+        "id": 1,
+        "name": "Solicitado",
+        "previous_situation_id": null,
+        "responsible_group_id": 2,
+        "is_initial": true,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 1,
+        "document_type_ids": []
+      },
+      {
+        "id": 2,
+        "name": "Finalizado",
+        "previous_situation_id": 1,
+        "responsible_group_id": 2,
+        "is_initial": false,
+        "is_final": true,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 2,
+        "document_type_ids": []
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "name": "Desconto de Faltas",
+    "slug": "desconto-de-faltas",
+    "description": "",
+    "documentation_url": "https://sites.unipampa.edu.br/drmf/desconto-de-faltas/",
+    "implementation_mode": "custom_module",
+    "module_key": "progressao-docente",
+    "active": true,
+    "featured": false,
+    "updated_at": "2026-09-05",
+    "category_ids": [
+      5
+    ],
+    "group_ids": [
+      2
+    ],
+    "situations": [
+      {
+        "id": 1,
+        "name": "Solicitado",
+        "previous_situation_id": null,
+        "responsible_group_id": 2,
+        "is_initial": true,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 1,
+        "document_type_ids": []
+      },
+      {
+        "id": 2,
+        "name": "Finalizado",
+        "previous_situation_id": 1,
+        "responsible_group_id": 2,
+        "is_initial": false,
+        "is_final": true,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 2,
+        "document_type_ids": []
+      }
+    ]
+  },
+  {
+    "id": 47,
+    "name": "Estágio Probatório (TAE e Docentes)",
+    "slug": "estagio-probatorio-tae-e-docentes",
+    "description": "",
+    "documentation_url": "https://sites.unipampa.edu.br/cqvs/",
+    "implementation_mode": "custom_module",
+    "module_key": "progressao-docente",
+    "active": true,
+    "featured": false,
+    "updated_at": "2026-09-05",
+    "category_ids": [
+      6
+    ],
+    "group_ids": [
+      2
+    ],
+    "situations": [
+      {
+        "id": 1,
+        "name": "Solicitado",
+        "previous_situation_id": null,
+        "responsible_group_id": 2,
+        "is_initial": true,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 1,
+        "document_type_ids": []
+      },
+      {
+        "id": 2,
+        "name": "Finalizado",
+        "previous_situation_id": 1,
+        "responsible_group_id": 2,
+        "is_initial": false,
+        "is_final": true,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 48,
-    "name": "Exames M\u00e9dicos Peri\u00f3dicos",
+    "name": "Exames Médicos Periódicos",
     "slug": "exames-medicos-periodicos",
     "description": "",
     "documentation_url": "",
@@ -1992,7 +2079,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      8
     ],
     "group_ids": [
       2
@@ -2007,7 +2094,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2018,13 +2106,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 49,
-    "name": "Exonera\u00e7\u00e3o",
+    "name": "Exoneração",
     "slug": "exoneracao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dcp/exoneracao/",
@@ -2034,7 +2123,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      4
     ],
     "group_ids": [
       2
@@ -2049,7 +2138,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2060,13 +2150,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 50,
-    "name": "F\u00e9rias",
+    "name": "Férias",
     "slug": "ferias",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/drmf/orientacoes-gerais-sobre-ferias/",
@@ -2076,7 +2167,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      5
     ],
     "group_ids": [
       2
@@ -2091,7 +2182,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2102,13 +2194,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 51,
-    "name": "Fluxo de preven\u00e7\u00e3o de casos de Nepotismo e de Inobserv\u00e2ncia do inciso VI do art. 4\u00ba da Lei n\u00ba 8.027/1990",
+    "name": "Fluxo de prevenção de casos de Nepotismo e de Inobservância do inciso VI do art. 4º da Lei nº 8.027/1990",
     "slug": "fluxo-de-prevencao-de-casos-de-nepotismo-e-de-inobservancia-do-inciso-vi-do-art-4-da-lei-n-8-027-1990",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/fluxo-de-prevencao-de-casos-de-nepotismo/",
@@ -2118,7 +2211,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      1
     ],
     "group_ids": [
       2
@@ -2133,7 +2226,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2144,13 +2238,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 52,
-    "name": "Gratifica\u00e7\u00e3o por Encargo de Curso ou Concurso",
+    "name": "Gratificação por Encargo de Curso ou Concurso",
     "slug": "gratificacao-por-encargo-de-curso-ou-concurso",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dcp/gratificacao-por-encargo-de-curso-ou-concurso/",
@@ -2160,8 +2255,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      1,
-      2
+      4
     ],
     "group_ids": [
       2
@@ -2176,7 +2270,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2187,13 +2282,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 53,
-    "name": "Gratifica\u00e7\u00e3o por Trabalhos com Raios-X ou Subst\u00e2ncias Radioativas",
+    "name": "Gratificação por Trabalhos com Raios-X ou Substâncias Radioativas",
     "slug": "gratificacao-por-trabalhos-com-raios-x-ou-substancias-radioativas",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dasst/concessao-de-gratificacao-por-trabalho-com-raio-x-ou-substancias-radioativas/",
@@ -2203,7 +2299,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      8
     ],
     "group_ids": [
       2
@@ -2218,7 +2314,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2229,13 +2326,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 54,
-    "name": "Incentivo \u00e0 Qualifica\u00e7\u00e3o",
+    "name": "Incentivo à Qualificação",
     "slug": "incentivo-a-qualificacao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2026/03/base-iq.pdf",
@@ -2260,7 +2358,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2271,13 +2370,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 55,
-    "name": "Licen\u00e7a Adotante",
+    "name": "Licença Adotante",
     "slug": "licenca-adotante",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/licenca-a-adotante/",
@@ -2287,7 +2387,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      1
     ],
     "group_ids": [
       2
@@ -2302,7 +2402,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2313,13 +2414,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 56,
-    "name": "Licen\u00e7a \u00e0 Gestante/Adotante - Prorroga\u00e7\u00e3o",
+    "name": "Licença à Gestante/Adotante - Prorrogação",
     "slug": "licenca-a-gestante-adotante-prorrogacao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/prorrogacao-de-licenca-a-gestante-adotante/",
@@ -2329,7 +2431,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      1
     ],
     "group_ids": [
       2
@@ -2344,7 +2446,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2355,13 +2458,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 57,
-    "name": "Licen\u00e7a \u00e0 Gestante com Avalia\u00e7\u00e3o Pericial (T\u00e9cnicos-Administrativos em Educa\u00e7\u00e3o)",
+    "name": "Licença à Gestante com Avaliação Pericial (Técnicos-Administrativos em Educação)",
     "slug": "licenca-a-gestante-com-avaliacao-pericial-tecnicos-administrativos-em-educacao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2022/08/progepe-licenca-gestante-com-avaliacao-pericial-taes.pdf",
@@ -2371,7 +2475,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      9
     ],
     "group_ids": [
       2
@@ -2386,7 +2490,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2397,13 +2502,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 58,
-    "name": "Licen\u00e7a \u00e0 Gestante (Natimorto)",
+    "name": "Licença à Gestante (Natimorto)",
     "slug": "licenca-a-gestante-natimorto",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/licenca-a-gestante-natimorto/",
@@ -2413,7 +2519,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      1
     ],
     "group_ids": [
       2
@@ -2428,7 +2534,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2439,13 +2546,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 59,
-    "name": "Licen\u00e7a \u00e0 Gestante sem Avalia\u00e7\u00e3o Pericial (Docentes)",
+    "name": "Licença à Gestante sem Avaliação Pericial (Docentes)",
     "slug": "licenca-a-gestante-sem-avaliacao-pericial-docentes",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/licenca-a-gestante-sem-avaliacao-pericial-docentes/",
@@ -2455,8 +2563,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2,
-      3
+      1
     ],
     "group_ids": [
       2
@@ -2471,7 +2578,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2482,13 +2590,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 60,
-    "name": "Licen\u00e7a \u00e0 Gestante sem Avalia\u00e7\u00e3o Pericial (T\u00e9cnicos-Administrativos em Educa\u00e7\u00e3o)",
+    "name": "Licença à Gestante sem Avaliação Pericial (Técnicos-Administrativos em Educação)",
     "slug": "licenca-a-gestante-sem-avaliacao-pericial-tecnicos-administrativos-em-educacao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/licenca-a-gestante-sem-avaliacao-pericial-tecnicos-administrativos-em-educacao/",
@@ -2498,7 +2607,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      1
     ],
     "group_ids": [
       2
@@ -2513,7 +2622,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2524,13 +2634,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 61,
-    "name": "Licen\u00e7a para Atividade Pol\u00edtica",
+    "name": "Licença para Atividade Política",
     "slug": "licenca-para-atividade-politica",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2024/04/base-editavel--lic-atividade-politica-1.pdf",
@@ -2540,7 +2651,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      6
     ],
     "group_ids": [
       2
@@ -2555,7 +2666,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2566,13 +2678,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 62,
-    "name": "Licen\u00e7a para Capacita\u00e7\u00e3o",
+    "name": "Licença para Capacitação",
     "slug": "licenca-para-capacitacao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2026/09/lic--capacitacao-base-editavel-revisada-setembro2026.pdf",
@@ -2597,7 +2710,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2608,13 +2722,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 63,
-    "name": "Licen\u00e7a para Tratamento de Sa\u00fade",
+    "name": "Licença para Tratamento de Saúde",
     "slug": "licenca-para-tratamento-de-saude",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2024/11/progepe-licenca-para-tratamento-de-saude-2024.pdf",
@@ -2624,7 +2739,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      9
     ],
     "group_ids": [
       2
@@ -2639,7 +2754,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2650,13 +2766,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 64,
-    "name": "Licen\u00e7a para Tratar de Interesses Particulares",
+    "name": "Licença para Tratar de Interesses Particulares",
     "slug": "licenca-para-tratar-de-interesses-particulares",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2019/08/base-editavel.pdf",
@@ -2666,7 +2783,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      6
     ],
     "group_ids": [
       2
@@ -2681,7 +2798,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2692,13 +2810,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 65,
-    "name": "Licen\u00e7a Paternidade e Prorroga\u00e7\u00e3o (Docentes)",
+    "name": "Licença Paternidade e Prorrogação (Docentes)",
     "slug": "licenca-paternidade-e-prorrogacao-docentes",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/snpp/licenca-paternidade-e-prorrogacao-docentes/",
@@ -2708,7 +2827,314 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2,
+      1
+    ],
+    "group_ids": [
+      2
+    ],
+    "situations": [
+      {
+        "id": 1,
+        "name": "Solicitado",
+        "previous_situation_id": null,
+        "responsible_group_id": 2,
+        "is_initial": true,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 1,
+        "document_type_ids": []
+      },
+      {
+        "id": 2,
+        "name": "Finalizado",
+        "previous_situation_id": 1,
+        "responsible_group_id": 2,
+        "is_initial": false,
+        "is_final": true,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 2,
+        "document_type_ids": []
+      }
+    ]
+  },
+  {
+    "id": 66,
+    "name": "Licença Paternidade e Prorrogação (Técnicos-Administrativos em Educação)",
+    "slug": "licenca-paternidade-e-prorrogacao-tecnicos-administrativos-em-educacao",
+    "description": "",
+    "documentation_url": "https://sites.unipampa.edu.br/snpp/licenca-paternidade-e-prorrogacao-tecnicos-administrativos-em-educacao/",
+    "implementation_mode": "custom_module",
+    "module_key": "progressao-docente",
+    "active": true,
+    "featured": false,
+    "updated_at": "2026-09-05",
+    "category_ids": [
+      1
+    ],
+    "group_ids": [
+      2
+    ],
+    "situations": [
+      {
+        "id": 1,
+        "name": "Solicitado",
+        "previous_situation_id": null,
+        "responsible_group_id": 2,
+        "is_initial": true,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 1,
+        "document_type_ids": []
+      },
+      {
+        "id": 2,
+        "name": "Finalizado",
+        "previous_situation_id": 1,
+        "responsible_group_id": 2,
+        "is_initial": false,
+        "is_final": true,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 2,
+        "document_type_ids": []
+      }
+    ]
+  },
+  {
+    "id": 67,
+    "name": "Licença por Motivo de Afastamento do Cônjuge - sem remuneração",
+    "slug": "licenca-por-motivo-de-afastamento-do-conjuge-sem-remuneracao",
+    "description": "",
+    "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2019/08/base-editavel-1.pdf",
+    "implementation_mode": "custom_module",
+    "module_key": "progressao-docente",
+    "active": true,
+    "featured": false,
+    "updated_at": "2026-09-05",
+    "category_ids": [
+      6
+    ],
+    "group_ids": [
+      2
+    ],
+    "situations": [
+      {
+        "id": 1,
+        "name": "Solicitado",
+        "previous_situation_id": null,
+        "responsible_group_id": 2,
+        "is_initial": true,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 1,
+        "document_type_ids": []
+      },
+      {
+        "id": 2,
+        "name": "Finalizado",
+        "previous_situation_id": 1,
+        "responsible_group_id": 2,
+        "is_initial": false,
+        "is_final": true,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 2,
+        "document_type_ids": []
+      }
+    ]
+  },
+  {
+    "id": 68,
+    "name": "Licença por Motivo de Afastamento do Cônjuge - exercício provisório",
+    "slug": "licenca-por-motivo-de-afastamento-do-conjuge-exercicio-provisorio",
+    "description": "",
+    "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2019/08/base-editavel-2.pdf",
+    "implementation_mode": "custom_module",
+    "module_key": "progressao-docente",
+    "active": true,
+    "featured": false,
+    "updated_at": "2026-09-05",
+    "category_ids": [
+      6
+    ],
+    "group_ids": [
+      2
+    ],
+    "situations": [
+      {
+        "id": 1,
+        "name": "Solicitado",
+        "previous_situation_id": null,
+        "responsible_group_id": 2,
+        "is_initial": true,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 1,
+        "document_type_ids": []
+      },
+      {
+        "id": 2,
+        "name": "Finalizado",
+        "previous_situation_id": 1,
+        "responsible_group_id": 2,
+        "is_initial": false,
+        "is_final": true,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 2,
+        "document_type_ids": []
+      }
+    ]
+  },
+  {
+    "id": 69,
+    "name": "Licença por Motivo de Doença em Pessoa da Família",
+    "slug": "licenca-por-motivo-de-doenca-em-pessoa-da-familia",
+    "description": "",
+    "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2024/11/progepe-licenca-por-motivo-de-doenca-em-pessoa-da-familia-2024.pdf",
+    "implementation_mode": "custom_module",
+    "module_key": "progressao-docente",
+    "active": true,
+    "featured": false,
+    "updated_at": "2026-09-05",
+    "category_ids": [
+      9
+    ],
+    "group_ids": [
+      2
+    ],
+    "situations": [
+      {
+        "id": 1,
+        "name": "Solicitado",
+        "previous_situation_id": null,
+        "responsible_group_id": 2,
+        "is_initial": true,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 1,
+        "document_type_ids": []
+      },
+      {
+        "id": 2,
+        "name": "Finalizado",
+        "previous_situation_id": 1,
+        "responsible_group_id": 2,
+        "is_initial": false,
+        "is_final": true,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 2,
+        "document_type_ids": []
+      }
+    ]
+  },
+  {
+    "id": 70,
+    "name": "Pagamento de Exercícios Anteriores",
+    "slug": "pagamento-de-exercicios-anteriores",
+    "description": "",
+    "documentation_url": "https://sites.unipampa.edu.br/dcp/pagamento-de-exercicios-anteriores/",
+    "implementation_mode": "custom_module",
+    "module_key": "progressao-docente",
+    "active": true,
+    "featured": false,
+    "updated_at": "2026-09-05",
+    "category_ids": [
+      4
+    ],
+    "group_ids": [
+      2
+    ],
+    "situations": [
+      {
+        "id": 1,
+        "name": "Solicitado",
+        "previous_situation_id": null,
+        "responsible_group_id": 2,
+        "is_initial": true,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 1,
+        "document_type_ids": []
+      },
+      {
+        "id": 2,
+        "name": "Finalizado",
+        "previous_situation_id": 1,
+        "responsible_group_id": 2,
+        "is_initial": false,
+        "is_final": true,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 2,
+        "document_type_ids": []
+      }
+    ]
+  },
+  {
+    "id": 71,
+    "name": "Pensão Alimentícia",
+    "slug": "pensao-alimenticia",
+    "description": "",
+    "documentation_url": "https://sites.unipampa.edu.br/dcp/pensao-alimenticia/",
+    "implementation_mode": "custom_module",
+    "module_key": "progressao-docente",
+    "active": true,
+    "featured": false,
+    "updated_at": "2026-09-05",
+    "category_ids": [
+      4
+    ],
+    "group_ids": [
+      2
+    ],
+    "situations": [
+      {
+        "id": 1,
+        "name": "Solicitado",
+        "previous_situation_id": null,
+        "responsible_group_id": 2,
+        "is_initial": true,
+        "is_final": false,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 1,
+        "document_type_ids": []
+      },
+      {
+        "id": 2,
+        "name": "Finalizado",
+        "previous_situation_id": 1,
+        "responsible_group_id": 2,
+        "is_initial": false,
+        "is_final": true,
+        "requires_opinion": false,
+        "requires_attachment": false,
+        "display_order": 2,
+        "document_type_ids": []
+      }
+    ]
+  },
+  {
+    "id": 72,
+    "name": "Pensão por Morte",
+    "slug": "pensao-por-morte",
+    "description": "",
+    "documentation_url": "https://sites.unipampa.edu.br/dap/pensao-por-morte/",
+    "implementation_mode": "custom_module",
+    "module_key": "progressao-docente",
+    "active": true,
+    "featured": false,
+    "updated_at": "2026-09-05",
+    "category_ids": [
       3
     ],
     "group_ids": [
@@ -2724,7 +3150,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -2735,307 +3162,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
-      }
-    ]
-  },
-  {
-    "id": 66,
-    "name": "Licen\u00e7a Paternidade e Prorroga\u00e7\u00e3o (T\u00e9cnicos-Administrativos em Educa\u00e7\u00e3o)",
-    "slug": "licenca-paternidade-e-prorrogacao-tecnicos-administrativos-em-educacao",
-    "description": "",
-    "documentation_url": "https://sites.unipampa.edu.br/snpp/licenca-paternidade-e-prorrogacao-tecnicos-administrativos-em-educacao/",
-    "implementation_mode": "custom_module",
-    "module_key": "progressao-docente",
-    "active": true,
-    "featured": false,
-    "updated_at": "2026-09-05",
-    "category_ids": [
-      2
-    ],
-    "group_ids": [
-      2
-    ],
-    "situations": [
-      {
-        "id": 1,
-        "name": "Solicitado",
-        "previous_situation_id": null,
-        "responsible_group_id": 2,
-        "is_initial": true,
-        "is_final": false,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 1
-      },
-      {
-        "id": 2,
-        "name": "Finalizado",
-        "previous_situation_id": 1,
-        "responsible_group_id": 2,
-        "is_initial": false,
-        "is_final": true,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 2
-      }
-    ]
-  },
-  {
-    "id": 67,
-    "name": "Licen\u00e7a por Motivo de Afastamento do C\u00f4njuge - sem remunera\u00e7\u00e3o",
-    "slug": "licenca-por-motivo-de-afastamento-do-conjuge-sem-remuneracao",
-    "description": "",
-    "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2019/08/base-editavel-1.pdf",
-    "implementation_mode": "custom_module",
-    "module_key": "progressao-docente",
-    "active": true,
-    "featured": false,
-    "updated_at": "2026-09-05",
-    "category_ids": [
-      2
-    ],
-    "group_ids": [
-      2
-    ],
-    "situations": [
-      {
-        "id": 1,
-        "name": "Solicitado",
-        "previous_situation_id": null,
-        "responsible_group_id": 2,
-        "is_initial": true,
-        "is_final": false,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 1
-      },
-      {
-        "id": 2,
-        "name": "Finalizado",
-        "previous_situation_id": 1,
-        "responsible_group_id": 2,
-        "is_initial": false,
-        "is_final": true,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 2
-      }
-    ]
-  },
-  {
-    "id": 68,
-    "name": "Licen\u00e7a por Motivo de Afastamento do C\u00f4njuge - exerc\u00edcio provis\u00f3rio",
-    "slug": "licenca-por-motivo-de-afastamento-do-conjuge-exercicio-provisorio",
-    "description": "",
-    "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2019/08/base-editavel-2.pdf",
-    "implementation_mode": "custom_module",
-    "module_key": "progressao-docente",
-    "active": true,
-    "featured": false,
-    "updated_at": "2026-09-05",
-    "category_ids": [
-      2
-    ],
-    "group_ids": [
-      2
-    ],
-    "situations": [
-      {
-        "id": 1,
-        "name": "Solicitado",
-        "previous_situation_id": null,
-        "responsible_group_id": 2,
-        "is_initial": true,
-        "is_final": false,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 1
-      },
-      {
-        "id": 2,
-        "name": "Finalizado",
-        "previous_situation_id": 1,
-        "responsible_group_id": 2,
-        "is_initial": false,
-        "is_final": true,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 2
-      }
-    ]
-  },
-  {
-    "id": 69,
-    "name": "Licen\u00e7a por Motivo de Doen\u00e7a em Pessoa da Fam\u00edlia",
-    "slug": "licenca-por-motivo-de-doenca-em-pessoa-da-familia",
-    "description": "",
-    "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2024/11/progepe-licenca-por-motivo-de-doenca-em-pessoa-da-familia-2024.pdf",
-    "implementation_mode": "custom_module",
-    "module_key": "progressao-docente",
-    "active": true,
-    "featured": false,
-    "updated_at": "2026-09-05",
-    "category_ids": [
-      2
-    ],
-    "group_ids": [
-      2
-    ],
-    "situations": [
-      {
-        "id": 1,
-        "name": "Solicitado",
-        "previous_situation_id": null,
-        "responsible_group_id": 2,
-        "is_initial": true,
-        "is_final": false,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 1
-      },
-      {
-        "id": 2,
-        "name": "Finalizado",
-        "previous_situation_id": 1,
-        "responsible_group_id": 2,
-        "is_initial": false,
-        "is_final": true,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 2
-      }
-    ]
-  },
-  {
-    "id": 70,
-    "name": "Pagamento de Exerc\u00edcios Anteriores",
-    "slug": "pagamento-de-exercicios-anteriores",
-    "description": "",
-    "documentation_url": "https://sites.unipampa.edu.br/dcp/pagamento-de-exercicios-anteriores/",
-    "implementation_mode": "custom_module",
-    "module_key": "progressao-docente",
-    "active": true,
-    "featured": false,
-    "updated_at": "2026-09-05",
-    "category_ids": [
-      2
-    ],
-    "group_ids": [
-      2
-    ],
-    "situations": [
-      {
-        "id": 1,
-        "name": "Solicitado",
-        "previous_situation_id": null,
-        "responsible_group_id": 2,
-        "is_initial": true,
-        "is_final": false,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 1
-      },
-      {
-        "id": 2,
-        "name": "Finalizado",
-        "previous_situation_id": 1,
-        "responsible_group_id": 2,
-        "is_initial": false,
-        "is_final": true,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 2
-      }
-    ]
-  },
-  {
-    "id": 71,
-    "name": "Pens\u00e3o Aliment\u00edcia",
-    "slug": "pensao-alimenticia",
-    "description": "",
-    "documentation_url": "https://sites.unipampa.edu.br/dcp/pensao-alimenticia/",
-    "implementation_mode": "custom_module",
-    "module_key": "progressao-docente",
-    "active": true,
-    "featured": false,
-    "updated_at": "2026-09-05",
-    "category_ids": [
-      2
-    ],
-    "group_ids": [
-      2
-    ],
-    "situations": [
-      {
-        "id": 1,
-        "name": "Solicitado",
-        "previous_situation_id": null,
-        "responsible_group_id": 2,
-        "is_initial": true,
-        "is_final": false,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 1
-      },
-      {
-        "id": 2,
-        "name": "Finalizado",
-        "previous_situation_id": 1,
-        "responsible_group_id": 2,
-        "is_initial": false,
-        "is_final": true,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 2
-      }
-    ]
-  },
-  {
-    "id": 72,
-    "name": "Pens\u00e3o por Morte",
-    "slug": "pensao-por-morte",
-    "description": "",
-    "documentation_url": "https://sites.unipampa.edu.br/dap/pensao-por-morte/",
-    "implementation_mode": "custom_module",
-    "module_key": "progressao-docente",
-    "active": true,
-    "featured": false,
-    "updated_at": "2026-09-05",
-    "category_ids": [
-      2
-    ],
-    "group_ids": [
-      2
-    ],
-    "situations": [
-      {
-        "id": 1,
-        "name": "Solicitado",
-        "previous_situation_id": null,
-        "responsible_group_id": 2,
-        "is_initial": true,
-        "is_final": false,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 1
-      },
-      {
-        "id": 2,
-        "name": "Finalizado",
-        "previous_situation_id": 1,
-        "responsible_group_id": 2,
-        "is_initial": false,
-        "is_final": true,
-        "requires_opinion": false,
-        "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 73,
-    "name": "Perfil Profissiogr\u00e1fico Previdenci\u00e1rio (PPP)",
+    "name": "Perfil Profissiográfico Previdenciário (PPP)",
     "slug": "perfil-profissiografico-previdenciario-ppp",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dasst/perfil-profissiografico-previdenciario-ppp/",
@@ -3045,7 +3179,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      8
     ],
     "group_ids": [
       2
@@ -3060,7 +3194,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3071,13 +3206,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 74,
-    "name": "Progress\u00e3o Funcional por Capacita\u00e7\u00e3o Profissional",
+    "name": "Progressão Funcional por Capacitação Profissional",
     "slug": "progressao-funcional-por-capacitacao-profissional",
     "description": "",
     "documentation_url": "http://legislacao.planalto.gov.br/legisla/legislacao.nsf/Viw_Identificacao/lei%2015.141-2025?OpenDocument",
@@ -3102,7 +3238,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3113,13 +3250,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 75,
-    "name": "Progress\u00e3o Funcional por M\u00e9rito Profissional",
+    "name": "Progressão Funcional por Mérito Profissional",
     "slug": "progressao-funcional-por-merito-profissional",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2023/04/progressao-funcional-por-merito-profissional-docx.pdf",
@@ -3129,7 +3267,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      6
     ],
     "group_ids": [
       2
@@ -3144,7 +3282,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3155,13 +3294,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 76,
-    "name": "Promo\u00e7\u00e3o e Progress\u00e3o Docente para as Classes A e B",
+    "name": "Promoção e Progressão Docente para as Classes A e B",
     "slug": "promocao-e-progressao-docente-para-as-classes-a-e-b",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2020/05/base-de-conhecimento-promocao-progressao-classe-a-b-e-c.pdf",
@@ -3171,8 +3311,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2,
-      3
+      6
     ],
     "group_ids": [
       1,
@@ -3188,7 +3327,15 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
       },
       {
         "id": 2,
@@ -3199,7 +3346,12 @@
         "is_final": false,
         "requires_opinion": true,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": [
+          7,
+          8,
+          9
+        ]
       },
       {
         "id": 3,
@@ -3210,13 +3362,16 @@
         "is_final": true,
         "requires_opinion": true,
         "requires_attachment": false,
-        "display_order": 3
+        "display_order": 3,
+        "document_type_ids": [
+          10
+        ]
       }
     ]
   },
   {
     "id": 77,
-    "name": "Promo\u00e7\u00e3o e Progress\u00e3o Docente para Classe C - Professor Associado",
+    "name": "Promoção e Progressão Docente para Classe C - Professor Associado",
     "slug": "promocao-e-progressao-docente-para-classe-c-professor-associado",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2020/05/base-de-conhecimento-promocao-progressao-classe-d.pdf",
@@ -3226,8 +3381,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2,
-      3
+      6
     ],
     "group_ids": [
       1,
@@ -3243,7 +3397,15 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
       },
       {
         "id": 2,
@@ -3254,7 +3416,12 @@
         "is_final": false,
         "requires_opinion": true,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": [
+          7,
+          8,
+          9
+        ]
       },
       {
         "id": 3,
@@ -3265,13 +3432,16 @@
         "is_final": true,
         "requires_opinion": true,
         "requires_attachment": false,
-        "display_order": 3
+        "display_order": 3,
+        "document_type_ids": [
+          10
+        ]
       }
     ]
   },
   {
     "id": 78,
-    "name": "Promo\u00e7\u00e3o Docente para Classe D - Professor Titular",
+    "name": "Promoção Docente para Classe D - Professor Titular",
     "slug": "promocao-docente-para-classe-d-professor-titular",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2022/01/base_de_conhecimento_promocao_docente_classe_e_professor_titular_versao_1.pdf",
@@ -3281,8 +3451,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2,
-      3
+      6
     ],
     "group_ids": [
       1,
@@ -3298,7 +3467,15 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
       },
       {
         "id": 2,
@@ -3309,7 +3486,12 @@
         "is_final": false,
         "requires_opinion": true,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": [
+          7,
+          8,
+          9
+        ]
       },
       {
         "id": 3,
@@ -3320,13 +3502,16 @@
         "is_final": true,
         "requires_opinion": true,
         "requires_attachment": false,
-        "display_order": 3
+        "display_order": 3,
+        "document_type_ids": [
+          10
+        ]
       }
     ]
   },
   {
     "id": 79,
-    "name": "Registro de Frequ\u00eancia (M\u00f3dulo Frequ\u00eancia/SOUGOV)",
+    "name": "Registro de Frequência (Módulo Frequência/SOUGOV)",
     "slug": "registro-de-frequencia-modulo-frequencia-sougov",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/drmf/registro-de-frequencia-modulo-frequencia-sougov/",
@@ -3336,7 +3521,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      5
     ],
     "group_ids": [
       2
@@ -3351,7 +3536,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3362,13 +3548,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 80,
-    "name": "Remo\u00e7\u00e3o a Pedido (a crit\u00e9rio da Administra\u00e7\u00e3o)",
+    "name": "Remoção a Pedido (a critério da Administração)",
     "slug": "remocao-a-pedido-a-criterio-da-administracao",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2025/01/base-de-conhecimento-remocao-a-pedido-docx-1.pdf",
@@ -3378,7 +3565,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      7
     ],
     "group_ids": [
       2
@@ -3393,7 +3580,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3404,13 +3592,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 81,
-    "name": "Remo\u00e7\u00e3o por Motivo de Sa\u00fade",
+    "name": "Remoção por Motivo de Saúde",
     "slug": "remocao-por-motivo-de-saude",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2020/10/progepe-remocao-por-motivo-de-saude.pdf",
@@ -3420,7 +3609,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      7
     ],
     "group_ids": [
       2
@@ -3435,7 +3624,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3446,13 +3636,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 82,
-    "name": "Requisi\u00e7\u00e3o de Servidor",
+    "name": "Requisição de Servidor",
     "slug": "requisicao-de-servidor",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2024/09/base-de-conhecimento-requisicao-de-servidor-2-docx-1.pdf",
@@ -3462,7 +3653,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      7
     ],
     "group_ids": [
       2
@@ -3477,7 +3668,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3488,13 +3680,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 83,
-    "name": "Rescis\u00e3o a Pedido de Professor Substituto/Tempor\u00e1rio",
+    "name": "Rescisão a Pedido de Professor Substituto/Temporário",
     "slug": "rescisao-a-pedido-de-professor-substituto-temporario",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/drmf/rescisao-a-pedido-de-professor-substituto-temporario/",
@@ -3504,8 +3697,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2,
-      3
+      5
     ],
     "group_ids": [
       2
@@ -3520,7 +3712,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3531,13 +3724,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 84,
-    "name": "Ressarcimento de Plano de Sa\u00fade",
+    "name": "Ressarcimento de Plano de Saúde",
     "slug": "ressarcimento-de-plano-de-saude",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dcp/ressarcimento-de-plano-de-saude/",
@@ -3547,7 +3741,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      4
     ],
     "group_ids": [
       2
@@ -3562,7 +3756,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3573,13 +3768,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 85,
-    "name": "Solicita\u00e7\u00e3o de Afastamento Integral para Qualifica\u00e7\u00e3o (Necess\u00e1rio aprova\u00e7\u00e3o em Chamada Interna)",
+    "name": "Solicitação de Afastamento Integral para Qualificação (Necessário aprovação em Chamada Interna)",
     "slug": "solicitacao-de-afastamento-integral-para-qualificacao-necessario-aprovacao-em-chamada-interna",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2026/09/docente-base-de-conhecimento-afastamento-integral-setembro2026.pdf",
@@ -3604,7 +3800,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3615,13 +3812,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 86,
-    "name": "Solicita\u00e7\u00e3o de Documentos Funcionais e Declara\u00e7\u00f5es Personalizadas",
+    "name": "Solicitação de Documentos Funcionais e Declarações Personalizadas",
     "slug": "solicitacao-de-documentos-funcionais-e-declaracoes-personalizadas",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/drmf/solicitacao-de-documentos-funcionais/",
@@ -3631,7 +3829,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      5
     ],
     "group_ids": [
       2
@@ -3646,7 +3844,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3657,13 +3856,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 87,
-    "name": "Solicita\u00e7\u00e3o de Abertura Concurso P\u00fablico (Professor Efetivo)",
+    "name": "Solicitação de Abertura Concurso Público (Professor Efetivo)",
     "slug": "solicitacao-de-abertura-concurso-publico-professor-efetivo",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2023/05/base-de-conhecimento-sei-concursos-professores-efetivos.pdf",
@@ -3673,9 +3873,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      1,
-      2,
-      3
+      7
     ],
     "group_ids": [
       2
@@ -3690,7 +3888,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3701,13 +3900,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 88,
-    "name": "Solicita\u00e7\u00e3o de Abertura Processo Seletivo Simplificado (Professor Substituto)",
+    "name": "Solicitação de Abertura Processo Seletivo Simplificado (Professor Substituto)",
     "slug": "solicitacao-de-abertura-processo-seletivo-simplificado-professor-substituto",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/progepe/files/2022/08/base-de-conhecimento-sei-pss-para-professores-substitutos.pdf",
@@ -3717,8 +3917,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2,
-      3
+      7
     ],
     "group_ids": [
       2
@@ -3733,7 +3932,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3744,13 +3944,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 89,
-    "name": "Substitui\u00e7\u00e3o de Chefia",
+    "name": "Substituição de Chefia",
     "slug": "substituicao-de-chefia",
     "description": "",
     "documentation_url": "https://sites.unipampa.edu.br/dcp/substituicao-de-chefia/",
@@ -3760,7 +3961,7 @@
     "featured": false,
     "updated_at": "2026-09-05",
     "category_ids": [
-      2
+      4
     ],
     "group_ids": [
       2
@@ -3775,7 +3976,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3786,13 +3988,14 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       }
     ]
   },
   {
     "id": 90,
-    "name": "Calculadora de Pontua\u00e7\u00e3o Progress\u00e3o Docente",
+    "name": "Calculadora de Pontuação Progressão Docente",
     "slug": "calculadora-de-pontuacao-progressao-docente",
     "description": "Use esta calculadora para simular a pontuacao de promocao ou progressao docente antes de iniciar uma solicitacao formal. Ela permite registrar atividades, calcular totais por requisito, anexar comprovantes por atividade e, quando os dados estiverem revisados, marcar a pontuacao como pronta para uso em uma solicitacao de Progressao Docente.\n\nRegras gerais: progressao e a passagem de um nivel para o seguinte dentro da mesma classe; promocao e a passagem do ultimo nivel de uma classe para o primeiro nivel da classe seguinte. Em ambos os casos, a regra base exige intersticio minimo de 24 meses e aprovacao em avaliacao de desempenho.\n\nClasses A, B e C: para promocao ou progressao nas classes iniciais da carreira, o docente deve atingir no minimo 14 pontos na planilha, sendo pelo menos 8 pontos no Requisito I, referente a Atividades de Ensino na Educacao Superior.\n\nClasse D - Professor Associado: para progressao na Classe D ou promocao para Professor Associado, tambem sao exigidos no minimo 14 pontos totais e pelo menos 8 pontos no Requisito I. Alem disso, o docente deve pontuar obrigatoriamente nos Requisitos I e II. Para promocao da Classe C para a Classe D, e exigido titulo de doutor.\n\nSomente pontuacoes marcadas como Pronta para uso poderao ser associadas a uma solicitacao formal de Progressao Docente.",
     "documentation_url": "",
@@ -3802,8 +4005,7 @@
     "featured": true,
     "updated_at": "2026-09-08",
     "category_ids": [
-      2,
-      3
+      6
     ],
     "group_ids": [
       1,
@@ -3820,7 +4022,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 1
+        "display_order": 1,
+        "document_type_ids": []
       },
       {
         "id": 2,
@@ -3831,7 +4034,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 2
+        "display_order": 2,
+        "document_type_ids": []
       },
       {
         "id": 3,
@@ -3842,7 +4046,8 @@
         "is_final": false,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 3
+        "display_order": 3,
+        "document_type_ids": []
       },
       {
         "id": 4,
@@ -3853,7 +4058,8 @@
         "is_final": true,
         "requires_opinion": false,
         "requires_attachment": false,
-        "display_order": 4
+        "display_order": 4,
+        "document_type_ids": []
       }
     ]
   }

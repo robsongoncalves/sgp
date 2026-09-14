@@ -111,6 +111,73 @@ h1 {
   font-weight: 700;
 }
 
+.documents-checklist {
+  display: grid;
+  gap: 14px;
+  max-width: 920px;
+}
+
+.documents-checklist h2 {
+  margin: 0;
+  color: #193878;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.checklist-flow {
+  display: grid;
+  gap: 10px;
+}
+
+.checklist-situation {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid #d8dde6;
+  border-radius: 8px;
+  background: #fbfcfe;
+}
+
+.checklist-situation header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: #193878;
+}
+
+.checklist-situation header span {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8f0fe;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.checklist-situation ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.checklist-situation li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #4f5b6b;
+}
+
+.checklist-situation li mat-icon {
+  width: 19px;
+  height: 19px;
+  color: #1f8f55;
+  font-size: 19px;
+}
+
 .service-meta {
   display: flex;
   gap: 16px;

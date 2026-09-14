@@ -2,7 +2,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { CreateServiceRequestPayload, ServiceRequest, ServiceRequestAttachment } from '../models/service-request';
+import {
+  CreateServiceRequestPayload,
+  ServiceRequest,
+  ServiceRequestAttachment,
+  ServiceRequestDocument
+} from '../models/service-request';
 
 export interface ServiceRequestListFilters {
   requesterUserId?: number;
@@ -15,6 +20,7 @@ export interface ServiceRequestAttachmentFilters {
   contextType?: string;
   requirementCode?: string;
   itemIndex?: number;
+  serviceRequestDocumentId?: number;
 }
 
 export interface ServiceRequestAttachmentPayload {
@@ -22,7 +28,20 @@ export interface ServiceRequestAttachmentPayload {
   contextType: string;
   requirementCode: string;
   itemIndex: number;
+  serviceRequestDocumentId?: number;
   file: File;
+}
+
+export interface ServiceRequestDocumentPayload {
+  service_situation_id: number;
+  document_type_id: number;
+  created_by_user_id?: number;
+  updated_by_user_id?: number;
+  status?: string;
+  content_data?: Record<string, unknown>;
+  assigned_to_user_id?: number | null;
+  assigned_to_group_id?: number | null;
+  linked_service_request_id?: number | null;
 }
 
 @Injectable({
@@ -85,6 +104,75 @@ export class ServiceRequestService {
     );
   }
 
+  listDocuments(serviceRequestId: number): Observable<ServiceRequestDocument[]> {
+    return this.http.get<ServiceRequestDocument[]>(`${this.apiUrl}/${serviceRequestId}/documents`);
+  }
+
+  listAssignedDocuments(userId: number): Observable<ServiceRequestDocument[]> {
+    const params = new HttpParams().set('assigned_to_user_id', userId);
+
+    return this.http.get<ServiceRequestDocument[]>(
+      'http://localhost:5000/api/service-request-documents',
+      { params }
+    );
+  }
+
+  createDocument(
+    serviceRequestId: number,
+    payload: ServiceRequestDocumentPayload
+  ): Observable<ServiceRequestDocument> {
+    return this.http.post<ServiceRequestDocument>(`${this.apiUrl}/${serviceRequestId}/documents`, payload);
+  }
+
+  updateDocument(
+    serviceRequestId: number,
+    documentId: number,
+    payload: Partial<ServiceRequestDocumentPayload>
+  ): Observable<ServiceRequestDocument> {
+    return this.http.put<ServiceRequestDocument>(
+      `${this.apiUrl}/${serviceRequestId}/documents/${documentId}`,
+      payload
+    );
+  }
+
+  deleteDocument(serviceRequestId: number, documentId: number, userId: number): Observable<void> {
+    const params = new HttpParams().set('user_id', userId);
+
+    return this.http.delete<void>(`${this.apiUrl}/${serviceRequestId}/documents/${documentId}`, { params });
+  }
+
+  submitDocument(
+    serviceRequestId: number,
+    documentId: number,
+    submittedByUserId: number,
+    assignedToUserId?: number | null
+  ): Observable<ServiceRequestDocument> {
+    return this.http.post<ServiceRequestDocument>(
+      `${this.apiUrl}/${serviceRequestId}/documents/${documentId}/submit`,
+      {
+        submitted_by_user_id: submittedByUserId,
+        assigned_to_user_id: assignedToUserId
+      }
+    );
+  }
+
+  decideDocument(
+    serviceRequestId: number,
+    documentId: number,
+    decidedByUserId: number,
+    decision: 'approved' | 'rejected' | 'returned',
+    decisionText = ''
+  ): Observable<ServiceRequestDocument> {
+    return this.http.post<ServiceRequestDocument>(
+      `${this.apiUrl}/${serviceRequestId}/documents/${documentId}/decision`,
+      {
+        decided_by_user_id: decidedByUserId,
+        decision,
+        decision_text: decisionText
+      }
+    );
+  }
+
   listAttachments(
     serviceRequestId: number,
     filters?: ServiceRequestAttachmentFilters
@@ -101,6 +189,10 @@ export class ServiceRequestService {
 
     if (filters?.itemIndex !== undefined) {
       params = params.set('item_index', filters.itemIndex);
+    }
+
+    if (filters?.serviceRequestDocumentId !== undefined) {
+      params = params.set('service_request_document_id', filters.serviceRequestDocumentId);
     }
 
     return this.http.get<ServiceRequestAttachment[]>(
@@ -120,8 +212,30 @@ export class ServiceRequestService {
     formData.append('requirement_code', payload.requirementCode);
     formData.append('item_index', String(payload.itemIndex));
 
+    if (payload.serviceRequestDocumentId) {
+      formData.append('service_request_document_id', String(payload.serviceRequestDocumentId));
+    }
+
     return this.http.post<ServiceRequestAttachment>(
       `${this.apiUrl}/${serviceRequestId}/attachments`,
+      formData
+    );
+  }
+
+  uploadDocumentAttachment(
+    serviceRequestId: number,
+    documentId: number,
+    payload: ServiceRequestAttachmentPayload
+  ): Observable<ServiceRequestAttachment> {
+    const formData = new FormData();
+    formData.append('file', payload.file);
+    formData.append('uploaded_by_user_id', String(payload.uploadedByUserId));
+    formData.append('context_type', payload.contextType);
+    formData.append('requirement_code', payload.requirementCode);
+    formData.append('item_index', String(payload.itemIndex));
+
+    return this.http.post<ServiceRequestAttachment>(
+      `${this.apiUrl}/${serviceRequestId}/documents/${documentId}/attachments`,
       formData
     );
   }

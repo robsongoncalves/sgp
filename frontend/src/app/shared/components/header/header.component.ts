@@ -30,7 +30,8 @@ import { AuthService } from '../../../core/services/auth.service';
 export class HeaderComponent {
   @Output() menuToggle = new EventEmitter<void>();
 
-  appName = 'Sistema Gestão de Pessoas (UNIPAMPA-PROGEPE)';
+  appName = 'Portal de Serviços';
+  appSubtitle = 'UNIPAMPA-PROGEPE';
   unreadMessages = 3;
   currentUser$ = this.authService.currentUser$;
 

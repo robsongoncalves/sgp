@@ -94,7 +94,6 @@ export class ServicosComponent implements OnInit {
           .filter((service) => service.active !== false)
           .map((service) => this.toServiceCard(service));
         this.categoryGroups = this.buildCategoryGroups();
-        this.expandCategories();
         this.errorMessage = this.services.length
           ? ''
           : 'Nenhum servico disponivel no momento.';
@@ -113,7 +112,6 @@ export class ServicosComponent implements OnInit {
       next: (categories) => {
         this.categories = categories;
         this.categoryGroups = this.buildCategoryGroups();
-        this.expandCategories();
       },
       error: () => {
         this.categories = [];
@@ -158,12 +156,6 @@ export class ServicosComponent implements OnInit {
       categoryIds: Array.isArray(service.category_ids) ? service.category_ids : [],
       route: `/servicos/${service.slug}`
     };
-  }
-
-  private expandCategories(): void {
-    this.categoryGroups.forEach((group) => {
-      this.expandedCategoryIds.add(this.categoryKey(group));
-    });
   }
 
   private categoryKey(group: ServiceCategoryGroup): string {

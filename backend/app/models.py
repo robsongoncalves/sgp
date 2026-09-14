@@ -25,6 +25,14 @@ service_group_association = db.Table(
 )
 
 
+service_situation_document_type_association = db.Table(
+    "service_situation_document_type_association",
+    db.metadata,
+    db.Column("situation_id", ForeignKey("service_situations.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("document_type_id", ForeignKey("document_types.id", ondelete="CASCADE"), primary_key=True),
+)
+
+
 user_group_members = db.Table(
     "user_group_members",
     db.metadata,
@@ -70,8 +78,13 @@ class UserGroup(db.Model, TimestampMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    manager_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
+    manager: Mapped[User | None] = relationship(foreign_keys=[manager_user_id])
     users: Mapped[list[User]] = relationship(
         secondary=user_group_members,
         back_populates="groups",
@@ -95,6 +108,77 @@ class ServiceCategory(db.Model, TimestampMixin):
         secondary=service_category_association,
         back_populates="categories",
     )
+
+
+class DocumentType(db.Model, TimestampMixin):
+    __tablename__ = "document_types"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(180), nullable=False, unique=True)
+    code: Mapped[str] = mapped_column(String(120), nullable=False, unique=True, index=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    origin: Mapped[str] = mapped_column(String(40), nullable=False, default="requester")
+    purpose: Mapped[str] = mapped_column(String(40), nullable=False, default="attachment")
+    module_slug: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    form_template_id: Mapped[int | None] = mapped_column(
+        ForeignKey("form_templates.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    opinion_template_id: Mapped[int | None] = mapped_column(
+        ForeignKey("opinion_templates.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    linked_service_id: Mapped[int | None] = mapped_column(
+        ForeignKey("services.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    linked_service_required_status: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    allowed_formats: Mapped[str] = mapped_column(String(180), nullable=False, default="PDF")
+    required_by_default: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    allow_multiple_files: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+    form_template: Mapped["FormTemplate | None"] = relationship()
+    opinion_template: Mapped["OpinionTemplate | None"] = relationship()
+    linked_service: Mapped["Service | None"] = relationship(foreign_keys=[linked_service_id])
+    situations: Mapped[list["ServiceSituation"]] = relationship(
+        secondary=service_situation_document_type_association,
+        back_populates="document_types",
+    )
+
+
+class FormTemplate(db.Model, TimestampMixin):
+    __tablename__ = "form_templates"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(180), nullable=False, unique=True)
+    slug: Mapped[str] = mapped_column(String(120), nullable=False, unique=True, index=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    execution_mode: Mapped[str] = mapped_column(String(40), nullable=False, default="dynamic")
+    fields_schema: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+
+class OpinionTemplate(db.Model, TimestampMixin):
+    __tablename__ = "opinion_templates"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(180), nullable=False, unique=True)
+    slug: Mapped[str] = mapped_column(String(120), nullable=False, unique=True, index=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    execution_mode: Mapped[str] = mapped_column(String(40), nullable=False, default="dynamic")
+    default_responsible_group_id: Mapped[int | None] = mapped_column(
+        ForeignKey("user_groups.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    decision_options: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    fields_schema: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    requires_justification: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    requires_signature: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    allow_attachments: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+    default_responsible_group: Mapped[UserGroup | None] = relationship()
 
 
 class Service(db.Model, TimestampMixin):
@@ -151,6 +235,10 @@ class ServiceSituation(db.Model, TimestampMixin):
     service: Mapped[Service] = relationship(back_populates="situations")
     previous_situation: Mapped["ServiceSituation | None"] = relationship(remote_side=[id])
     responsible_group: Mapped[UserGroup | None] = relationship()
+    document_types: Mapped[list[DocumentType]] = relationship(
+        secondary=service_situation_document_type_association,
+        back_populates="situations",
+    )
 
 
 class ServiceRequest(db.Model, TimestampMixin):
@@ -179,6 +267,11 @@ class ServiceRequest(db.Model, TimestampMixin):
         back_populates="service_request",
         cascade="all, delete-orphan",
     )
+    documents: Mapped[list["ServiceRequestDocument"]] = relationship(
+        back_populates="service_request",
+        cascade="all, delete-orphan",
+        foreign_keys="ServiceRequestDocument.service_request_id",
+    )
 
 
 class ServiceRequestMovement(db.Model, TimestampMixin):
@@ -206,6 +299,53 @@ class ServiceRequestMovement(db.Model, TimestampMixin):
     to_situation: Mapped[ServiceSituation | None] = relationship(foreign_keys=[to_situation_id])
 
 
+class ServiceRequestDocument(db.Model, TimestampMixin):
+    __tablename__ = "service_request_documents"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    service_request_id: Mapped[int] = mapped_column(
+        ForeignKey("service_requests.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    service_situation_id: Mapped[int] = mapped_column(
+        ForeignKey("service_situations.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    document_type_id: Mapped[int] = mapped_column(
+        ForeignKey("document_types.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    linked_service_request_id: Mapped[int | None] = mapped_column(
+        ForeignKey("service_requests.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    created_by_user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"), nullable=False)
+    updated_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    assigned_to_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    assigned_to_group_id: Mapped[int | None] = mapped_column(ForeignKey("user_groups.id", ondelete="SET NULL"), nullable=True)
+    decided_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    decision: Mapped[str] = mapped_column(String(40), nullable=False, default="")
+    decision_text: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(40), nullable=False, default="draft")
+    content_data: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+    service_request: Mapped[ServiceRequest] = relationship(
+        back_populates="documents",
+        foreign_keys=[service_request_id],
+    )
+    service_situation: Mapped[ServiceSituation] = relationship()
+    document_type: Mapped[DocumentType] = relationship()
+    linked_service_request: Mapped[ServiceRequest | None] = relationship(foreign_keys=[linked_service_request_id])
+    created_by: Mapped[User] = relationship(foreign_keys=[created_by_user_id])
+    updated_by: Mapped[User | None] = relationship(foreign_keys=[updated_by_user_id])
+    assigned_to_user: Mapped[User | None] = relationship(foreign_keys=[assigned_to_user_id])
+    assigned_to_group: Mapped[UserGroup | None] = relationship()
+    decided_by: Mapped[User | None] = relationship(foreign_keys=[decided_by_user_id])
+    attachments: Mapped[list["ServiceRequestAttachment"]] = relationship(back_populates="document")
+
+
 class ServiceRequestAttachment(db.Model, TimestampMixin):
     __tablename__ = "service_request_attachments"
 
@@ -213,6 +353,10 @@ class ServiceRequestAttachment(db.Model, TimestampMixin):
     service_request_id: Mapped[int] = mapped_column(
         ForeignKey("service_requests.id", ondelete="CASCADE"),
         nullable=False,
+    )
+    service_request_document_id: Mapped[int | None] = mapped_column(
+        ForeignKey("service_request_documents.id", ondelete="SET NULL"),
+        nullable=True,
     )
     uploaded_by_user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"), nullable=False)
     original_name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -227,4 +371,5 @@ class ServiceRequestAttachment(db.Model, TimestampMixin):
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")
 
     service_request: Mapped[ServiceRequest] = relationship(back_populates="attachments")
+    document: Mapped[ServiceRequestDocument | None] = relationship(back_populates="attachments")
     uploaded_by: Mapped[User] = relationship()

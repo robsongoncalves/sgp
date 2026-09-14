@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "angular-cdk": {
+      "source": "oguzhan18/angular-ecosystem-skills",
+      "sourceType": "github",
+      "skillPath": "skills/angular-cdk/SKILL.md",
+      "computedHash": "aa4d27d602ebfe02b95afd2cafb8be2e1adff0ce25f05ed514f284485fd2e0c6"
+    },
+    "angular-developer": {
+      "source": "angular/angular",
+      "sourceType": "github",
+      "skillPath": "skills/dev-skills/angular-developer/SKILL.md",
+      "computedHash": "0850aa966b6a7da1151daa9d0ef2081bf397f052573a35c1643fb92b948f0f00"
+    },
+    "daisyui": {
+      "source": "saadeghi/daisyui",
+      "sourceType": "github",
+      "skillPath": "skills/daisyui/SKILL.md",
+      "computedHash": "f70b06883160802b5b04db0504647cc140bd38cf7eb941183a38f44a179b27ca"
+    },
+    "design-md": {
+      "source": "google-labs-code/stitch-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/stitch-utilities/skills/design-md/SKILL.md",
+      "computedHash": "d3a4c7d2f2715a33662c8b06ffc16035d01965a8b4ed81c2958fb22ae94760f8"
+    }
+  }
+}

@@ -9,16 +9,21 @@ from sqlalchemy import text
 
 from app.extensions import db
 from app.models import (
+    DocumentType,
+    FormTemplate,
+    OpinionTemplate,
     Service,
     ServiceCategory,
     ServiceRequest,
     ServiceRequestAttachment,
+    ServiceRequestDocument,
     ServiceRequestMovement,
     ServiceSituation,
     User,
     UserGroup,
     service_category_association,
     service_group_association,
+    service_situation_document_type_association,
     user_group_members,
 )
 
@@ -28,6 +33,7 @@ DATA_DIR = BASE_DIR / "data"
 
 def register_cli(app):
     app.cli.add_command(seed_json_command)
+    app.cli.add_command(seed_document_config_command)
 
 
 @click.command("seed-json")
@@ -39,6 +45,9 @@ def seed_json_command(reset: bool):
     _seed_users()
     _seed_user_groups()
     _seed_service_categories()
+    _seed_form_templates()
+    _seed_opinion_templates()
+    _seed_document_types()
     _seed_services()
     _seed_service_requests()
     db.session.commit()
@@ -46,16 +55,31 @@ def seed_json_command(reset: bool):
     click.echo("Dados JSON importados para o PostgreSQL.")
 
 
+@click.command("seed-document-config")
+def seed_document_config_command():
+    _seed_form_templates()
+    _seed_opinion_templates()
+    _seed_document_types()
+    db.session.commit()
+
+    click.echo("Configuracao documental importada para o PostgreSQL.")
+
+
 def _reset_database() -> None:
     for table in (
         ServiceRequestMovement.__table__,
         ServiceRequestAttachment.__table__,
+        ServiceRequestDocument.__table__,
         ServiceRequest.__table__,
+        service_situation_document_type_association,
         ServiceSituation.__table__,
         service_group_association,
         service_category_association,
         user_group_members,
         Service.__table__,
+        DocumentType.__table__,
+        OpinionTemplate.__table__,
+        FormTemplate.__table__,
         ServiceCategory.__table__,
         UserGroup.__table__,
         User.__table__,
@@ -88,6 +112,7 @@ def _seed_user_groups() -> None:
         group = db.session.get(UserGroup, item["id"]) or UserGroup(id=item["id"])
         group.name = item["name"]
         group.description = item.get("description", "")
+        group.manager_user_id = item.get("manager_user_id")
         group.active = item.get("active", True)
         db.session.add(group)
 
@@ -118,6 +143,64 @@ def _seed_service_categories() -> None:
 
     db.session.flush()
     _reset_sequence("service_categories", "id")
+
+
+def _seed_document_types() -> None:
+    for item in _read_json("document_types.json"):
+        document_type = db.session.get(DocumentType, item["id"]) or DocumentType(id=item["id"])
+        document_type.name = item["name"]
+        document_type.code = item["code"]
+        document_type.description = item.get("description", "")
+        document_type.origin = item.get("origin", "requester")
+        document_type.purpose = item.get("purpose", "attachment")
+        document_type.module_slug = item.get("module_slug", "")
+        document_type.form_template_id = item.get("form_template_id")
+        document_type.opinion_template_id = item.get("opinion_template_id")
+        document_type.linked_service_id = item.get("linked_service_id")
+        document_type.linked_service_required_status = item.get("linked_service_required_status", "")
+        document_type.allowed_formats = item.get("allowed_formats", "PDF")
+        document_type.required_by_default = item.get("required_by_default", False)
+        document_type.allow_multiple_files = item.get("allow_multiple_files", False)
+        document_type.active = item.get("active", True)
+        db.session.add(document_type)
+
+    db.session.flush()
+    _reset_sequence("document_types", "id")
+
+
+def _seed_form_templates() -> None:
+    for item in _read_json("form_templates.json"):
+        template = db.session.get(FormTemplate, item["id"]) or FormTemplate(id=item["id"])
+        template.name = item["name"]
+        template.slug = item["slug"]
+        template.description = item.get("description", "")
+        template.execution_mode = item.get("execution_mode", "dynamic")
+        template.fields_schema = item.get("fields_schema", [])
+        template.active = item.get("active", True)
+        db.session.add(template)
+
+    db.session.flush()
+    _reset_sequence("form_templates", "id")
+
+
+def _seed_opinion_templates() -> None:
+    for item in _read_json("opinion_templates.json"):
+        template = db.session.get(OpinionTemplate, item["id"]) or OpinionTemplate(id=item["id"])
+        template.name = item["name"]
+        template.slug = item["slug"]
+        template.description = item.get("description", "")
+        template.execution_mode = item.get("execution_mode", "dynamic")
+        template.default_responsible_group_id = item.get("default_responsible_group_id")
+        template.decision_options = item.get("decision_options", [])
+        template.fields_schema = item.get("fields_schema", [])
+        template.requires_justification = item.get("requires_justification", True)
+        template.requires_signature = item.get("requires_signature", True)
+        template.allow_attachments = item.get("allow_attachments", True)
+        template.active = item.get("active", True)
+        db.session.add(template)
+
+    db.session.flush()
+    _reset_sequence("opinion_templates", "id")
 
 
 def _seed_services() -> None:
@@ -175,6 +258,11 @@ def _seed_service_situations(service: Service, situations_data: list[dict]) -> N
         )
         db.session.add(situation)
         db.session.flush()
+        situation.document_types = [
+            document_type
+            for document_type_id in item.get("document_type_ids", [])
+            if (document_type := db.session.get(DocumentType, document_type_id))
+        ]
         situation_by_json_id[item["id"]] = situation
 
     for item in situations_data:

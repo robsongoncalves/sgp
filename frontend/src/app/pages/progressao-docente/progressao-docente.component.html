@@ -5,99 +5,355 @@
 
   @if (!isCalculatorMode) {
     <nav class="steps" aria-label="Etapas do serviço">
-      @for (step of steps; track step.id; let index = $index) {
+      @for (situation of situationSteps; track situation.id; let index = $index) {
         <button
           class="step-button"
           type="button"
-          [class.active]="currentStep === step.id"
-          [class.done]="isStepDone(index)"
-          (click)="selectStep(step.id)"
+          [class.active]="selectedSituation?.id === situation.id"
+          [class.done]="isSituationStepDone(situation)"
+          (click)="selectSituation(situation.id)"
         >
           <span class="step-index">{{ index + 1 }}</span>
-          <span class="step-label">{{ step.label }}</span>
+          <span class="step-label">{{ situation.name }}</span>
         </button>
       }
     </nav>
   }
 
   @switch (currentStep) {
-    @case ('solicitacao') {
-      <section class="step-page">
-        <h2>Solicitação</h2>
-
-        <form class="request-form" [formGroup]="solicitacaoForm">
-          <div class="form-section">
-            <h3>Identificação</h3>
-
-            <div class="form-grid">
-              <mat-form-field appearance="outline" class="full-row">
-                <mat-label>Nome</mat-label>
-                <input matInput formControlName="nome" type="text">
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>SIAPE</mat-label>
-                <input matInput formControlName="siape" type="text">
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Cargo</mat-label>
-                <input matInput formControlName="cargo" type="text">
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="full-row">
-                <mat-label>Local de Exercício</mat-label>
-                <input matInput formControlName="localExercicio" type="text">
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Email Institucional</mat-label>
-                <input matInput formControlName="emailInstitucional" type="email">
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Telefone</mat-label>
-                <input matInput formControlName="telefone" type="tel">
-              </mat-form-field>
-            </div>
+    @case ('documentos') {
+      <section class="step-page documents-page">
+        <div class="documents-title">
+          <div>
+            <h2>Documentos</h2>
+            <p>
+              Acompanhe os documentos exigidos em cada situação do serviço.
+            </p>
           </div>
 
-          <div class="level-grid">
-            <div class="form-section">
-              <h3>Classe/Nível atual</h3>
+          @if (currentServiceRequest?.current_situation_name) {
+            <span>Situação atual: {{ currentServiceRequest?.current_situation_name }}</span>
+          }
+        </div>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Classe/Nível atual</mat-label>
-                <input matInput formControlName="classeNivel" type="text">
-              </mat-form-field>
+        @if (documentMessage) {
+          <p class="document-message">{{ documentMessage }}</p>
+        }
 
-              <mat-form-field appearance="outline">
-                <mat-label>Data da última promoção ou progressão</mat-label>
-                <input matInput formControlName="dataUltimaPromocaoProgressao" type="date">
-              </mat-form-field>
-            </div>
+        @if (selectedSituation; as situation) {
+          <section class="documents-flow" aria-label="Checklist documental das situações">
+            <article
+              class="documents-situation"
+              [class.current]="isCurrentSituation(situation)"
+            >
+              <header>
+                <div>
+                  <span class="situation-order">{{ situation.display_order }}</span>
+                  <div>
+                    <h3>{{ situation.name }}</h3>
+                    <small>{{ getSituationChecklistStatus(situation) }}</small>
+                  </div>
+                </div>
 
-            <div class="form-section">
-              <h3>Classe/Nível desejado</h3>
+                @if (isCurrentSituation(situation)) {
+                  <strong>Situação em atendimento</strong>
+                }
+              </header>
 
-              <mat-radio-group class="request-types" formControlName="tipoSolicitacao">
-                <mat-radio-button value="promocao-b">
-                  Promoção para Classe B - Professor Assistente
-                </mat-radio-button>
-                <mat-radio-button value="promocao-c">
-                  Promoção para Classe C - Professor Adjunto
-                </mat-radio-button>
-              </mat-radio-group>
-            </div>
-          </div>
+              <div class="documents-list">
+                @for (documentType of getDocumentTypesForSituation(situation.document_type_ids); track documentType.id) {
+                  <article class="document-check-item">
+                    <div>
+                      <mat-icon aria-hidden="true">
+                        {{ getServiceRequestDocuments(situation, documentType).length ? 'check_circle' : 'radio_button_unchecked' }}
+                      </mat-icon>
+                      <div>
+                        <strong>{{ documentType.name }}</strong>
+                        <small>{{ getDocumentInstanceStatus(situation, documentType) }}</small>
+                      </div>
+                    </div>
 
-          <div class="step-actions">
-            <button mat-flat-button color="primary" type="button" (click)="nextStep()">
-              Próxima etapa
-              <mat-icon aria-hidden="true">chevron_right</mat-icon>
-            </button>
-          </div>
-        </form>
+                    @if (documentType.purpose === 'linked_service') {
+                      <div class="linked-service-actions" aria-label="Serviço vinculado">
+                        <label>
+                          <span>Exige: {{ linkedServiceRequiredStatusLabel(documentType) }}</span>
+                          <select
+                            [value]="linkedServiceRequestValue(situation, documentType)"
+                            [disabled]="!canManageDocument(situation, documentType)"
+                            (change)="linkServiceRequest(situation, documentType, $event)"
+                          >
+                            <option value="">Selecione uma solicitação</option>
+                            @for (linkedRequest of linkedServiceOptions(documentType); track linkedRequest.id) {
+                              <option [value]="linkedRequest.id">
+                                {{ linkedRequest.number }} - {{ linkedRequest.status }}
+                              </option>
+                            }
+                          </select>
+                        </label>
+
+                        @if (canManageDocument(situation, documentType)) {
+                          <button
+                            mat-icon-button
+                            color="primary"
+                            type="button"
+                            aria-label="Criar serviço vinculado"
+                            (click)="createLinkedServiceRequest(situation, documentType)"
+                          >
+                            <mat-icon aria-hidden="true">add_link</mat-icon>
+                          </button>
+                        }
+
+                        @if (getServiceRequestDocuments(situation, documentType)[0]; as document) {
+                          @if (document.linked_service_request_id) {
+                            <button
+                              mat-icon-button
+                              color="primary"
+                              type="button"
+                              aria-label="Abrir serviço vinculado"
+                              (click)="openLinkedServiceRequest(document)"
+                            >
+                              <mat-icon aria-hidden="true">open_in_new</mat-icon>
+                            </button>
+                          }
+                        }
+                      </div>
+                    } @else if (canManageDocument(situation, documentType)) {
+                      <div class="document-actions" aria-label="Ações do documento">
+                        <input
+                          #documentFileInput
+                          class="file-input"
+                          type="file"
+                          (change)="uploadServiceDocument(situation, documentType, $event)"
+                        >
+
+                        @if (documentType.purpose === 'attachment' || documentType.allow_multiple_files) {
+                          <button
+                            mat-icon-button
+                            color="primary"
+                            type="button"
+                            aria-label="Anexar arquivo"
+                            [disabled]="isCreatingServiceDocument(situation, documentType)"
+                            (click)="documentFileInput.click()"
+                          >
+                            <mat-icon aria-hidden="true">upload_file</mat-icon>
+                          </button>
+                        } @else {
+                          <button
+                            mat-icon-button
+                            color="primary"
+                            type="button"
+                            aria-label="Novo documento"
+                            [disabled]="isCreatingServiceDocument(situation, documentType)"
+                            (click)="createServiceDocument(situation, documentType)"
+                          >
+                            <mat-icon aria-hidden="true">add</mat-icon>
+                          </button>
+                        }
+
+                        @if (getServiceRequestDocuments(situation, documentType)[0]; as document) {
+                          <button
+                            mat-icon-button
+                            color="primary"
+                            type="button"
+                            aria-label="Editar documento"
+                            (click)="openDocumentEditor(document, documentType)"
+                          >
+                            <mat-icon aria-hidden="true">edit</mat-icon>
+                          </button>
+                        }
+
+                        @if (canDeleteDocument(documentType) && getServiceRequestDocuments(situation, documentType)[0]; as document) {
+                          <button
+                            mat-icon-button
+                            color="warn"
+                            type="button"
+                            aria-label="Remover documento"
+                            (click)="deleteServiceDocument(document)"
+                          >
+                            <mat-icon aria-hidden="true">delete</mat-icon>
+                          </button>
+                        }
+                      </div>
+                    }
+                  </article>
+
+                  @if (getServiceRequestDocuments(situation, documentType)[0]; as document) {
+                    @if (activeServiceDocument?.id === document.id && activeDocumentType?.id === documentType.id) {
+                      <section class="document-editor" aria-label="Formulario do documento">
+                        <header>
+                          <div>
+                            <span>{{ activeDocumentType?.name }}</span>
+                            <h3>{{ activeFormTemplate?.name || 'Documento' }}</h3>
+                          </div>
+
+                          <button mat-icon-button type="button" aria-label="Fechar formulário" (click)="closeDocumentEditor()">
+                            <mat-icon aria-hidden="true">close</mat-icon>
+                          </button>
+                        </header>
+
+                        @if (activeFormTemplate?.description) {
+                          <p>{{ activeFormTemplate?.description }}</p>
+                        }
+
+                        @if (activeServiceDocument?.assigned_to_user_name) {
+                          <p class="document-assignment">
+                            Enviado para {{ activeServiceDocument?.assigned_to_user_name }}
+                            @if (activeServiceDocument?.assigned_to_user_email) {
+                              <span>({{ activeServiceDocument?.assigned_to_user_email }})</span>
+                            }
+                          </p>
+                        }
+
+                          @if (canDecideActiveDocument()) {
+                            <section class="decision-panel prominent" aria-label="Decisão do documento">
+                              <header>
+                                <div>
+                                  <span>Aguardando sua decisão</span>
+                                  <h3>Avaliar documento</h3>
+                                </div>
+                              </header>
+
+                              <label>
+                                Observação da decisão
+                                <textarea rows="3" [(ngModel)]="decisionText"></textarea>
+                              </label>
+
+                              <div class="decision-actions">
+                                <button mat-stroked-button color="primary" type="button" (click)="decideActiveDocument('returned')">
+                                  <mat-icon aria-hidden="true">undo</mat-icon>
+                                  Devolver
+                                </button>
+                                <button mat-stroked-button color="warn" type="button" (click)="decideActiveDocument('rejected')">
+                                  <mat-icon aria-hidden="true">cancel</mat-icon>
+                                  Rejeitar
+                                </button>
+                                <button mat-flat-button color="primary" type="button" (click)="decideActiveDocument('approved')">
+                                  <mat-icon aria-hidden="true">check_circle</mat-icon>
+                                  Aprovar
+                                </button>
+                              </div>
+                            </section>
+                          }
+
+                          @if (activeFormFields.length) {
+                            <div class="dynamic-form">
+                              @for (field of activeFormFields; track field.name) {
+                                @if (field.type === 'section') {
+                                  <h4 class="dynamic-section-title">{{ field.label }}</h4>
+                                } @else {
+                                  <label [class.checkbox-field]="field.type === 'checkbox'">
+                                    <span>{{ field.label }} @if (field.required) { <strong>*</strong> }</span>
+
+                                    @switch (field.type) {
+                                      @case ('textarea') {
+                                        <textarea
+                                        rows="4"
+                                        [value]="activeDocumentFieldValue(field.name)"
+                                        (input)="updateActiveDocumentField(field.name, $event, field.type)"
+                                      ></textarea>
+                                    }
+
+                                      @case ('select') {
+                                        <select
+                                        [value]="activeDocumentFieldValue(field.name)"
+                                        (change)="updateActiveDocumentField(field.name, $event, field.type)"
+                                      >
+                                          <option value="">Selecione</option>
+                                          @for (option of field.options || []; track option) {
+                                            <option [value]="option">{{ option }}</option>
+                                          }
+                                        </select>
+                                    }
+
+                                    @case ('user') {
+                                      <select
+                                        [value]="activeDocumentFieldValue(field.name)"
+                                        (change)="updateActiveDocumentField(field.name, $event, field.type)"
+                                      >
+                                        <option value="">Selecione um usuário</option>
+                                        @for (user of activeUsers(); track user.id) {
+                                          <option [value]="user.id">{{ user.name }} - {{ user.email }}</option>
+                                        }
+                                      </select>
+                                    }
+
+                                    @case ('radio') {
+                                        <div class="radio-options">
+                                          @for (option of field.options || []; track option) {
+                                            <label>
+                                              <input
+                                                type="radio"
+                                                [name]="field.name"
+                                                [value]="option"
+                                                [checked]="activeDocumentFieldValue(field.name) === option"
+                                                (change)="updateActiveDocumentField(field.name, $event, field.type)"
+                                              >
+                                              <span>{{ option }}</span>
+                                            </label>
+                                          }
+                                        </div>
+                                      }
+
+                                      @case ('checkbox') {
+                                        <input
+                                          type="checkbox"
+                                          [checked]="activeDocumentFieldChecked(field.name)"
+                                          (change)="updateActiveDocumentField(field.name, $event, field.type)"
+                                        >
+                                      }
+
+                                      @default {
+                                        <input
+                                          [type]="['number', 'date', 'email', 'tel'].includes(field.type) ? field.type : 'text'"
+                                          [value]="activeDocumentFieldValue(field.name)"
+                                          (input)="updateActiveDocumentField(field.name, $event, field.type)"
+                                        >
+                                      }
+                                    }
+                                  </label>
+                                }
+                              }
+                            </div>
+                          } @else {
+                            <p class="empty-filter">Este documento ainda não possui campos configurados.</p>
+                          }
+
+                          <div class="step-actions">
+                            <button mat-stroked-button color="primary" type="button" (click)="closeDocumentEditor()">
+                              Cancelar
+                            </button>
+
+                            @if (canSaveActiveDocumentDraft()) {
+                              <button mat-flat-button color="primary" type="button" (click)="saveActiveDocument()">
+                                <mat-icon aria-hidden="true">save</mat-icon>
+                                Salvar rascunho
+                              </button>
+                            }
+
+                            @if (canSubmitActiveDocument()) {
+                              <button mat-flat-button color="primary" type="button" (click)="submitActiveDocument()">
+                                <mat-icon aria-hidden="true">send</mat-icon>
+                                Enviar para análise
+                              </button>
+                            }
+                          </div>
+                        </section>
+                      }
+                    }
+                  }
+              </div>
+            </article>
+          </section>
+        } @else {
+          <p class="empty-filter">Nenhum documento configurado para as situações deste serviço.</p>
+        }
+
+        <div class="step-actions">
+          <button mat-flat-button color="primary" type="button" (click)="nextStep()">
+            Próxima etapa
+            <mat-icon aria-hidden="true">chevron_right</mat-icon>
+          </button>
+        </div>
       </section>
     }
 
@@ -316,59 +572,7 @@
           }
         </section>
 
-        } @else {
-          <section class="calculation-picker">
-            <div>
-              <h3>Calculadora de Pontuação Progressão Docente</h3>
-              <p>
-                Associe uma pontuação marcada como pronta para uso. A validação desta solicitação considerará a pontuação escolhida.
-              </p>
-            </div>
-
-            @if (readyScoreCalculations.length) {
-              <div class="calculation-options">
-                @for (calculation of readyScoreCalculations; track calculation.id) {
-                  <button
-                    type="button"
-                    class="calculation-option"
-                    [class.active]="selectedScoreCalculationId === calculation.id"
-                    (click)="selectScoreCalculation(calculation.id)"
-                  >
-                    <strong>{{ calculation.number }}</strong>
-                    <span>{{ calculation.status }}</span>
-                    <small>Atualizada em {{ calculation.updated_at | date:'dd/MM/yyyy HH:mm' }}</small>
-                  </button>
-                }
-              </div>
-            } @else {
-              <p class="empty-filter">Nenhuma pontuação pronta para uso encontrada.</p>
-            }
-          </section>
-
-          <div class="step-actions">
-            <button mat-stroked-button color="primary" type="button" (click)="previousStep()">
-              <mat-icon aria-hidden="true">chevron_left</mat-icon>
-              Voltar
-            </button>
-
-            <button mat-flat-button color="primary" type="button" (click)="nextStep()">
-              Próxima etapa
-              <mat-icon aria-hidden="true">chevron_right</mat-icon>
-            </button>
-          </div>
         }
-      </section>
-    }
-
-    @case ('confirmacao') {
-      <section class="step-page blank-page">
-        <h2>Validação</h2>
-      </section>
-    }
-
-    @case ('enviar') {
-      <section class="step-page blank-page">
-        <h2>Conclusão</h2>
       </section>
     }
   }

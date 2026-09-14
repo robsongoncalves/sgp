@@ -74,6 +74,7 @@ label {
 }
 
 input,
+select,
 textarea {
   box-sizing: border-box;
   width: 100%;
@@ -88,6 +89,10 @@ input {
   height: 42px;
 }
 
+select {
+  height: 42px;
+}
+
 textarea {
   min-height: 92px;
   padding-top: 10px;
@@ -95,6 +100,7 @@ textarea {
 }
 
 input:focus,
+select:focus,
 textarea:focus {
   border-color: #0b57d0;
   outline: 0;
@@ -259,6 +265,16 @@ th,
 td {
   height: 42px;
   padding: 6px 12px;
+}
+
+td strong,
+td small {
+  display: block;
+}
+
+td small {
+  color: #5f6b7a;
+  font-size: 0.82rem;
 }
 
 th {

@@ -1,0 +1,287 @@
+<section class="page-header">
+  <div class="page-title">
+    <mat-icon aria-hidden="true">description</mat-icon>
+    <div>
+      <h1>Tipos de Documentos</h1>
+      <p>Configure os documentos que podem ser exigidos nas situações dos serviços.</p>
+    </div>
+  </div>
+
+  @if (!isFormVisible) {
+    <button mat-flat-button color="primary" type="button" (click)="createDocumentType()">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      Novo tipo
+    </button>
+  }
+</section>
+
+@if (!isFormVisible) {
+  <section class="content-panel document-types-list" aria-label="Tipos de documentos cadastrados">
+    <header class="table-toolbar">
+      <label class="table-filter" for="document-types-filter">
+        <mat-icon aria-hidden="true">search</mat-icon>
+        <input
+          id="document-types-filter"
+          type="search"
+          placeholder="Filtrar por nome, chave, origem, formato ou status"
+          [ngModel]="filterTerm"
+          (ngModelChange)="applyFilter($event)"
+        >
+      </label>
+
+      <button mat-stroked-button type="button" (click)="loadDocumentTypes()" [disabled]="isLoading">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        Atualizar
+      </button>
+    </header>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="feedback success">{{ successMessage }}</p>
+    }
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <mat-spinner diameter="28" />
+        <span>Carregando tipos de documentos</span>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+            <td mat-cell *matCellDef="let documentType">
+              <strong>{{ documentType.name }}</strong>
+              <small>{{ documentType.code }}</small>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="origin">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Origem</th>
+            <td mat-cell *matCellDef="let documentType">{{ originLabel(documentType.origin) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="allowed_formats">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Formatos</th>
+            <td mat-cell *matCellDef="let documentType">{{ documentType.allowed_formats }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="purpose">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Finalidade</th>
+            <td mat-cell *matCellDef="let documentType">{{ purposeLabel(documentType.purpose) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="template">
+            <th mat-header-cell *matHeaderCellDef>Modelo</th>
+            <td mat-cell *matCellDef="let documentType">{{ templateLabel(documentType) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="rules">
+            <th mat-header-cell *matHeaderCellDef>Regras</th>
+            <td mat-cell *matCellDef="let documentType">
+              <span class="rule-chip" [class.active]="documentType.required_by_default">Obrigatório</span>
+              <span class="rule-chip" [class.active]="documentType.allow_multiple_files">Múltiplos</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef aria-label="Acoes"></th>
+            <td mat-cell *matCellDef="let documentType" class="actions">
+              <button mat-icon-button type="button" aria-label="Editar tipo de documento" (click)="editDocumentType(documentType)">
+                <mat-icon aria-hidden="true">edit</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Alterar status" (click)="toggleDocumentTypeStatus(documentType)">
+                <mat-icon aria-hidden="true">{{ documentType.active ? 'block' : 'check_circle' }}</mat-icon>
+              </button>
+              <button mat-icon-button type="button" aria-label="Remover tipo de documento" (click)="deleteDocumentType(documentType)">
+                <mat-icon aria-hidden="true">delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let documentType; columns: displayedColumns;"
+            class="data-row"
+            [class.inactive-row]="!documentType.active"
+            (dblclick)="editDocumentType(documentType)"
+          ></tr>
+          <tr class="mat-row empty-row" *matNoDataRow>
+            <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+              Nenhum tipo de documento encontrado.
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25]"
+        showFirstLastButtons
+        aria-label="Paginacao de tipos de documentos"
+      />
+    }
+  </section>
+} @else {
+  <form class="content-panel document-type-form" (ngSubmit)="saveDocumentType()">
+    <h2>{{ isEditing ? 'Editar tipo de documento' : 'Novo tipo de documento' }}</h2>
+
+    <div class="form-grid">
+      <label for="document-type-name">
+        Nome
+        <input
+          id="document-type-name"
+          name="name"
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="form.name"
+          (blur)="syncCodeFromName()"
+        >
+      </label>
+
+      <label for="document-type-code">
+        Chave
+        <input
+          id="document-type-code"
+          name="code"
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="form.code"
+        >
+      </label>
+
+      <label for="document-type-origin">
+        Origem
+        <select id="document-type-origin" name="origin" [(ngModel)]="form.origin">
+          @for (option of originOptions; track option.value) {
+            <option [ngValue]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </label>
+
+      <label for="document-type-purpose">
+        Finalidade
+        <select id="document-type-purpose" name="purpose" [(ngModel)]="form.purpose">
+          @for (option of purposeOptions; track option.value) {
+            <option [ngValue]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </label>
+
+      <label for="document-type-formats">
+        Formatos permitidos
+        <input
+          id="document-type-formats"
+          name="allowedFormats"
+          type="text"
+          autocomplete="off"
+          placeholder="PDF, DOCX, XLSX"
+          [(ngModel)]="form.allowed_formats"
+        >
+      </label>
+
+      <label for="document-type-module-slug">
+        Slug do módulo
+        <input
+          id="document-type-module-slug"
+          name="moduleSlug"
+          type="text"
+          autocomplete="off"
+          placeholder="progressao-docente"
+          [(ngModel)]="form.module_slug"
+        >
+      </label>
+
+      <label for="document-type-form-template">
+        Formulário associado
+        <select id="document-type-form-template" name="formTemplate" [(ngModel)]="form.form_template_id">
+          <option [ngValue]="null">Sem formulário</option>
+          @for (template of formTemplates; track template.id) {
+            <option [ngValue]="template.id">{{ template.name }}</option>
+          }
+        </select>
+      </label>
+
+      <label for="document-type-opinion-template">
+        Modelo de parecer associado
+        <select id="document-type-opinion-template" name="opinionTemplate" [(ngModel)]="form.opinion_template_id">
+          <option [ngValue]="null">Sem parecer</option>
+          @for (template of opinionTemplates; track template.id) {
+            <option [ngValue]="template.id">{{ template.name }}</option>
+          }
+        </select>
+      </label>
+
+      @if (form.purpose === 'linked_service') {
+        <label for="document-type-linked-service">
+          Serviço vinculado
+          <select id="document-type-linked-service" name="linkedService" [(ngModel)]="form.linked_service_id">
+            <option [ngValue]="null">Selecione um serviço</option>
+            @for (service of services; track service.id) {
+              <option [ngValue]="service.id">{{ service.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label for="document-type-linked-service-status">
+          Situação exigida do serviço vinculado
+          <input
+            id="document-type-linked-service-status"
+            name="linkedServiceRequiredStatus"
+            type="text"
+            autocomplete="off"
+            placeholder="Pronta para uso"
+            [(ngModel)]="form.linked_service_required_status"
+          >
+        </label>
+      }
+    </div>
+
+    <label for="document-type-description">
+      Descricao
+      <textarea
+        id="document-type-description"
+        name="description"
+        rows="4"
+        [(ngModel)]="form.description"
+      ></textarea>
+    </label>
+
+    <div class="flag-options">
+      <mat-checkbox name="requiredByDefault" [(ngModel)]="form.required_by_default">
+        Obrigatório por padrão
+      </mat-checkbox>
+
+      <mat-checkbox name="allowMultipleFiles" [(ngModel)]="form.allow_multiple_files">
+        Permite múltiplos arquivos
+      </mat-checkbox>
+
+      <mat-checkbox name="active" [(ngModel)]="form.active">
+        Tipo ativo
+      </mat-checkbox>
+    </div>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="feedback success">{{ successMessage }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+        <mat-icon aria-hidden="true">save</mat-icon>
+        {{ isSaving ? 'Salvando' : 'Salvar' }}
+      </button>
+
+      <button mat-button type="button" (click)="closeForm()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+}

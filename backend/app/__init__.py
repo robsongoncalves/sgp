@@ -8,6 +8,9 @@ from app.extensions import db, migrate
 from app.openapi import OPENAPI_SPEC
 from app.routes.auth import auth_bp
 from app.routes.health import health_bp
+from app.routes.document_types import document_types_bp
+from app.routes.form_templates import form_templates_bp
+from app.routes.opinion_templates import opinion_templates_bp
 from app.routes.public import public_bp
 from app.routes.service_categories import service_categories_bp
 from app.routes.service_requests import service_requests_bp
@@ -27,7 +30,10 @@ def create_app() -> Flask:
     from app import models  # noqa: F401
 
     app.register_blueprint(auth_bp, url_prefix="/api")
+    app.register_blueprint(document_types_bp, url_prefix="/api")
+    app.register_blueprint(form_templates_bp, url_prefix="/api")
     app.register_blueprint(health_bp, url_prefix="/api")
+    app.register_blueprint(opinion_templates_bp, url_prefix="/api")
     app.register_blueprint(public_bp, url_prefix="/api")
     app.register_blueprint(service_categories_bp, url_prefix="/api")
     app.register_blueprint(service_requests_bp, url_prefix="/api")

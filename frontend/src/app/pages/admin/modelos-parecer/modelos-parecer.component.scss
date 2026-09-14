@@ -1,0 +1,19 @@
+@import '../formularios/formularios.component';
+
+.rule-chip {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  margin: 2px 4px 2px 0;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #eef1f5;
+  color: #7a8491;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.rule-chip.active {
+  background: #e8f0fe;
+  color: #0b57d0;
+}
