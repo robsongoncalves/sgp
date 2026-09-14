@@ -10,7 +10,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
 import { AutomationFunction } from '../../../core/models/automation-function';
-import { DocumentType } from '../../../core/models/document-type';
+import { DocumentPurpose, DocumentType } from '../../../core/models/document-type';
 import { ServiceCategory } from '../../../core/models/service-category';
 import {
   ServiceHook,
@@ -58,6 +58,20 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
   isSaving = false;
   errorMessage = '';
   successMessage = '';
+  categoryFilterTerm = '';
+  groupFilterTerm = '';
+  situationFilterTerm = '';
+  documentPurposeFilters: Record<DocumentPurpose, string> = {
+    attachment: '',
+    form: '',
+    opinion: '',
+    evaluation: '',
+    generated: '',
+    linked_service: ''
+  };
+  activeDocumentPurpose: DocumentPurpose = 'attachment';
+  isSituationFormVisible = false;
+  editingSituationId: number | null = null;
 
   form: ServicePayload = this.createEmptyForm();
   situationDraft: ServiceSituationDraft = this.createEmptySituationDraft();
@@ -65,6 +79,14 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
   hookEvents = [
     { value: 'before_request_create', label: 'Antes de criar solicitação' },
     { value: 'after_request_create', label: 'Depois de criar solicitação' }
+  ];
+  documentPurposeTabs: { value: DocumentPurpose; label: string }[] = [
+    { value: 'attachment', label: 'Anexos' },
+    { value: 'form', label: 'Formulários' },
+    { value: 'opinion', label: 'Pareceres' },
+    { value: 'evaluation', label: 'Avaliações' },
+    { value: 'generated', label: 'Gerados' },
+    { value: 'linked_service', label: 'Serviços vinculados' }
   ];
 
   @ViewChild(MatPaginator) paginator?: MatPaginator;
@@ -95,6 +117,82 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     return this.form.implementation_mode === 'custom_module';
   }
 
+  get isEditingSituation(): boolean {
+    return this.editingSituationId !== null;
+  }
+
+  get filteredCategories(): ServiceCategory[] {
+    const filter = this.categoryFilterTerm.trim().toLowerCase();
+    const categories = [...this.categories].sort((first, second) => {
+      const order = first.display_order - second.display_order;
+      return order || first.name.localeCompare(second.name, 'pt-BR');
+    });
+
+    if (!filter) {
+      return categories;
+    }
+
+    return categories.filter((category) =>
+      [
+        category.name,
+        category.description,
+        category.parent_category_name || ''
+      ].join(' ').toLowerCase().includes(filter)
+    );
+  }
+
+  get filteredGroups(): UserGroup[] {
+    const filter = this.groupFilterTerm.trim().toLowerCase();
+    const groups = [...this.groups].sort((first, second) =>
+      first.name.localeCompare(second.name, 'pt-BR')
+    );
+
+    if (!filter) {
+      return groups;
+    }
+
+    return groups.filter((group) =>
+      [
+        group.name,
+        group.description,
+        group.parent_group_name || '',
+        group.manager_name || '',
+        group.manager_email || ''
+      ].join(' ').toLowerCase().includes(filter)
+    );
+  }
+
+  get availablePreviousSituations(): ServiceSituation[] {
+    return this.form.situations.filter((situation) => situation.id !== this.editingSituationId);
+  }
+
+  get filteredSituations(): ServiceSituation[] {
+    const filter = this.situationFilterTerm.trim().toLowerCase();
+    const situations = [...this.form.situations].sort(
+      (first, second) => first.display_order - second.display_order
+    );
+
+    if (!filter) {
+      return situations;
+    }
+
+    return situations.filter((situation) => {
+      const content = [
+        situation.display_order,
+        situation.name,
+        this.previousSituationName(situation.previous_situation_id),
+        this.responsibleGroupName(situation.responsible_group_id),
+        this.documentTypeNames(situation.document_type_ids || []),
+        situation.is_initial ? 'inicial' : '',
+        situation.is_final ? 'final' : '',
+        situation.requires_opinion ? 'parecer' : '',
+        situation.requires_attachment ? 'anexo' : ''
+      ].join(' ');
+
+      return content.toLowerCase().includes(filter);
+    });
+  }
+
   loadReferenceData(): void {
     forkJoin({
       automationFunctions: this.automationFunctionService.list(),
@@ -109,7 +207,7 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
         this.groups = groups;
       },
       error: () => {
-        this.errorMessage = 'Nao foi possivel carregar categorias, documentos e grupos.';
+        this.errorMessage = 'Nao foi possivel carregar categorias, documentos e unidades.';
       }
     });
   }
@@ -286,16 +384,41 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addSituation(): void {
+  createSituation(): void {
+    this.editingSituationId = null;
+    this.situationDraft = {
+      ...this.createEmptySituationDraft(),
+      is_initial: !this.form.situations.length,
+      display_order: this.form.situations.length + 1
+    };
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.isSituationFormVisible = true;
+  }
+
+  editSituation(situation: ServiceSituation): void {
+    this.editingSituationId = situation.id;
+    this.situationDraft = {
+      ...situation,
+      document_type_ids: [...(situation.document_type_ids || [])]
+    };
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.isSituationFormVisible = true;
+  }
+
+  saveSituation(): void {
     if (!this.situationDraft.name.trim()) {
       this.errorMessage = 'Informe o nome da situacao.';
       return;
     }
 
-    const nextId = this.nextSituationId();
-    const shouldBeInitial = this.form.situations.length === 0 || this.situationDraft.is_initial;
-    const newSituation: ServiceSituation = {
-      id: nextId,
+    const otherSituations = this.form.situations.filter(
+      (situation) => situation.id !== this.editingSituationId
+    );
+    const shouldBeInitial = !otherSituations.length || this.situationDraft.is_initial;
+    const situation: ServiceSituation = {
+      id: this.editingSituationId || this.nextSituationId(),
       name: this.situationDraft.name.trim(),
       previous_situation_id: shouldBeInitial ? null : this.situationDraft.previous_situation_id,
       responsible_group_id: this.situationDraft.responsible_group_id || null,
@@ -304,19 +427,35 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
       requires_opinion: this.situationDraft.requires_opinion,
       requires_attachment: this.situationDraft.requires_attachment,
       document_type_ids: [...this.situationDraft.document_type_ids],
-      display_order: this.form.situations.length + 1
+      display_order: Number(this.situationDraft.display_order) || otherSituations.length + 1
     };
 
-    if (newSituation.is_initial) {
+    if (situation.is_initial) {
       this.form.situations = this.form.situations.map((situation) => ({
         ...situation,
         is_initial: false
       }));
     }
 
-    this.form.situations = [...this.form.situations, newSituation];
+    const existingSituation = this.form.situations.some((item) => item.id === situation.id);
+    this.form.situations = existingSituation
+      ? this.form.situations.map((item) => item.id === situation.id ? situation : item)
+      : [...this.form.situations, situation];
+    this.form.situations = this.form.situations
+      .sort((first, second) => first.display_order - second.display_order)
+      .map((item, index) => ({
+        ...item,
+        display_order: index + 1
+      }));
+    this.closeSituationForm();
+    this.errorMessage = '';
+  }
+
+  closeSituationForm(): void {
+    this.editingSituationId = null;
     this.situationDraft = this.createEmptySituationDraft();
     this.errorMessage = '';
+    this.isSituationFormVisible = false;
   }
 
   removeSituation(situation: ServiceSituation): void {
@@ -393,6 +532,9 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
   resetForm(): void {
     this.editingServiceId = null;
     this.form = this.createEmptyForm();
+    this.situationFilterTerm = '';
+    this.isSituationFormVisible = false;
+    this.editingSituationId = null;
     this.situationDraft = this.createEmptySituationDraft();
   }
 
@@ -446,6 +588,34 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
       .map((documentType) => documentType.name);
 
     return names.length ? names.join(', ') : '-';
+  }
+
+  documentTypesByIds(documentTypeIds: number[]): DocumentType[] {
+    return this.documentTypes.filter((documentType) => documentTypeIds.includes(documentType.id));
+  }
+
+  documentTypesByPurpose(purpose: DocumentPurpose): DocumentType[] {
+    const filter = this.documentPurposeFilters[purpose].trim().toLowerCase();
+    const items = this.documentTypes
+      .filter((documentType) => documentType.purpose === purpose)
+      .sort((first, second) => first.name.localeCompare(second.name, 'pt-BR'));
+
+    if (!filter) {
+      return items;
+    }
+
+    return items.filter((documentType) =>
+      [
+        documentType.name,
+        documentType.code,
+        documentType.description,
+        documentType.allowed_formats
+      ].join(' ').toLowerCase().includes(filter)
+    );
+  }
+
+  setActiveDocumentPurpose(purpose: DocumentPurpose): void {
+    this.activeDocumentPurpose = purpose;
   }
 
   eventLabel(eventName: string): string {

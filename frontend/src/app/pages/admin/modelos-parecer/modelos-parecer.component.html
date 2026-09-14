@@ -23,7 +23,7 @@
         <input
           id="opinions-filter"
           type="search"
-          placeholder="Filtrar por nome, slug, grupo ou status"
+          placeholder="Filtrar por nome, slug, unidade ou status"
           [ngModel]="filterTerm"
           (ngModelChange)="applyFilter($event)"
         >
@@ -65,7 +65,7 @@
           </ng-container>
 
           <ng-container matColumnDef="group">
-            <th mat-header-cell *matHeaderCellDef>Grupo padrão</th>
+            <th mat-header-cell *matHeaderCellDef>Unidade padrão</th>
             <td mat-cell *matCellDef="let template">{{ template.default_responsible_group_name || '-' }}</td>
           </ng-container>
 
@@ -136,9 +136,9 @@
       </label>
 
       <label for="opinion-group">
-        Grupo responsável padrão
+        Unidade responsável padrão
         <select id="opinion-group" name="defaultResponsibleGroup" [(ngModel)]="form.default_responsible_group_id">
-          <option [ngValue]="null">Sem grupo padrão</option>
+          <option [ngValue]="null">Sem unidade padrão</option>
           @for (group of groups; track group.id) {
             <option [ngValue]="group.id">{{ group.name }}</option>
           }

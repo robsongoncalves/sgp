@@ -3,7 +3,7 @@
     <mat-icon aria-hidden="true">inbox</mat-icon>
     <div>
       <h1>Caixa Postal</h1>
-      <p>Consulte solicitacoes recebidas conforme o grupo selecionado.</p>
+      <p>Consulte solicitacoes recebidas conforme a unidade selecionada.</p>
     </div>
   </div>
 </section>
@@ -90,7 +90,7 @@
   <form [formGroup]="filterForm" (ngSubmit)="consultar()">
     <div class="filters-grid">
       <mat-form-field appearance="fill">
-        <mat-label>Grupo</mat-label>
+        <mat-label>Unidade</mat-label>
         <mat-select formControlName="groupId" [disabled]="isLoadingGroups || !groups.length">
           @for (group of groups; track group.id) {
             <mat-option [value]="group.id">{{ group.name }}</mat-option>
@@ -129,7 +129,7 @@
       <span>Carregando solicitacoes</span>
     </div>
   } @else if (!groups.length) {
-    <p class="empty-state">O usuario atual nao faz parte de nenhum grupo ativo.</p>
+    <p class="empty-state">O usuario atual nao faz parte de nenhuma unidade ativa.</p>
   } @else {
     <div class="table-wrap">
       <table mat-table [dataSource]="dataSource" matSort>
@@ -192,7 +192,7 @@
         <tr mat-row *matRowDef="let request; columns: displayedColumns;" class="data-row"></tr>
         <tr class="mat-row empty-row" *matNoDataRow>
           <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
-            Nenhuma solicitacao encontrada para o grupo selecionado.
+            Nenhuma solicitacao encontrada para a unidade selecionada.
           </td>
         </tr>
       </table>

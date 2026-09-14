@@ -3,7 +3,7 @@
     <mat-icon aria-hidden="true">person</mat-icon>
     <div>
       <h1>Usuarios</h1>
-      <p>Cadastro base para autenticacao LDAP futura e vinculo aos grupos do sistema.</p>
+      <p>Cadastro base para autenticacao LDAP futura e vinculo as unidades do sistema.</p>
     </div>
   </div>
 
@@ -198,26 +198,26 @@
       Usuario ativo
     </mat-checkbox>
 
-    <section class="groups-section" aria-label="Grupos associados ao usuario">
+    <section class="groups-section" aria-label="Unidades associadas ao usuario">
       <div class="section-heading">
-        <h3>Grupos do usuario</h3>
+        <h3>Unidades do usuario</h3>
         @if (isLoadingGroups) {
-          <span>Carregando grupos</span>
+          <span>Carregando unidades</span>
         }
       </div>
 
       @if (!isEditing) {
-        <p class="empty-inline">Salve o usuario para associar grupos pelo cadastro de Grupos de Usuarios.</p>
+        <p class="empty-inline">Salve o usuario para associar unidades pelo cadastro de Unidades.</p>
       } @else if (isLoadingGroups) {
         <div class="loading-state compact">
           <mat-spinner diameter="24" />
-          <span>Carregando grupos do usuario</span>
+          <span>Carregando unidades do usuario</span>
         </div>
       } @else if (selectedUserGroups.length) {
         <div class="table-wrap">
           <table mat-table [dataSource]="selectedUserGroups" class="groups-table">
             <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef>Grupo</th>
+              <th mat-header-cell *matHeaderCellDef>Unidade</th>
               <td mat-cell *matCellDef="let group">
                 <strong>{{ group.name }}</strong>
               </td>
@@ -242,7 +242,7 @@
           </table>
         </div>
       } @else {
-        <p class="empty-inline">Usuario sem grupos associados.</p>
+        <p class="empty-inline">Usuario sem unidades associadas.</p>
       }
     </section>
 

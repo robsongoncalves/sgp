@@ -23,7 +23,7 @@
         <input
           id="categories-filter"
           type="search"
-          placeholder="Filtrar por nome, descricao, ordem ou status"
+          placeholder="Filtrar por nome, categoria pai, descricao, menu, ordem ou status"
           [ngModel]="filterTerm"
           (ngModelChange)="applyFilter($event)"
         >
@@ -59,6 +59,11 @@
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
             <td mat-cell *matCellDef="let category">{{ category.name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="parent_category_name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoria pai</th>
+            <td mat-cell *matCellDef="let category">{{ category.parent_category_name || '-' }}</td>
           </ng-container>
 
           <ng-container matColumnDef="description">
@@ -120,6 +125,20 @@
       >
     </label>
 
+    <label for="category-parent">
+      Categoria pai
+      <select
+        id="category-parent"
+        name="parentCategoryId"
+        [(ngModel)]="form.parent_category_id"
+      >
+        <option [ngValue]="null">Nenhuma categoria pai</option>
+        @for (category of availableParentCategories; track category.id) {
+          <option [ngValue]="category.id">{{ category.name }}</option>
+        }
+      </select>
+    </label>
+
     <label for="category-description">
       Descricao
       <textarea
@@ -144,6 +163,10 @@
 
     <mat-checkbox name="active" [(ngModel)]="form.active">
       Categoria ativa
+    </mat-checkbox>
+
+    <mat-checkbox name="showOnMainMenu" [(ngModel)]="form.show_on_main_menu">
+      Mostrar no menu principal
     </mat-checkbox>
 
     @if (errorMessage) {

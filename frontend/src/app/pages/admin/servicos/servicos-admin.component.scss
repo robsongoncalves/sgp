@@ -77,6 +77,13 @@ h3 {
   border-bottom: 0;
 }
 
+.section-table-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .form-grid,
 .situation-editor,
 .hook-editor {
@@ -140,6 +147,98 @@ select:disabled {
   gap: 8px 14px;
 }
 
+.association-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.association-panel {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #d8dde6;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.association-panel header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.association-panel header span {
+  color: #5f6b7a;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.association-filter {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #aab3c2;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #5f6b7a;
+  font-weight: 400;
+}
+
+.association-filter input {
+  height: auto;
+  padding: 0;
+  border: 0;
+}
+
+.association-filter input:focus {
+  box-shadow: none;
+}
+
+.association-list {
+  display: grid;
+  max-height: 300px;
+  overflow: auto;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #edf0f5;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.association-list mat-checkbox {
+  min-width: 0;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.association-list mat-checkbox:hover {
+  background: #f5f8fd;
+}
+
+.association-list span,
+.association-list small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.association-list span {
+  color: #243447;
+  font-weight: 600;
+}
+
+.association-list small {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
 .situation-options {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -155,26 +254,144 @@ select:disabled {
   background: #f8fafc;
 }
 
-.document-check-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px 12px;
-}
-
-.document-check-list {
-  display: grid;
-  gap: 2px;
-  min-width: 280px;
-  max-height: 184px;
-  overflow: auto;
-  padding: 6px;
+.document-purpose-tabs {
+  min-width: 0;
   border: 1px solid #edf0f5;
   border-radius: 6px;
   background: #ffffff;
 }
 
+.document-tab-bar {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.document-tab-bar button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 2px;
+  padding: 0 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #4b5563;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.document-tab-bar button:hover {
+  background: #f5f8fd;
+}
+
+.document-tab-bar button.active {
+  border-bottom-color: #0b57d0;
+  color: #0b57d0;
+}
+
+.document-tab-bar button.active .tab-count {
+  background: #e8f0fe;
+  color: #0b57d0;
+}
+
+.tab-count {
+  display: inline-flex;
+  min-width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #eef1f5;
+  color: #5f6b7a;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.document-purpose-panel {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.document-check-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 12px;
+  max-height: 260px;
+  overflow: auto;
+  padding: 4px;
+}
+
+.document-check-grid mat-checkbox {
+  min-width: 0;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.document-check-grid mat-checkbox:hover {
+  background: #f5f8fd;
+}
+
+.document-check-grid span,
+.document-check-grid small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.document-check-grid span {
+  color: #243447;
+  font-weight: 600;
+}
+
+.document-check-grid small {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
 .situation-document-cell {
   min-width: 320px;
+}
+
+.document-pill-list {
+  display: flex;
+  max-width: 460px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.document-pill {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: #eef4ff;
+  color: #1f4597;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.document-pill mat-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+
+.document-pill span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .flag-options {
@@ -286,6 +503,10 @@ td small {
   margin-bottom: 18px;
 }
 
+.table-toolbar.compact {
+  margin-bottom: 0;
+}
+
 .table-filter {
   display: flex;
   max-width: 560px;
@@ -371,6 +592,7 @@ td small {
   .form-grid,
   .situation-editor,
   .hook-editor,
+  .association-grid,
   .check-grid,
   .document-check-grid {
     grid-template-columns: 1fr;

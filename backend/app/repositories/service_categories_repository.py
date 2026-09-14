@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from app.extensions import db
 from app.models import ServiceCategory
-from app.repositories.utils import bool_value
+from app.repositories.utils import bool_value, optional_int
 
 
 class ServiceCategoriesRepository:
@@ -28,7 +28,9 @@ class ServiceCategoriesRepository:
         category = ServiceCategory(
             name=name,
             description=str(data.get("description", "")).strip(),
+            parent_category_id=self._parent_category_id(data),
             display_order=self._parse_display_order(data),
+            show_on_main_menu=bool_value(data.get("show_on_main_menu", False)),
             active=bool_value(data.get("active", True)),
         )
         db.session.add(category)
@@ -50,9 +52,16 @@ class ServiceCategoriesRepository:
         if self._name_exists(name, ignore_category_id=category_id):
             return None, "Ja existe uma categoria cadastrada com este nome."
 
+        parent_category_id = self._parent_category_id(data)
+        hierarchy_error = self._validate_hierarchy(category, parent_category_id)
+        if hierarchy_error:
+            return None, hierarchy_error
+
         category.name = name
         category.description = str(data.get("description", "")).strip()
+        category.parent_category_id = parent_category_id
         category.display_order = self._parse_display_order(data)
+        category.show_on_main_menu = bool_value(data.get("show_on_main_menu", False))
         category.active = bool_value(data.get("active", True))
         db.session.commit()
 
@@ -73,6 +82,10 @@ class ServiceCategoriesRepository:
 
         if not name:
             return "Informe o nome da categoria."
+
+        parent_category_id = self._parent_category_id(data)
+        if parent_category_id is not None and db.session.get(ServiceCategory, parent_category_id) is None:
+            return "Categoria pai nao encontrada."
 
         try:
             display_order = self._parse_display_order(data)
@@ -97,12 +110,42 @@ class ServiceCategoriesRepository:
             "id": category.id,
             "name": category.name,
             "description": category.description,
+            "parent_category_id": category.parent_category_id,
+            "parent_category_name": category.parent.name if category.parent else "",
             "display_order": category.display_order,
+            "show_on_main_menu": category.show_on_main_menu,
             "active": category.active,
         }
 
     def _parse_display_order(self, data: dict) -> int:
         return int(data.get("display_order", 0))
+
+    def _parent_category_id(self, data: dict) -> int | None:
+        return optional_int(data.get("parent_category_id"))
+
+    def _validate_hierarchy(
+        self,
+        category: ServiceCategory,
+        parent_category_id: int | None,
+    ) -> str | None:
+        if parent_category_id is None:
+            return None
+
+        if parent_category_id == category.id:
+            return "Uma categoria nao pode ser filha dela mesma."
+
+        current = db.session.get(ServiceCategory, parent_category_id)
+        visited_category_ids: set[int] = set()
+
+        while current is not None:
+            if current.id == category.id:
+                return "Hierarquia invalida: a categoria pai escolhida criaria um ciclo."
+
+            if current.id in visited_category_ids:
+                return "Hierarquia invalida: foi detectado um ciclo entre categorias."
+
+            visited_category_ids.add(current.id)
+            current = current.parent
 
 
 service_categories_repository = ServiceCategoriesRepository()

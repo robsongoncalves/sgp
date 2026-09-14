@@ -6,7 +6,9 @@ Este documento registra as primeiras decisoes de dominio para o Sistema de Gesta
 
 O sistema tem como objetivo automatizar servicos administrativos, academicos e de gestao de pessoas da universidade.
 
-Usuarios poderao acessar servicos disponiveis, iniciar solicitacoes individuais e acompanhar seus servicos. Grupos responsaveis poderao receber, analisar, tramitar e finalizar solicitacoes conforme regras de permissao e fluxo definidas para cada servico.
+Usuarios poderao acessar servicos disponiveis, iniciar solicitacoes individuais e acompanhar seus servicos. Unidades responsaveis poderao receber, analisar, tramitar e finalizar solicitacoes conforme regras de permissao e fluxo definidas para cada servico.
+
+Nota de arquitetura: o conceito inicialmente chamado de "Grupo de Usuarios" passa a ser tratado na interface e no dominio como "Unidade". Uma unidade representa setores, divisoes, comissoes, campi ou grupos funcionais, pode possuir unidade pai e unidades filhas, e continua sendo usada para associar usuarios, permissoes, responsabilidades por situacao e caixa postal.
 
 ## Perfis e Papeis
 
@@ -17,7 +19,7 @@ Usuario com permissao total sobre o sistema.
 Pode:
 
 - gerenciar usuarios;
-- gerenciar grupos de usuarios;
+- gerenciar unidades;
 - gerenciar categorias de servicos;
 - gerenciar servicoss;
 - gerenciar situacoes/status dentro de cada servico;
@@ -36,9 +38,9 @@ Pode:
 - associar servicoss a categorias;
 - definir situacoes permitidas dentro do servico;
 - configurar transicoes do fluxo dentro do servico;
-- associar grupos de usuarios a categorias e servicoss.
+- associar unidades a categorias e servicoss.
 
-A principio, este papel configura a estrutura dos servicos. A atuacao em uma solicitacao real deve depender tambem das permissoes do grupo responsavel pela etapa.
+A principio, este papel configura a estrutura dos servicos. A atuacao em uma solicitacao real deve depender tambem das permissoes da unidade responsavel pela etapa.
 
 ### Usuario Solicitante
 
@@ -52,26 +54,26 @@ Pode:
 - cancelar uma solicitacao quando ela ainda nao tiver sido tramitada;
 - responder pendencias quando o fluxo permitir.
 
-### Membro de Grupo
+### Membro de Unidade
 
-Usuario associado a um grupo responsavel por alguma etapa de servico.
+Usuario associado a uma unidade responsavel por alguma etapa de servico.
 
 Pode:
 
-- visualizar solicitacoes recebidas pelo grupo, quando tiver permissao;
-- atuar em servicos atribuidos ao grupo;
+- visualizar solicitacoes recebidas pela unidade, quando tiver permissao;
+- atuar em servicos atribuidos a unidade;
 - tramitar servicos conforme transicoes permitidas.
 
-### Administrador de Grupo
+### Administrador de Unidade
 
-Usuario membro de um grupo com permissao administrativa dentro daquele grupo.
+Usuario membro de uma unidade com permissao administrativa dentro daquela unidade.
 
 Pode:
 
-- visualizar todos os servicos relacionados ao grupo;
-- acompanhar servicos recebidos pelo grupo;
+- visualizar todos os servicos relacionados a unidade;
+- acompanhar servicos recebidos pela unidade;
 - eventualmente gerenciar membros ou distribuicoes internas, caso essa regra seja implementada;
-- atuar conforme permissoes especificas do grupo por categoria ou servico.
+- atuar conforme permissoes especificas da unidade por categoria ou servico.
 
 ## Conceitos Principais
 
@@ -170,7 +172,7 @@ Status geral sugerido:
 
 ### Categoria de Servico
 
-Organiza servicos por grandes areas.
+Organiza servicos por grandes areas. Categorias podem possuir uma categoria pai e categorias filhas, permitindo estruturar o catalogo por coordenadorias, divisoes, setores ou temas.
 
 Exemplos:
 
@@ -183,8 +185,12 @@ Campos sugeridos:
 
 - nome;
 - descricao;
+- categoria pai;
 - ativo;
+- mostrar no menu principal;
 - ordem de exibicao.
+
+Quando uma categoria estiver marcada para aparecer no menu principal, o sistema deve criar uma entrada de navegacao para ela. Ao acessar essa entrada, a tela deve listar suas categorias filhas e os servicos vinculados a cada filha, considerando tambem os servicos de categorias descendentes.
 
 ### Situacao do Servico
 
@@ -267,30 +273,32 @@ Sugestao de interface:
 
 Esse modelo e melhor que apenas uma lista linear, porque deixa espaco para fluxos com bifurcacoes sem complicar a primeira implementacao.
 
-### Grupo de Usuarios
+### Unidade
 
-Agrupa usuarios para permissao, recebimento e tramitacao de servicos.
+Agrupa usuarios para permissao, recebimento e tramitacao de servicos. Pode representar uma unidade administrativa real, uma comissao, um campus ou um grupo funcional. Uma unidade pode possuir uma unidade pai, permitindo hierarquias como coordenadoria, divisao e setor.
 
 Campos sugeridos:
 
 - nome;
 - descricao;
+- unidade pai;
+- chefia;
 - ativo.
 
-### Membro de Grupo
+### Membro de Unidade
 
-Relaciona usuario e grupo.
+Relaciona usuario e unidade.
 
 Campos sugeridos:
 
 - usuario;
-- grupo;
-- papel no grupo.
+- unidade;
+- papel na unidade.
 
 Papeis sugeridos:
 
 - membro;
-- administrador do grupo.
+- administrador da unidade.
 
 ### Usuario
 

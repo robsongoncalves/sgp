@@ -38,7 +38,7 @@ def update_user_group(group_id: int):
     )
 
     if error:
-        status_code = 404 if error == "Grupo nao encontrado." else 400
+        status_code = 404 if error == "Unidade nao encontrada." else 400
         return jsonify({"message": error}), status_code
 
     return jsonify(group)
@@ -47,7 +47,7 @@ def update_user_group(group_id: int):
 @user_groups_bp.delete("/user-groups/<int:group_id>")
 def delete_user_group(group_id: int):
     if not user_groups_repository.delete(group_id):
-        return jsonify({"message": "Grupo nao encontrado."}), 404
+        return jsonify({"message": "Unidade nao encontrada."}), 404
 
     return "", 204
 
@@ -57,7 +57,7 @@ def list_user_group_members(group_id: int):
     user_ids = user_groups_repository.get_member_user_ids(group_id)
 
     if user_ids is None:
-        return jsonify({"message": "Grupo nao encontrado."}), 404
+        return jsonify({"message": "Unidade nao encontrada."}), 404
 
     return jsonify({"user_ids": user_ids})
 
@@ -73,6 +73,6 @@ def update_user_group_members(group_id: int):
     updated_user_ids = user_groups_repository.set_member_user_ids(group_id, user_ids)
 
     if updated_user_ids is None:
-        return jsonify({"message": "Grupo nao encontrado."}), 404
+        return jsonify({"message": "Unidade nao encontrada."}), 404
 
     return jsonify({"user_ids": updated_user_ids})

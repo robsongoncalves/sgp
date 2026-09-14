@@ -39,11 +39,12 @@ class UserGroupsRepository:
 
         name = str(data["name"]).strip()
         if self._name_exists(name):
-            return None, "Ja existe um grupo cadastrado com este nome."
+            return None, "Ja existe uma unidade cadastrada com este nome."
 
         group = UserGroup(
             name=name,
             description=str(data.get("description", "")).strip(),
+            parent_group_id=self._parent_group_id(data),
             manager_user_id=self._manager_user_id(data),
             active=bool_value(data.get("active", True)),
         )
@@ -60,14 +61,20 @@ class UserGroupsRepository:
         group = self.get(group_id)
 
         if group is None:
-            return None, "Grupo nao encontrado."
+            return None, "Unidade nao encontrada."
 
         name = str(data["name"]).strip()
         if self._name_exists(name, ignore_group_id=group_id):
-            return None, "Ja existe um grupo cadastrado com este nome."
+            return None, "Ja existe uma unidade cadastrada com este nome."
+
+        parent_group_id = self._parent_group_id(data)
+        hierarchy_error = self._validate_hierarchy(group, parent_group_id)
+        if hierarchy_error:
+            return None, hierarchy_error
 
         group.name = name
         group.description = str(data.get("description", "")).strip()
+        group.parent_group_id = parent_group_id
         group.manager_user_id = self._manager_user_id(data)
         group.active = bool_value(data.get("active", True))
         db.session.commit()
@@ -130,7 +137,11 @@ class UserGroupsRepository:
         name = str(data.get("name", "")).strip()
 
         if not name:
-            return "Informe o nome do grupo."
+            return "Informe o nome da unidade."
+
+        parent_group_id = self._parent_group_id(data)
+        if parent_group_id is not None and db.session.get(UserGroup, parent_group_id) is None:
+            return "Unidade pai nao encontrada."
 
         manager_user_id = self._manager_user_id(data)
         if manager_user_id is not None and db.session.get(User, manager_user_id) is None:
@@ -151,6 +162,8 @@ class UserGroupsRepository:
             "id": group.id,
             "name": group.name,
             "description": group.description,
+            "parent_group_id": group.parent_group_id,
+            "parent_group_name": group.parent.name if group.parent else "",
             "manager_user_id": group.manager_user_id,
             "manager_name": group.manager.name if group.manager else "",
             "manager_email": group.manager.email if group.manager else "",
@@ -159,6 +172,29 @@ class UserGroupsRepository:
 
     def _manager_user_id(self, data: dict) -> int | None:
         return optional_int(data.get("manager_user_id"))
+
+    def _parent_group_id(self, data: dict) -> int | None:
+        return optional_int(data.get("parent_group_id"))
+
+    def _validate_hierarchy(self, group: UserGroup, parent_group_id: int | None) -> str | None:
+        if parent_group_id is None:
+            return None
+
+        if parent_group_id == group.id:
+            return "Uma unidade nao pode ser filha dela mesma."
+
+        current = db.session.get(UserGroup, parent_group_id)
+        visited_group_ids: set[int] = set()
+
+        while current is not None:
+            if current.id == group.id:
+                return "Hierarquia invalida: a unidade pai escolhida criaria um ciclo."
+
+            if current.id in visited_group_ids:
+                return "Hierarquia invalida: foi detectado um ciclo entre unidades."
+
+            visited_group_ids.add(current.id)
+            current = current.parent
 
 
 user_groups_repository = UserGroupsRepository()

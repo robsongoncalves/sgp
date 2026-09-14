@@ -19,7 +19,7 @@ OPENAPI_SPEC = {
         {"name": "Autenticacao"},
         {"name": "Catalogo Publico"},
         {"name": "Usuarios"},
-        {"name": "Grupos de Usuarios"},
+        {"name": "Unidades"},
         {"name": "Categorias de Servico"},
         {"name": "Tipos de Documentos"},
         {"name": "Formularios"},
@@ -86,15 +86,15 @@ OPENAPI_SPEC = {
         "/users/{user_id}/groups": {
             "get": {
                 "tags": ["Usuarios"],
-                "summary": "Lista grupos associados ao usuario",
+                "summary": "Lista unidades associadas ao usuario",
                 "parameters": [{"name": "user_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
-                "responses": {"200": {"description": "Grupos do usuario retornados"}},
+                "responses": {"200": {"description": "Unidades do usuario retornadas"}},
             },
         },
         "/user-groups": {
             "get": {
-                "tags": ["Grupos de Usuarios"],
-                "summary": "Lista grupos de usuarios",
+                "tags": ["Unidades"],
+                "summary": "Lista unidades",
                 "parameters": [
                     {
                         "name": "user_id",
@@ -103,38 +103,38 @@ OPENAPI_SPEC = {
                         "schema": {"type": "integer"},
                     }
                 ],
-                "responses": {"200": {"description": "Grupos retornados"}},
+                "responses": {"200": {"description": "Unidades retornadas"}},
             },
             "post": {
-                "tags": ["Grupos de Usuarios"],
-                "summary": "Cria grupo de usuarios",
-                "responses": {"201": {"description": "Grupo criado"}},
+                "tags": ["Unidades"],
+                "summary": "Cria unidade",
+                "responses": {"201": {"description": "Unidade criada"}},
             },
         },
         "/user-groups/{group_id}": {
             "put": {
-                "tags": ["Grupos de Usuarios"],
-                "summary": "Atualiza grupo de usuarios",
+                "tags": ["Unidades"],
+                "summary": "Atualiza unidade",
                 "parameters": [{"name": "group_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
-                "responses": {"200": {"description": "Grupo atualizado"}},
+                "responses": {"200": {"description": "Unidade atualizada"}},
             },
             "delete": {
-                "tags": ["Grupos de Usuarios"],
-                "summary": "Remove grupo de usuarios",
+                "tags": ["Unidades"],
+                "summary": "Remove unidade",
                 "parameters": [{"name": "group_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
-                "responses": {"204": {"description": "Grupo removido"}},
+                "responses": {"204": {"description": "Unidade removida"}},
             },
         },
         "/user-groups/{group_id}/members": {
             "get": {
-                "tags": ["Grupos de Usuarios"],
-                "summary": "Lista membros do grupo",
+                "tags": ["Unidades"],
+                "summary": "Lista membros da unidade",
                 "parameters": [{"name": "group_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
                 "responses": {"200": {"description": "Membros retornados"}},
             },
             "put": {
-                "tags": ["Grupos de Usuarios"],
-                "summary": "Atualiza membros do grupo",
+                "tags": ["Unidades"],
+                "summary": "Atualiza membros da unidade",
                 "parameters": [{"name": "group_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
                 "responses": {"200": {"description": "Membros atualizados"}},
             },
@@ -308,6 +308,23 @@ OPENAPI_SPEC = {
                 "summary": "Remove servico",
                 "parameters": [{"name": "service_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
                 "responses": {"204": {"description": "Servico removido"}},
+            },
+        },
+        "/services/{service_id}/ratings": {
+            "get": {
+                "tags": ["Servicos"],
+                "summary": "Consulta resumo de avaliacoes do servico",
+                "parameters": [
+                    {"name": "service_id", "in": "path", "required": True, "schema": {"type": "integer"}},
+                    {"name": "user_id", "in": "query", "required": False, "schema": {"type": "integer"}},
+                ],
+                "responses": {"200": {"description": "Avaliacoes retornadas"}},
+            },
+            "post": {
+                "tags": ["Servicos"],
+                "summary": "Cria ou atualiza avaliacao do usuario para o servico",
+                "parameters": [{"name": "service_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"200": {"description": "Avaliacao salva"}},
             },
         },
         "/service-requests": {

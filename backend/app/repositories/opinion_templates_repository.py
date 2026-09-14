@@ -98,7 +98,7 @@ class OpinionTemplatesRepository:
 
         group_id = data["default_responsible_group_id"]
         if group_id and db.session.get(UserGroup, group_id) is None:
-            return "Grupo responsavel padrao nao encontrado."
+            return "Unidade responsavel padrao nao encontrada."
 
         return None
 

@@ -94,7 +94,7 @@ export class CaixaPostalComponent implements OnInit, AfterViewInit {
         }
       },
       error: () => {
-        this.errorMessage = 'Nao foi possivel carregar os grupos do usuario.';
+        this.errorMessage = 'Nao foi possivel carregar as unidades do usuario.';
         this.isLoadingGroups = false;
       }
     });

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { ServiceRating, ServiceRatingPayload, ServiceRatingSummary } from '../models/service-rating';
 import { Service, ServicePayload } from '../models/service';
 
 @Injectable({
@@ -26,5 +27,15 @@ export class ServiceService {
 
   delete(serviceId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${serviceId}`);
+  }
+
+  getRatings(serviceId: number, userId?: number): Observable<ServiceRatingSummary> {
+    const params = userId ? { user_id: userId } : undefined;
+
+    return this.http.get<ServiceRatingSummary>(`${this.apiUrl}/${serviceId}/ratings`, { params });
+  }
+
+  saveRating(serviceId: number, payload: ServiceRatingPayload): Observable<ServiceRating> {
+    return this.http.post<ServiceRating>(`${this.apiUrl}/${serviceId}/ratings`, payload);
   }
 }

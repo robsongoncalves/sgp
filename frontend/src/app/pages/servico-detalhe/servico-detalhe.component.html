@@ -4,16 +4,21 @@
   } @else if (errorMessage && !service) {
     <p class="state-message error-message">{{ errorMessage }}</p>
   } @else if (service) {
+    <a class="back-link top-link" routerLink="/">
+      <mat-icon aria-hidden="true">chevron_left</mat-icon>
+      Voltar para servicos
+    </a>
+
     <div class="service-heading">
       <div class="service-main">
         <h1>{{ service.name }}</h1>
 
         <div class="rating-line" aria-label="Avaliacao do servico">
           <span>Avaliacao:</span>
-          <strong>{{ rating }}</strong>
+          <strong>{{ displayRating }}</strong>
           <span class="stars" aria-hidden="true">
             @for (star of starOptions; track star) {
-              <mat-icon>{{ star < 5 ? 'star' : 'star_half' }}</mat-icon>
+              <mat-icon>{{ starIcon(star, averageRating) }}</mat-icon>
             }
           </span>
           <span>({{ ratingCount }})</span>
@@ -84,6 +89,58 @@
       </section>
     }
 
+    <section class="service-rating-panel" aria-label="Avaliar servico">
+      <div class="rating-form">
+        <h2>Avalie este serviço</h2>
+
+        <div class="rating-picker" aria-label="Selecionar avaliacao">
+          @for (star of starOptions; track star) {
+            <button
+              type="button"
+              class="star-button"
+              [class.active]="star <= activeRating"
+              [attr.aria-label]="'Avaliar com ' + star + ' estrela(s)'"
+              (mouseenter)="hoveredRating = star"
+              (mouseleave)="hoveredRating = 0"
+              (focus)="hoveredRating = star"
+              (blur)="hoveredRating = 0"
+              (click)="setRating(star)"
+            >
+              <mat-icon aria-hidden="true">{{ star <= activeRating ? 'star' : 'star_border' }}</mat-icon>
+            </button>
+          }
+        </div>
+
+        <label for="rating-comment">
+          Comentário
+          <textarea
+            id="rating-comment"
+            name="ratingComment"
+            rows="3"
+            maxlength="1000"
+            [(ngModel)]="ratingComment"
+          ></textarea>
+        </label>
+
+        <div class="rating-actions">
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            [disabled]="isSavingRating"
+            (click)="saveRating()"
+          >
+            <mat-icon aria-hidden="true">star</mat-icon>
+            {{ isSavingRating ? 'Salvando' : 'Enviar avaliação' }}
+          </button>
+
+          @if (ratingMessage) {
+            <span class="rating-message">{{ ratingMessage }}</span>
+          }
+        </div>
+      </div>
+    </section>
+
     <footer class="service-meta">
       <span>
         Ultima Modificacao:
@@ -103,30 +160,37 @@
           </a>
         }
 
-        <button class="icon-link" type="button" aria-label="Imprimir pagina">
+        <button class="icon-link" type="button" aria-label="Imprimir pagina" (click)="printPage()">
           <mat-icon aria-hidden="true">print</mat-icon>
-        </button>
-
-        <span>Compartilhe:</span>
-        <button class="icon-link" type="button" aria-label="Compartilhar por WhatsApp">
-          <mat-icon aria-hidden="true">chat</mat-icon>
-        </button>
-        <button class="icon-link text-icon" type="button" aria-label="Compartilhar no Facebook">f</button>
-        <button class="icon-link text-icon" type="button" aria-label="Compartilhar no X">X</button>
-        <button class="icon-link text-icon" type="button" aria-label="Compartilhar no LinkedIn">in</button>
-        <button class="icon-link" type="button" aria-label="Copiar link">
-          <mat-icon aria-hidden="true">link</mat-icon>
         </button>
       </div>
     </footer>
+
+    @if (comments.length) {
+      <section class="comments-section" aria-label="Ultimos comentarios do servico">
+        <h2>Últimos comentários</h2>
+
+        <div class="comments-list">
+          @for (comment of comments; track comment.id) {
+            <article class="comment-item">
+              <header>
+                <strong>{{ comment.user_name }}</strong>
+                <span class="comment-stars" [attr.aria-label]="'Nota ' + comment.rating">
+                  @for (star of starOptions; track star) {
+                    <mat-icon aria-hidden="true">{{ star <= comment.rating ? 'star' : 'star_border' }}</mat-icon>
+                  }
+                </span>
+              </header>
+              <p>{{ comment.comment }}</p>
+            </article>
+          }
+        </div>
+      </section>
+    }
 
     @if (errorMessage) {
       <p class="state-message error-message">{{ errorMessage }}</p>
     }
 
-    <a class="back-link" routerLink="/">
-      <mat-icon aria-hidden="true">chevron_left</mat-icon>
-      Voltar para servicos
-    </a>
   }
 </section>

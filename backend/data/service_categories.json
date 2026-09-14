@@ -1,65 +1,110 @@
 [
   {
     "id": 1,
-    "name": "Setor de Normas e Políticas de Pessoal (SNPP)",
-    "description": "Normas, políticas de pessoal, concessões e licenças legais.",
+    "name": "Setor de Normas e Politicas de Pessoal (SNPP)",
+    "description": "Normas, politicas de pessoal, concessoes e licencas legais.",
+    "parent_category_id": 12,
     "display_order": 1,
+    "show_on_main_menu": false,
     "active": true
   },
   {
     "id": 2,
-    "name": "Escola de Formação de Servidores (EServ)",
-    "description": "Capacitação, qualificação e desenvolvimento de servidores.",
+    "name": "Escola de Formacao de Servidores (EServ)",
+    "description": "Capacitacao, qualificacao e desenvolvimento de servidores.",
+    "parent_category_id": 12,
     "display_order": 2,
+    "show_on_main_menu": false,
+    "active": true
+  },
+  {
+    "id": 10,
+    "name": "Coordenadoria de Administracao de Pessoal (CAP)",
+    "description": "Servicos da Coordenadoria de Administracao de Pessoal.",
+    "parent_category_id": 12,
+    "display_order": 3,
+    "show_on_main_menu": false,
+    "active": true
+  },
+  {
+    "id": 11,
+    "name": "Coordenadoria de Qualidade de Vida e Selecao de Pessoal (CQVSP)",
+    "description": "Servicos da Coordenadoria de Qualidade de Vida e Selecao de Pessoal.",
+    "parent_category_id": 12,
+    "display_order": 4,
+    "show_on_main_menu": false,
+    "active": true
+  },
+  {
+    "id": 12,
+    "name": "PROGEPE",
+    "description": "Pro-Reitoria de Gestao de Pessoas.",
+    "parent_category_id": null,
+    "display_order": 5,
+    "show_on_main_menu": true,
     "active": true
   },
   {
     "id": 3,
-    "name": "CAP - Divisão de Aposentadoria e Pensão (DAP)",
-    "description": "Aposentadoria, pensão, averbação e certidões previdenciárias.",
-    "display_order": 3,
+    "name": "CAP - Divisao de Aposentadoria e Pensao (DAP)",
+    "description": "Aposentadoria, pensao, averbacao e certidoes previdenciarias.",
+    "parent_category_id": 10,
+    "display_order": 6,
+    "show_on_main_menu": false,
     "active": true
   },
   {
     "id": 4,
-    "name": "CAP - Divisão de Concessão de Pagamentos (DCP)",
-    "description": "Pagamentos, auxílios, adicionais, benefícios e descontos.",
-    "display_order": 4,
+    "name": "CAP - Divisao de Concessao de Pagamentos (DCP)",
+    "description": "Pagamentos, auxilios, adicionais, beneficios e descontos.",
+    "parent_category_id": 10,
+    "display_order": 7,
+    "show_on_main_menu": false,
     "active": true
   },
   {
     "id": 5,
-    "name": "CAP - Divisão de Registros e Movimentações Funcionais (DRMF)",
-    "description": "Registros funcionais, cadastro, frequência, férias e documentos funcionais.",
-    "display_order": 5,
+    "name": "CAP - Divisao de Registros e Movimentacoes Funcionais (DRMF)",
+    "description": "Registros funcionais, cadastro, frequencia, ferias e documentos funcionais.",
+    "parent_category_id": 10,
+    "display_order": 8,
+    "show_on_main_menu": false,
     "active": true
   },
   {
     "id": 6,
-    "name": "CQVSP - Divisão de Acompanhamento Funcional, Avaliação e Afastamentos (DAFA)",
-    "description": "Acompanhamento funcional, avaliação, afastamentos e progressões.",
-    "display_order": 6,
+    "name": "CQVSP - Divisao de Acompanhamento Funcional, Avaliacao e Afastamentos (DAFA)",
+    "description": "Acompanhamento funcional, avaliacao, afastamentos e progressoes.",
+    "parent_category_id": 11,
+    "display_order": 9,
+    "show_on_main_menu": false,
     "active": true
   },
   {
     "id": 7,
-    "name": "CQVSP - Divisão de Concursos, Movimentações e Seleção de Pessoal (DCSP)",
-    "description": "Concursos, processos seletivos, remoções, cessões e movimentações.",
-    "display_order": 7,
+    "name": "CQVSP - Divisao de Concursos, Movimentacoes e Selecao de Pessoal (DCSP)",
+    "description": "Concursos, processos seletivos, remocoes, cessoes e movimentacoes.",
+    "parent_category_id": 11,
+    "display_order": 10,
+    "show_on_main_menu": false,
     "active": true
   },
   {
     "id": 8,
-    "name": "CQVSP - Divisão de Atenção à Saúde e Segurança do Trabalho (DASST)",
-    "description": "Saúde ocupacional, segurança do trabalho, adicionais ocupacionais e PPP.",
-    "display_order": 8,
+    "name": "CQVSP - Divisao de Atencao a Saude e Seguranca do Trabalho (DASST)",
+    "description": "Saude ocupacional, seguranca do trabalho, adicionais ocupacionais e PPP.",
+    "parent_category_id": 11,
+    "display_order": 11,
+    "show_on_main_menu": false,
     "active": true
   },
   {
     "id": 9,
-    "name": "CQVSP - Divisão de Perícias (DP)",
-    "description": "Perícias oficiais e licenças de saúde com avaliação pericial.",
-    "display_order": 9,
+    "name": "CQVSP - Divisao de Pericias (DP)",
+    "description": "Pericias oficiais e licencas de saude com avaliacao pericial.",
+    "parent_category_id": 11,
+    "display_order": 12,
+    "show_on_main_menu": false,
     "active": true
   }
 ]

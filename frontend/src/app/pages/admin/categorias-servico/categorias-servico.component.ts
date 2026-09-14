@@ -33,7 +33,7 @@ import { ServiceCategoryService } from '../../../core/services/service-category.
 export class CategoriasServicoComponent implements OnInit, AfterViewInit {
   categories: ServiceCategory[] = [];
   dataSource = new MatTableDataSource<ServiceCategory>([]);
-  displayedColumns = ['display_order', 'name', 'description', 'actions'];
+  displayedColumns = ['display_order', 'name', 'parent_category_name', 'description', 'actions'];
   isFormVisible = false;
   filterTerm = '';
   editingCategoryId: number | null = null;
@@ -59,6 +59,10 @@ export class CategoriasServicoComponent implements OnInit, AfterViewInit {
 
   get isEditing(): boolean {
     return this.editingCategoryId !== null;
+  }
+
+  get availableParentCategories(): ServiceCategory[] {
+    return this.categories.filter((category) => category.id !== this.editingCategoryId);
   }
 
   loadCategories(): void {
@@ -88,7 +92,9 @@ export class CategoriasServicoComponent implements OnInit, AfterViewInit {
     const payload: ServiceCategoryPayload = {
       name: this.form.name.trim(),
       description: this.form.description.trim(),
+      parent_category_id: this.form.parent_category_id,
       display_order: Number(this.form.display_order) || 0,
+      show_on_main_menu: this.form.show_on_main_menu,
       active: this.form.active
     };
 
@@ -121,7 +127,9 @@ export class CategoriasServicoComponent implements OnInit, AfterViewInit {
     this.form = {
       name: category.name,
       description: category.description,
+      parent_category_id: category.parent_category_id,
       display_order: category.display_order,
+      show_on_main_menu: category.show_on_main_menu,
       active: category.active
     };
     this.errorMessage = '';
@@ -147,7 +155,9 @@ export class CategoriasServicoComponent implements OnInit, AfterViewInit {
     this.serviceCategoryService.update(category.id, {
       name: category.name,
       description: category.description,
+      parent_category_id: category.parent_category_id,
       display_order: category.display_order,
+      show_on_main_menu: category.show_on_main_menu,
       active: !category.active
     }).subscribe({
       next: () => this.loadCategories(),
@@ -193,7 +203,9 @@ export class CategoriasServicoComponent implements OnInit, AfterViewInit {
       const content = [
         category.display_order,
         category.name,
+        category.parent_category_name || '',
         category.description,
+        category.show_on_main_menu ? 'menu principal' : '',
         category.active ? 'ativo' : 'inativo'
       ].join(' ');
 
@@ -205,7 +217,9 @@ export class CategoriasServicoComponent implements OnInit, AfterViewInit {
     return {
       name: '',
       description: '',
+      parent_category_id: null,
       display_order: this.categories.length + 1,
+      show_on_main_menu: false,
       active: true
     };
   }

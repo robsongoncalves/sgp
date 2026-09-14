@@ -21,6 +21,7 @@ from app.models import (
     ServiceRequestAttachment,
     ServiceRequestDocument,
     ServiceRequestMovement,
+    ServiceRating,
     ServiceSituation,
     User,
     UserGroup,
@@ -87,6 +88,7 @@ def _reset_database() -> None:
         ServiceRequestAttachment.__table__,
         ServiceRequestDocument.__table__,
         ServiceRequest.__table__,
+        ServiceRating.__table__,
         ServiceHook.__table__,
         service_situation_document_type_association,
         ServiceSituation.__table__,
@@ -130,6 +132,7 @@ def _seed_user_groups() -> None:
         group = db.session.get(UserGroup, item["id"]) or UserGroup(id=item["id"])
         group.name = item["name"]
         group.description = item.get("description", "")
+        group.parent_group_id = item.get("parent_group_id")
         group.manager_user_id = item.get("manager_user_id")
         group.active = item.get("active", True)
         db.session.add(group)
@@ -155,7 +158,9 @@ def _seed_service_categories() -> None:
         category = db.session.get(ServiceCategory, item["id"]) or ServiceCategory(id=item["id"])
         category.name = item["name"]
         category.description = item.get("description", "")
+        category.parent_category_id = item.get("parent_category_id")
         category.display_order = int(item.get("display_order", 0))
+        category.show_on_main_menu = item.get("show_on_main_menu", False)
         category.active = item.get("active", True)
         db.session.add(category)
 

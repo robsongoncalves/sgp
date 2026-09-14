@@ -56,7 +56,7 @@ export class TiposDocumentosComponent implements OnInit, AfterViewInit {
 
   readonly originOptions: { value: DocumentOrigin; label: string }[] = [
     { value: 'requester', label: 'Solicitante' },
-    { value: 'responsible_group', label: 'Grupo responsável' },
+    { value: 'responsible_group', label: 'Unidade responsável' },
     { value: 'system', label: 'Gerado pelo sistema' },
     { value: 'external', label: 'Externo' }
   ];

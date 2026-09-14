@@ -281,10 +281,10 @@ class ServiceRequestDocumentsRepository:
 
         if document_type.origin == "responsible_group":
             if not situation.responsible_group_id:
-                return "Situacao sem grupo responsavel configurado."
+                return "Situacao sem unidade responsavel configurada."
 
             if not self._is_group_member(user.id, situation.responsible_group_id):
-                return "Usuario nao faz parte do grupo responsavel pela situacao atual."
+                return "Usuario nao faz parte da unidade responsavel pela situacao atual."
 
         return None
 

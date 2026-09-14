@@ -3,7 +3,7 @@
     <mat-icon aria-hidden="true">category</mat-icon>
     <div>
       <h1>Servicos</h1>
-      <p>Configure servicos, categorias, grupos responsaveis e situacoes do fluxo.</p>
+      <p>Configure servicos, categorias, unidades responsaveis e situacoes do fluxo.</p>
     </div>
   </div>
 
@@ -23,7 +23,7 @@
         <input
           id="services-filter"
           type="search"
-          placeholder="Filtrar por nome, slug, categoria, grupo ou status"
+          placeholder="Filtrar por nome, slug, categoria, unidade ou status"
           [ngModel]="filterTerm"
           (ngModelChange)="applyFilter($event)"
         >
@@ -70,7 +70,7 @@
           </ng-container>
 
           <ng-container matColumnDef="groups">
-            <th mat-header-cell *matHeaderCellDef>Grupos</th>
+            <th mat-header-cell *matHeaderCellDef>Unidades</th>
             <td mat-cell *matCellDef="let service">{{ groupNames(service.group_ids) }}</td>
           </ng-container>
 
@@ -113,6 +113,151 @@
       />
     }
   </section>
+} @else if (isSituationFormVisible) {
+  <form class="content-panel service-form situation-subform" (ngSubmit)="saveSituation()">
+    <section class="form-section">
+      <h2>{{ isEditingSituation ? 'Editar situação do serviço' : 'Nova situação do serviço' }}</h2>
+
+      <div class="situation-editor">
+        <label for="situation-name">
+          Situação
+          <input
+            id="situation-name"
+            name="situationName"
+            type="text"
+            autocomplete="off"
+            [(ngModel)]="situationDraft.name"
+          >
+        </label>
+
+        <label for="situation-order">
+          Ordem
+          <input
+            id="situation-order"
+            name="situationOrder"
+            type="number"
+            min="1"
+            step="1"
+            [(ngModel)]="situationDraft.display_order"
+          >
+        </label>
+
+        <label for="previous-situation">
+          Situação anterior
+          <select
+            id="previous-situation"
+            name="previousSituation"
+            [disabled]="situationDraft.is_initial || !availablePreviousSituations.length"
+            [(ngModel)]="situationDraft.previous_situation_id"
+          >
+            <option [ngValue]="null">Nenhuma</option>
+            @for (situation of availablePreviousSituations; track situation.id) {
+              <option [ngValue]="situation.id">{{ situation.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label for="responsible-group">
+          Unidade responsável
+          <select
+            id="responsible-group"
+            name="responsibleGroup"
+            [(ngModel)]="situationDraft.responsible_group_id"
+          >
+            <option [ngValue]="null">Nenhuma</option>
+            @for (group of groups; track group.id) {
+              <option [ngValue]="group.id">{{ group.name }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="situation-options">
+          <mat-checkbox name="situationInitial" [(ngModel)]="situationDraft.is_initial">
+            Inicial
+          </mat-checkbox>
+          <mat-checkbox name="situationFinal" [(ngModel)]="situationDraft.is_final">
+            Finaliza
+          </mat-checkbox>
+          <mat-checkbox name="situationOpinion" [(ngModel)]="situationDraft.requires_opinion">
+            Exige parecer
+          </mat-checkbox>
+          <mat-checkbox name="situationAttachment" [(ngModel)]="situationDraft.requires_attachment">
+            Exige anexo
+          </mat-checkbox>
+        </div>
+
+        <section class="situation-documents full-field">
+          <h3>Tipos de documentos da situação</h3>
+
+          <div class="document-purpose-tabs">
+            <div class="document-tab-bar" role="tablist" aria-label="Finalidades dos tipos de documentos">
+            @for (purposeTab of documentPurposeTabs; track purposeTab.value) {
+              <button
+                type="button"
+                role="tab"
+                [class.active]="activeDocumentPurpose === purposeTab.value"
+                [attr.aria-selected]="activeDocumentPurpose === purposeTab.value"
+                (click)="setActiveDocumentPurpose(purposeTab.value)"
+              >
+                  {{ purposeTab.label }}
+                  <span class="tab-count">
+                    {{
+                      documentTypesByPurpose(purposeTab.value).length
+                    }}
+                  </span>
+              </button>
+            }
+            </div>
+
+            <div class="document-purpose-panel" role="tabpanel">
+              <label class="association-filter" [for]="'document-purpose-filter-' + activeDocumentPurpose">
+                <mat-icon aria-hidden="true">search</mat-icon>
+                <input
+                  [id]="'document-purpose-filter-' + activeDocumentPurpose"
+                  [name]="'documentPurposeFilter-' + activeDocumentPurpose"
+                  type="search"
+                  placeholder="Pesquisar tipo de documento"
+                  [(ngModel)]="documentPurposeFilters[activeDocumentPurpose]"
+                >
+              </label>
+
+              <div class="document-check-grid">
+                @for (documentType of documentTypesByPurpose(activeDocumentPurpose); track documentType.id) {
+                  <mat-checkbox
+                    [name]="'draft-document-type-' + documentType.id"
+                    [checked]="situationDraft.document_type_ids.includes(documentType.id)"
+                    (change)="toggleDraftDocumentType(documentType.id, $event.checked)"
+                  >
+                    <span>{{ documentType.name }}</span>
+                    @if (documentType.description) {
+                      <small>{{ documentType.description }}</small>
+                    }
+                  </mat-checkbox>
+                } @empty {
+                  <p class="empty-inline">Nenhum tipo de documento encontrado.</p>
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    @if (errorMessage) {
+      <p class="feedback error">{{ errorMessage }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit">
+        <mat-icon aria-hidden="true">save</mat-icon>
+        Salvar situação
+      </button>
+
+      <button mat-button type="button" (click)="closeSituationForm()">
+        Cancelar
+      </button>
+    </div>
+  </form>
 } @else {
   <form class="content-panel service-form" (ngSubmit)="saveService()">
     <section class="form-section">
@@ -202,120 +347,103 @@
     </section>
 
     <section class="form-section">
-      <h2>Categorias</h2>
-      <div class="check-grid">
-        @for (category of categories; track category.id) {
-          <mat-checkbox
-            [name]="'category-' + category.id"
-            [checked]="form.category_ids.includes(category.id)"
-            (change)="toggleCategory(category.id, $event.checked)"
-          >
-            {{ category.name }}
-          </mat-checkbox>
-        } @empty {
-          <p class="empty-inline">Nenhuma categoria cadastrada.</p>
-        }
-      </div>
-    </section>
+      <h2>Classificacao e responsabilidades</h2>
 
-    <section class="form-section">
-      <h2>Grupos de usuarios associados</h2>
-      <div class="check-grid">
-        @for (group of groups; track group.id) {
-          <mat-checkbox
-            [name]="'group-' + group.id"
-            [checked]="form.group_ids.includes(group.id)"
-            (change)="toggleGroup(group.id, $event.checked)"
-          >
-            {{ group.name }}
-          </mat-checkbox>
-        } @empty {
-          <p class="empty-inline">Nenhum grupo cadastrado.</p>
-        }
-      </div>
-    </section>
+      <div class="association-grid">
+        <section class="association-panel" aria-label="Categorias associadas ao servico">
+          <header>
+            <h3>Categorias</h3>
+            <span>{{ form.category_ids.length }} selecionadas</span>
+          </header>
 
-    <section class="form-section situations-section">
-      <h2>Situacoes do fluxo</h2>
+          <label class="association-filter" for="service-category-filter">
+            <mat-icon aria-hidden="true">search</mat-icon>
+            <input
+              id="service-category-filter"
+              name="categoryFilterTerm"
+              type="search"
+              placeholder="Pesquisar categoria"
+              [(ngModel)]="categoryFilterTerm"
+            >
+          </label>
 
-      <div class="situation-editor">
-        <label for="situation-name">
-          Nova situacao
-          <input
-            id="situation-name"
-            name="situationName"
-            type="text"
-            autocomplete="off"
-            [(ngModel)]="situationDraft.name"
-          >
-        </label>
-
-        <label for="previous-situation">
-          Situacao anterior
-          <select
-            id="previous-situation"
-            name="previousSituation"
-            [disabled]="situationDraft.is_initial || !form.situations.length"
-            [(ngModel)]="situationDraft.previous_situation_id"
-          >
-            <option [ngValue]="null">Nenhuma</option>
-            @for (situation of form.situations; track situation.id) {
-              <option [ngValue]="situation.id">{{ situation.name }}</option>
-            }
-          </select>
-        </label>
-
-        <label for="responsible-group">
-          Grupo responsavel
-          <select
-            id="responsible-group"
-            name="responsibleGroup"
-            [(ngModel)]="situationDraft.responsible_group_id"
-          >
-            <option [ngValue]="null">Nenhum</option>
-            @for (group of groups; track group.id) {
-              <option [ngValue]="group.id">{{ group.name }}</option>
-            }
-          </select>
-        </label>
-
-        <div class="situation-options">
-          <mat-checkbox name="situationInitial" [(ngModel)]="situationDraft.is_initial">
-            Inicial
-          </mat-checkbox>
-          <mat-checkbox name="situationFinal" [(ngModel)]="situationDraft.is_final">
-            Finaliza
-          </mat-checkbox>
-          <mat-checkbox name="situationOpinion" [(ngModel)]="situationDraft.requires_opinion">
-            Exige parecer
-          </mat-checkbox>
-          <mat-checkbox name="situationAttachment" [(ngModel)]="situationDraft.requires_attachment">
-            Exige anexo
-          </mat-checkbox>
-        </div>
-
-        <section class="situation-documents full-field">
-          <h3>Tipos de documentos da situação</h3>
-          <div class="document-check-grid">
-            @for (documentType of documentTypes; track documentType.id) {
+          <div class="association-list">
+            @for (category of filteredCategories; track category.id) {
               <mat-checkbox
-                [name]="'draft-document-type-' + documentType.id"
-                [checked]="situationDraft.document_type_ids.includes(documentType.id)"
-                (change)="toggleDraftDocumentType(documentType.id, $event.checked)"
+                [name]="'category-' + category.id"
+                [checked]="form.category_ids.includes(category.id)"
+                (change)="toggleCategory(category.id, $event.checked)"
               >
-                {{ documentType.name }}
+                <span>{{ category.name }}</span>
+                @if (category.parent_category_name) {
+                  <small>{{ category.parent_category_name }}</small>
+                }
               </mat-checkbox>
             } @empty {
-              <p class="empty-inline">Nenhum tipo de documento cadastrado.</p>
+              <p class="empty-inline">Nenhuma categoria encontrada.</p>
             }
           </div>
         </section>
 
-        <button mat-stroked-button type="button" (click)="addSituation()">
+        <section class="association-panel" aria-label="Unidades associadas ao servico">
+          <header>
+            <h3>Unidades</h3>
+            <span>{{ form.group_ids.length }} selecionadas</span>
+          </header>
+
+          <label class="association-filter" for="service-group-filter">
+            <mat-icon aria-hidden="true">search</mat-icon>
+            <input
+              id="service-group-filter"
+              name="groupFilterTerm"
+              type="search"
+              placeholder="Pesquisar unidade"
+              [(ngModel)]="groupFilterTerm"
+            >
+          </label>
+
+          <div class="association-list">
+            @for (group of filteredGroups; track group.id) {
+              <mat-checkbox
+                [name]="'group-' + group.id"
+                [checked]="form.group_ids.includes(group.id)"
+                (change)="toggleGroup(group.id, $event.checked)"
+              >
+                <span>{{ group.name }}</span>
+                @if (group.parent_group_name) {
+                  <small>{{ group.parent_group_name }}</small>
+                }
+              </mat-checkbox>
+            } @empty {
+              <p class="empty-inline">Nenhuma unidade encontrada.</p>
+            }
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="form-section situations-section">
+      <div class="section-table-header">
+        <h2>Situações do serviço</h2>
+
+        <button mat-flat-button color="primary" type="button" (click)="createSituation()">
           <mat-icon aria-hidden="true">add</mat-icon>
-          Adicionar situacao
+          Nova situação
         </button>
       </div>
+
+      <header class="table-toolbar compact">
+        <label class="table-filter" for="situations-filter">
+          <mat-icon aria-hidden="true">search</mat-icon>
+          <input
+            id="situations-filter"
+            name="situationFilterTerm"
+            type="search"
+            placeholder="Filtrar por situação, anterior, unidade, documento ou regra"
+            [(ngModel)]="situationFilterTerm"
+          >
+        </label>
+      </header>
 
       <div class="situations-table-wrap">
         <table class="situations-table">
@@ -324,33 +452,32 @@
               <th>Ordem</th>
               <th>Situacao</th>
               <th>Anterior</th>
-              <th>Grupo</th>
+              <th>Unidade</th>
               <th>Documentos</th>
               <th>Regras</th>
               <th aria-label="Acoes"></th>
             </tr>
           </thead>
           <tbody>
-            @for (situation of form.situations; track situation.id) {
-              <tr>
+            @for (situation of filteredSituations; track situation.id) {
+              <tr class="data-row" (dblclick)="editSituation(situation)">
                 <td>{{ situation.display_order }}</td>
                 <td>{{ situation.name }}</td>
                 <td>{{ previousSituationName(situation.previous_situation_id) }}</td>
                 <td>{{ responsibleGroupName(situation.responsible_group_id) }}</td>
                 <td class="situation-document-cell">
-                  <div class="document-check-list" [attr.aria-label]="'Documentos da situação ' + situation.name">
-                    @for (documentType of documentTypes; track documentType.id) {
-                      <mat-checkbox
-                        [name]="'situation-' + situation.id + '-document-type-' + documentType.id"
-                        [checked]="(situation.document_type_ids || []).includes(documentType.id)"
-                        (change)="toggleSituationDocumentType(situation, documentType.id, $event.checked)"
-                      >
-                        {{ documentType.name }}
-                      </mat-checkbox>
-                    } @empty {
-                      <span>{{ documentTypeNames(situation.document_type_ids || []) }}</span>
-                    }
-                  </div>
+                  @if (documentTypesByIds(situation.document_type_ids || []).length) {
+                    <div class="document-pill-list" [attr.aria-label]="'Documentos da situação ' + situation.name">
+                      @for (documentType of documentTypesByIds(situation.document_type_ids || []); track documentType.id) {
+                        <span class="document-pill">
+                          <mat-icon aria-hidden="true">description</mat-icon>
+                          <span>{{ documentType.name }}</span>
+                        </span>
+                      }
+                    </div>
+                  } @else {
+                    -
+                  }
                 </td>
                 <td>
                   <span class="rule-chip" [class.active]="situation.is_initial">Inicial</span>
@@ -359,10 +486,10 @@
                   <span class="rule-chip" [class.active]="situation.requires_attachment">Anexo</span>
                 </td>
                 <td class="actions">
-                  <button mat-icon-button type="button" aria-label="Marcar situacao inicial" (click)="markInitialSituation(situation)">
-                    <mat-icon aria-hidden="true">flag</mat-icon>
+                  <button mat-icon-button type="button" aria-label="Editar situação" (click)="editSituation(situation)">
+                    <mat-icon aria-hidden="true">edit</mat-icon>
                   </button>
-                  <button mat-icon-button type="button" aria-label="Remover situacao" (click)="removeSituation(situation)">
+                  <button mat-icon-button type="button" aria-label="Remover situação" (click)="removeSituation(situation)">
                     <mat-icon aria-hidden="true">delete</mat-icon>
                   </button>
                 </td>

@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 
+from app.repositories.service_ratings_repository import service_ratings_repository
 from app.repositories.services_repository import services_repository
+from app.repositories.utils import optional_int
 
 services_bp = Blueprint("services", __name__)
 
@@ -42,3 +44,30 @@ def delete_service(service_id: int):
         return jsonify({"message": "Servico nao encontrado."}), 404
 
     return "", 204
+
+
+@services_bp.get("/services/<int:service_id>/ratings")
+def get_service_ratings(service_id: int):
+    summary, error = service_ratings_repository.summary(
+        service_id,
+        user_id=optional_int(request.args.get("user_id")),
+    )
+
+    if error:
+        return jsonify({"message": error}), 404
+
+    return jsonify(summary)
+
+
+@services_bp.post("/services/<int:service_id>/ratings")
+def save_service_rating(service_id: int):
+    rating, error = service_ratings_repository.upsert(
+        service_id,
+        request.get_json(silent=True) or {},
+    )
+
+    if error:
+        status_code = 404 if error in {"Servico nao encontrado.", "Usuario nao encontrado."} else 400
+        return jsonify({"message": error}), status_code
+
+    return jsonify(rating)

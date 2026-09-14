@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -7,6 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { User } from '../../../core/models/user';
 import { AuthService } from '../../../core/services/auth.service';
+import { ServiceCategoryService } from '../../../core/services/service-category.service';
 
 interface MenuItem {
   icon: string;
@@ -34,11 +35,14 @@ interface MenuSection {
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   @Input() collapsed = false;
   currentUser$ = this.authService.currentUser$;
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly serviceCategoryService: ServiceCategoryService
+  ) {}
 
   menuSections: MenuSection[] = [
     {
@@ -47,25 +51,20 @@ export class SidebarComponent {
           icon: 'apps',
           label: 'Serviços Disponíveis',
           route: '/'
-        },
-        {
-          icon: 'assignment_turned_in',
-          label: 'Minhas Solicitações',
-          route: '/minhas-solicitacoes'
         }
       ]
     },
     {
       items: [
         {
+          icon: 'assignment_turned_in',
+          label: 'Minhas Solicitações',
+          route: '/minhas-solicitacoes'
+        },
+        {
           icon: 'inbox',
           label: 'Caixa Postal',
           route: '/caixa-postal'
-        },
-        {
-          icon: 'bar_chart',
-          label: 'Relatórios',
-          route: '/relatorios'
         }
       ]
     },
@@ -100,7 +99,7 @@ export class SidebarComponent {
         },
         {
           icon: 'groups',
-          label: 'Grupos de Usuarios',
+          label: 'Unidades',
           route: '/admin/grupos'
         },
         {
@@ -132,7 +131,35 @@ export class SidebarComponent {
     }
   ];
 
+  ngOnInit(): void {
+    this.loadMainMenuCategories();
+  }
+
   canShowSection(section: MenuSection, user: User | null): boolean {
     return !section.adminOnly || this.authService.isSystemAdminUser(user);
+  }
+
+  private loadMainMenuCategories(): void {
+    this.serviceCategoryService.list().subscribe({
+      next: (categories) => {
+        const categoryItems = categories
+          .filter((category) => category.active && category.show_on_main_menu)
+          .sort((first, second) => {
+            const order = first.display_order - second.display_order;
+            return order || first.name.localeCompare(second.name, 'pt-BR');
+          })
+          .map((category) => ({
+            icon: 'folder_open',
+            label: category.name,
+            route: `/categorias/${category.id}`
+          }));
+
+        const mainItems = this.menuSections[0].items;
+        this.menuSections[0].items = [
+          mainItems[0],
+          ...categoryItems
+        ];
+      }
+    });
   }
 }

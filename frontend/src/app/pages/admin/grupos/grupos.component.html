@@ -2,28 +2,28 @@
   <div class="page-title">
     <mat-icon aria-hidden="true">groups</mat-icon>
     <div>
-      <h1>Grupos de Usuarios</h1>
-      <p>Organize usuarios por responsabilidades, permissoes e etapas dos servicos.</p>
+      <h1>Unidades</h1>
+      <p>Organize usuarios por unidades, responsabilidades, permissoes e etapas dos servicos.</p>
     </div>
   </div>
 
   @if (!isFormVisible) {
     <button mat-flat-button color="primary" type="button" (click)="createGroup()">
       <mat-icon aria-hidden="true">add</mat-icon>
-      Novo grupo
+      Nova unidade
     </button>
   }
 </section>
 
 @if (!isFormVisible) {
-  <section class="content-panel groups-list" aria-label="Grupos cadastrados">
+  <section class="content-panel groups-list" aria-label="Unidades cadastradas">
     <header class="table-toolbar">
       <label class="table-filter" for="groups-filter">
         <mat-icon aria-hidden="true">search</mat-icon>
         <input
           id="groups-filter"
           type="search"
-          placeholder="Filtrar por nome, descricao, chefia ou status"
+          placeholder="Filtrar por nome, unidade pai, descricao, chefia ou status"
           [ngModel]="filterTerm"
           (ngModelChange)="applyFilter($event)"
         >
@@ -46,7 +46,7 @@
     @if (isLoading) {
       <div class="loading-state">
         <mat-spinner diameter="28" />
-        <span>Carregando grupos</span>
+        <span>Carregando unidades</span>
       </div>
     } @else {
       <div class="table-wrap">
@@ -59,6 +59,11 @@
           <ng-container matColumnDef="description">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Descricao</th>
             <td mat-cell *matCellDef="let group">{{ group.description || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="parent_group_name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Unidade pai</th>
+            <td mat-cell *matCellDef="let group">{{ group.parent_group_name || '-' }}</td>
           </ng-container>
 
           <ng-container matColumnDef="manager">
@@ -76,13 +81,13 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef aria-label="Acoes"></th>
             <td mat-cell *matCellDef="let group" class="actions">
-              <button mat-icon-button type="button" aria-label="Editar grupo" (click)="editGroup(group)">
+              <button mat-icon-button type="button" aria-label="Editar unidade" (click)="editGroup(group)">
                 <mat-icon aria-hidden="true">edit</mat-icon>
               </button>
               <button mat-icon-button type="button" aria-label="Alterar status" (click)="toggleGroupStatus(group)">
                 <mat-icon aria-hidden="true">{{ group.active ? 'block' : 'check_circle' }}</mat-icon>
               </button>
-              <button mat-icon-button type="button" aria-label="Remover grupo" (click)="deleteGroup(group)">
+              <button mat-icon-button type="button" aria-label="Remover unidade" (click)="deleteGroup(group)">
                 <mat-icon aria-hidden="true">delete</mat-icon>
               </button>
             </td>
@@ -98,7 +103,7 @@
           ></tr>
           <tr class="mat-row empty-row" *matNoDataRow>
             <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
-              Nenhum grupo encontrado.
+              Nenhuma unidade encontrada.
             </td>
           </tr>
         </table>
@@ -108,13 +113,13 @@
         [pageSize]="10"
         [pageSizeOptions]="[5, 10, 25]"
         showFirstLastButtons
-        aria-label="Paginacao de grupos"
+        aria-label="Paginacao de unidades"
       />
     }
   </section>
 } @else {
   <form class="content-panel group-form" (ngSubmit)="saveGroup()">
-    <h2>{{ isEditing ? 'Editar grupo' : 'Novo grupo' }}</h2>
+    <h2>{{ isEditing ? 'Editar unidade' : 'Nova unidade' }}</h2>
 
     <label for="group-name">
       Nome
@@ -125,6 +130,20 @@
         autocomplete="off"
         [(ngModel)]="form.name"
       >
+    </label>
+
+    <label for="group-parent">
+      Unidade pai
+      <select
+        id="group-parent"
+        name="parentGroupId"
+        [(ngModel)]="form.parent_group_id"
+      >
+        <option [ngValue]="null">Nenhuma unidade pai</option>
+        @for (group of availableParentGroups; track group.id) {
+          <option [ngValue]="group.id">{{ group.name }}</option>
+        }
+      </select>
     </label>
 
     <label for="group-description">
@@ -152,10 +171,10 @@
     </label>
 
     <mat-checkbox name="active" [(ngModel)]="form.active">
-      Grupo ativo
+      Unidade ativa
     </mat-checkbox>
 
-    <section class="members-section" aria-label="Usuarios do grupo">
+    <section class="members-section" aria-label="Usuarios da unidade">
       <div class="transfer-list">
         <header>
           <h3>Usuarios disponiveis</h3>

@@ -82,9 +82,15 @@ class UserGroup(db.Model, TimestampMixin):
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
     )
+    parent_group_id: Mapped[int | None] = mapped_column(
+        ForeignKey("user_groups.id", ondelete="SET NULL"),
+        nullable=True,
+    )
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     manager: Mapped[User | None] = relationship(foreign_keys=[manager_user_id])
+    parent: Mapped["UserGroup | None"] = relationship(remote_side=[id], back_populates="children")
+    children: Mapped[list["UserGroup"]] = relationship(back_populates="parent")
     users: Mapped[list[User]] = relationship(
         secondary=user_group_members,
         back_populates="groups",
@@ -101,9 +107,16 @@ class ServiceCategory(db.Model, TimestampMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(140), nullable=False, unique=True)
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    parent_category_id: Mapped[int | None] = mapped_column(
+        ForeignKey("service_categories.id", ondelete="SET NULL"),
+        nullable=True,
+    )
     display_order: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    show_on_main_menu: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
+    parent: Mapped["ServiceCategory | None"] = relationship(remote_side=[id], back_populates="children")
+    children: Mapped[list["ServiceCategory"]] = relationship(back_populates="parent")
     services: Mapped[list["Service"]] = relationship(
         secondary=service_category_association,
         back_populates="categories",
@@ -212,6 +225,10 @@ class Service(db.Model, TimestampMixin):
         cascade="all, delete-orphan",
         order_by="ServiceHook.execution_order",
     )
+    ratings: Mapped[list["ServiceRating"]] = relationship(
+        back_populates="service",
+        cascade="all, delete-orphan",
+    )
 
 
 class ServiceSituation(db.Model, TimestampMixin):
@@ -302,6 +319,22 @@ class ServiceHookExecution(db.Model, TimestampMixin):
     hook: Mapped[ServiceHook] = relationship(back_populates="executions")
     service_request: Mapped["ServiceRequest | None"] = relationship()
     user: Mapped[User | None] = relationship()
+
+
+class ServiceRating(db.Model, TimestampMixin):
+    __tablename__ = "service_ratings"
+    __table_args__ = (
+        UniqueConstraint("service_id", "user_id", name="uq_service_rating_user"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    service_id: Mapped[int] = mapped_column(ForeignKey("services.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    rating: Mapped[int] = mapped_column(Integer, nullable=False)
+    comment: Mapped[str] = mapped_column(Text, nullable=False, default="")
+
+    service: Mapped[Service] = relationship(back_populates="ratings")
+    user: Mapped[User] = relationship()
 
 
 class ServiceRequest(db.Model, TimestampMixin):

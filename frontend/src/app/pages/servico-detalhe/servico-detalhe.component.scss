@@ -178,6 +178,94 @@ h1 {
   font-size: 19px;
 }
 
+.service-rating-panel {
+  display: grid;
+  max-width: 760px;
+  padding: 18px 0 2px;
+  border-top: 1px solid #edf0f5;
+}
+
+.rating-form {
+  display: grid;
+  gap: 12px;
+}
+
+.rating-form h2,
+.comments-section h2 {
+  margin: 0;
+  color: #193878;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.rating-picker {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.star-button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #8a94a6;
+  cursor: pointer;
+}
+
+.star-button.active,
+.star-button:hover {
+  color: #f2c94c;
+}
+
+.star-button mat-icon {
+  width: 28px;
+  height: 28px;
+  font-size: 28px;
+}
+
+.rating-form label {
+  display: grid;
+  gap: 6px;
+  color: #374151;
+  font-weight: 600;
+}
+
+.rating-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 96px;
+  padding: 10px 12px;
+  border: 1px solid #aab3c2;
+  border-radius: 6px;
+  background: #ffffff;
+  font: inherit;
+  font-weight: 400;
+  resize: vertical;
+}
+
+.rating-form textarea:focus {
+  border-color: #0b57d0;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(11, 87, 208, 0.12);
+}
+
+.rating-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.rating-message {
+  color: #4f5b6b;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .service-meta {
   display: flex;
   gap: 16px;
@@ -191,6 +279,52 @@ h1 {
 
 .service-meta strong {
   font-weight: 500;
+}
+
+.comments-section {
+  display: grid;
+  gap: 14px;
+  max-width: 920px;
+  padding-top: 8px;
+}
+
+.comments-list {
+  display: grid;
+  gap: 10px;
+}
+
+.comment-item {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid #d8dde6;
+  border-radius: 8px;
+  background: #fbfcfe;
+}
+
+.comment-item header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.comment-item p {
+  margin: 0;
+  color: #4f5b6b;
+  line-height: 1.45;
+}
+
+.comment-stars {
+  display: inline-flex;
+  gap: 1px;
+  color: #f2c94c;
+}
+
+.comment-stars mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
 }
 
 .meta-actions {
@@ -232,6 +366,10 @@ h1 {
   text-decoration: none;
 }
 
+.top-link {
+  margin-bottom: -8px;
+}
+
 .state-message {
   margin: 0;
   color: #4f5b6b;
@@ -271,5 +409,10 @@ h1 {
 
   .meta-actions {
     flex-wrap: wrap;
+  }
+
+  .comment-item header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

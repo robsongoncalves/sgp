@@ -33,7 +33,7 @@ import { UserGroupService } from '../../../core/services/user-group.service';
 export class GruposComponent implements OnInit, AfterViewInit {
   groups: UserGroup[] = [];
   dataSource = new MatTableDataSource<UserGroup>([]);
-  displayedColumns = ['name', 'description', 'manager', 'actions'];
+  displayedColumns = ['name', 'parent_group_name', 'description', 'manager', 'actions'];
   isFormVisible = false;
   filterTerm = '';
   editingGroupId: number | null = null;
@@ -87,6 +87,10 @@ export class GruposComponent implements OnInit, AfterViewInit {
       .filter((user) => this.matchesUserFilter(user, filter));
   }
 
+  get availableParentGroups(): UserGroup[] {
+    return this.groups.filter((group) => group.id !== this.editingGroupId);
+  }
+
   loadGroups(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -99,7 +103,7 @@ export class GruposComponent implements OnInit, AfterViewInit {
         this.isLoading = false;
       },
       error: () => {
-        this.errorMessage = 'Nao foi possivel carregar os grupos.';
+        this.errorMessage = 'Nao foi possivel carregar as unidades.';
         this.isLoading = false;
       }
     });
@@ -118,13 +122,14 @@ export class GruposComponent implements OnInit, AfterViewInit {
 
   saveGroup(): void {
     if (!this.form.name.trim()) {
-      this.errorMessage = 'Informe o nome do grupo.';
+      this.errorMessage = 'Informe o nome da unidade.';
       return;
     }
 
     const payload: UserGroupPayload = {
       name: this.form.name.trim(),
       description: this.form.description.trim(),
+      parent_group_id: this.form.parent_group_id,
       manager_user_id: this.form.manager_user_id,
       active: this.form.active
     };
@@ -144,14 +149,14 @@ export class GruposComponent implements OnInit, AfterViewInit {
     ).subscribe({
       next: () => {
         this.successMessage = this.isEditing
-          ? 'Grupo atualizado com sucesso.'
-          : 'Grupo cadastrado com sucesso.';
+          ? 'Unidade atualizada com sucesso.'
+          : 'Unidade cadastrada com sucesso.';
         this.closeForm();
         this.loadGroups();
         this.isSaving = false;
       },
       error: (response) => {
-        this.errorMessage = response?.error?.message || 'Nao foi possivel salvar o grupo.';
+        this.errorMessage = response?.error?.message || 'Nao foi possivel salvar a unidade.';
         this.isSaving = false;
       }
     });
@@ -162,6 +167,7 @@ export class GruposComponent implements OnInit, AfterViewInit {
     this.form = {
       name: group.name,
       description: group.description,
+      parent_group_id: group.parent_group_id,
       manager_user_id: group.manager_user_id,
       active: group.active
     };
@@ -190,6 +196,7 @@ export class GruposComponent implements OnInit, AfterViewInit {
     this.userGroupService.update(group.id, {
       name: group.name,
       description: group.description,
+      parent_group_id: group.parent_group_id,
       manager_user_id: group.manager_user_id,
       active: !group.active
     }).subscribe({
@@ -201,7 +208,7 @@ export class GruposComponent implements OnInit, AfterViewInit {
   }
 
   deleteGroup(group: UserGroup): void {
-    const confirmed = window.confirm(`Remover o grupo ${group.name}?`);
+    const confirmed = window.confirm(`Remover a unidade ${group.name}?`);
 
     if (!confirmed) {
       return;
@@ -209,11 +216,11 @@ export class GruposComponent implements OnInit, AfterViewInit {
 
     this.userGroupService.delete(group.id).subscribe({
       next: () => {
-        this.successMessage = 'Grupo removido com sucesso.';
+        this.successMessage = 'Unidade removida com sucesso.';
         this.loadGroups();
       },
       error: (response) => {
-        this.errorMessage = response?.error?.message || 'Nao foi possivel remover o grupo.';
+        this.errorMessage = response?.error?.message || 'Nao foi possivel remover a unidade.';
       }
     });
   }
@@ -234,7 +241,7 @@ export class GruposComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator || null;
     this.dataSource.sort = this.sort || null;
     this.dataSource.filterPredicate = (group, filter) => {
-      const content = `${group.name} ${group.description} ${group.active ? 'ativo' : 'inativo'}`;
+      const content = `${group.name} ${group.parent_group_name || ''} ${group.description} ${group.active ? 'ativo' : 'inativo'}`;
       const manager = `${group.manager_name || ''} ${group.manager_email || ''}`;
       return `${content} ${manager}`.toLowerCase().includes(filter);
     };
@@ -244,6 +251,7 @@ export class GruposComponent implements OnInit, AfterViewInit {
     return {
       name: '',
       description: '',
+      parent_group_id: null,
       manager_user_id: null,
       active: true
     };
@@ -257,7 +265,7 @@ export class GruposComponent implements OnInit, AfterViewInit {
         this.selectedAssociatedUserIds = [];
       },
       error: (response) => {
-        this.errorMessage = response?.error?.message || 'Nao foi possivel carregar os usuarios do grupo.';
+        this.errorMessage = response?.error?.message || 'Nao foi possivel carregar os usuarios da unidade.';
       }
     });
   }

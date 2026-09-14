@@ -5,6 +5,7 @@ import { MinhasSolicitacoesComponent } from './pages/minhas-solicitacoes/minhas-
 import { PlaceholderPageComponent } from './pages/placeholder/placeholder-page.component';
 import { ProgressaoDocenteComponent } from './pages/progressao-docente/progressao-docente.component';
 import { ServicoDetalheComponent } from './pages/servico-detalhe/servico-detalhe.component';
+import { CategoriaServicosComponent } from './pages/categoria-servicos/categoria-servicos.component';
 import { ServicosComponent } from './pages/servicos/servicos.component';
 import { TodosServicosComponent } from './pages/todos-servicos/todos-servicos.component';
 import { authGuard } from './core/guards/auth.guard';
@@ -28,6 +29,11 @@ export const routes: Routes = [
   {
     path: 'todos-servicos',
     component: TodosServicosComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'categorias/:id',
+    component: CategoriaServicosComponent,
     canActivate: [authGuard]
   },
   {

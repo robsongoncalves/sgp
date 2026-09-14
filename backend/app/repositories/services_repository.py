@@ -349,6 +349,8 @@ class ServicesRepository:
                     "id": category.id,
                     "name": category.name,
                     "description": category.description,
+                    "parent_category_id": category.parent_category_id,
+                    "parent_category_name": category.parent.name if category.parent else "",
                     "display_order": category.display_order,
                 }
                 for category in categories

@@ -1,0 +1,95 @@
+<section class="services-panel">
+  <label class="service-search" aria-label="Buscar serviços da categoria">
+    <mat-icon aria-hidden="true">search</mat-icon>
+    <input
+      type="search"
+      placeholder="Buscar nos serviços"
+      [(ngModel)]="searchTerm"
+    >
+  </label>
+
+  <header class="services-header">
+    <h1>{{ selectedCategory?.name || 'Categoria' }}</h1>
+
+    <button
+      mat-button
+      color="primary"
+      type="button"
+      class="all-services-button"
+      (click)="showAvailableServices()"
+    >
+      Serviços Disponíveis
+      <mat-icon aria-hidden="true">expand_more</mat-icon>
+    </button>
+  </header>
+
+  <div class="category-list">
+    @if (isLoading) {
+      <p class="empty-services">Carregando serviços da categoria.</p>
+    } @else if (errorMessage) {
+      <p class="empty-services error-message">{{ errorMessage }}</p>
+    } @else {
+      @for (group of filteredCategoryGroups; track group.key) {
+        <section class="category-panel" [class.expanded]="isCategoryExpanded(group)">
+          <button
+            class="category-header"
+            type="button"
+            [attr.aria-expanded]="isCategoryExpanded(group)"
+            (click)="toggleCategory(group)"
+          >
+            <span>
+              {{ group.name }}
+              <small>{{ group.services.length }} serviços</small>
+            </span>
+            <mat-icon aria-hidden="true">
+              {{ isCategoryExpanded(group) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+            </mat-icon>
+          </button>
+
+          @if (isCategoryExpanded(group)) {
+            <div class="category-services">
+              @for (service of group.services; track service.id) {
+                <article
+                  class="service-card"
+                  [class.disabled]="!service.route"
+                  [class.featured]="service.featured"
+                >
+                  <a
+                    class="service-open"
+                    [class.disabled]="!service.route"
+                    [routerLink]="service.route || null"
+                    [attr.aria-disabled]="!service.route"
+                  >
+                    <span class="service-title">
+                      <mat-icon aria-hidden="true">{{ service.icon }}</mat-icon>
+                      <strong>{{ service.label }}</strong>
+                    </span>
+                    @if (service.description) {
+                      <small>{{ service.description }}</small>
+                    }
+                  </a>
+
+                  @if (service.documentationUrl) {
+                    <a
+                      class="documentation-link"
+                      [href]="service.documentationUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      [attr.aria-label]="'Abrir documentacao de ' + service.label"
+                    >
+                      <mat-icon aria-hidden="true">menu_book</mat-icon>
+                    </a>
+                  }
+                </article>
+              } @empty {
+                <p class="empty-services">Nenhum serviço vinculado a esta categoria.</p>
+              }
+            </div>
+          }
+        </section>
+      } @empty {
+        <p class="empty-services">Nenhum serviço encontrado.</p>
+      }
+    }
+  </div>
+</section>

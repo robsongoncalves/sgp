@@ -1,11 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { DocumentType } from '../../core/models/document-type';
 import { Service } from '../../core/models/service';
+import { ServiceRating } from '../../core/models/service-rating';
 import { AuthService } from '../../core/services/auth.service';
 import { DocumentTypeService } from '../../core/services/document-type.service';
 import { ServiceRequestService } from '../../core/services/service-request.service';
@@ -16,6 +18,7 @@ import { ServiceService } from '../../core/services/service.service';
   standalone: true,
   imports: [
     DatePipe,
+    FormsModule,
     RouterLink,
     MatButtonModule,
     MatIconModule
@@ -28,10 +31,16 @@ export class ServicoDetalheComponent implements OnInit {
   documentTypes: DocumentType[] = [];
   isLoading = false;
   isStarting = false;
+  isSavingRating = false;
   isDescriptionExpanded = false;
   errorMessage = '';
-  readonly rating = 4.6;
-  readonly ratingCount = 66511;
+  ratingMessage = '';
+  averageRating = 0;
+  ratingCount = 0;
+  selectedRating = 0;
+  hoveredRating = 0;
+  ratingComment = '';
+  comments: ServiceRating[] = [];
   readonly starOptions = [1, 2, 3, 4, 5];
 
   constructor(
@@ -70,6 +79,14 @@ export class ServicoDetalheComponent implements OnInit {
     return Number.isNaN(date.getTime()) ? null : date;
   }
 
+  get displayRating(): string {
+    return this.ratingCount ? this.averageRating.toFixed(1).replace('.', ',') : '-';
+  }
+
+  get activeRating(): number {
+    return this.hoveredRating || this.selectedRating || Math.round(this.averageRating);
+  }
+
   get descriptionParagraphs(): string[] {
     return (this.service?.description || '')
       .split(/\n+/)
@@ -90,6 +107,58 @@ export class ServicoDetalheComponent implements OnInit {
     return documentTypeIds
       .map((documentTypeId) => this.documentTypes.find((documentType) => documentType.id === documentTypeId))
       .filter((documentType): documentType is DocumentType => Boolean(documentType));
+  }
+
+  starIcon(star: number, ratingValue = this.activeRating): string {
+    return star <= Math.round(ratingValue) ? 'star' : 'star_border';
+  }
+
+  setRating(rating: number): void {
+    this.selectedRating = rating;
+    this.ratingMessage = '';
+  }
+
+  saveRating(): void {
+    if (!this.service || this.isSavingRating) {
+      return;
+    }
+
+    const currentUser = this.authService.currentUser;
+
+    if (!currentUser) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
+    if (!this.selectedRating) {
+      this.ratingMessage = 'Selecione uma nota para avaliar o servico.';
+      return;
+    }
+
+    this.isSavingRating = true;
+    this.ratingMessage = '';
+
+    this.serviceService.saveRating(this.service.id, {
+      user_id: currentUser.id,
+      rating: this.selectedRating,
+      comment: this.ratingComment
+    }).subscribe({
+      next: () => {
+        this.ratingMessage = 'Avaliacao registrada.';
+        this.isSavingRating = false;
+        this.loadRatings();
+      },
+      error: (response) => {
+        this.ratingMessage = response?.error?.message || 'Nao foi possivel salvar a avaliacao.';
+        this.isSavingRating = false;
+      }
+    });
+  }
+
+  printPage(): void {
+    window.print();
   }
 
   startService(): void {
@@ -144,6 +213,7 @@ export class ServicoDetalheComponent implements OnInit {
         this.isDescriptionExpanded = false;
         this.errorMessage = this.service ? '' : 'Servico nao encontrado.';
         this.isLoading = false;
+        this.loadRatings();
       },
       error: () => {
         this.errorMessage = 'Nao foi possivel carregar o servico.';
@@ -156,6 +226,24 @@ export class ServicoDetalheComponent implements OnInit {
     this.documentTypeService.list().subscribe({
       next: (documentTypes) => {
         this.documentTypes = documentTypes.filter((documentType) => documentType.active);
+      }
+    });
+  }
+
+  private loadRatings(): void {
+    if (!this.service) {
+      return;
+    }
+
+    const currentUser = this.authService.currentUser;
+
+    this.serviceService.getRatings(this.service.id, currentUser?.id).subscribe({
+      next: (summary) => {
+        this.averageRating = summary.average_rating || 0;
+        this.ratingCount = summary.rating_count || 0;
+        this.comments = summary.comments || [];
+        this.selectedRating = summary.user_rating?.rating || 0;
+        this.ratingComment = summary.user_rating?.comment || '';
       }
     });
   }

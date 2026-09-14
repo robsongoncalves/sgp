@@ -1,26 +1,61 @@
 .sidebar-nav {
   height: 100%;
-  padding: 12px 8px;
+  padding: 8px 8px;
   background: #ffffff;
 }
 
 a[mat-list-item] {
-  margin-bottom: 4px;
+  --mdc-list-list-item-one-line-container-height: 34px;
+  --mat-list-list-item-leading-icon-start-space: 10px;
+  --mat-list-list-item-leading-icon-end-space: 8px;
+  min-height: 34px;
+  height: 34px !important;
+  margin-bottom: 0;
   border-radius: 8px;
 }
 
+:host ::ng-deep .sidebar-nav .mat-mdc-nav-list {
+  padding: 0;
+}
+
+:host ::ng-deep .sidebar-nav a.mat-mdc-list-item,
+:host ::ng-deep .sidebar-nav a.mdc-list-item {
+  min-height: 34px !important;
+  height: 34px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+:host ::ng-deep a[mat-list-item] .mdc-list-item__primary-text {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  line-height: 1.1;
+}
+
+:host ::ng-deep a[mat-list-item] .mdc-list-item__primary-text {
+  font-size: 0.9rem;
+}
+
 :host ::ng-deep a[mat-list-item] .mat-mdc-list-item-icon {
-  width: 22px;
-  margin-right: 8px;
+  align-self: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  font-size: 20px;
+  line-height: 20px;
 }
 
 :host ::ng-deep a[mat-list-item] .mdc-list-item__start {
   margin-left: 0;
-  margin-right: 8px;
+  margin-right: 6px;
 }
 
 :host ::ng-deep a[mat-list-item] .mdc-list-item__content {
+  min-height: 34px;
   min-width: 0;
+  display: flex;
+  align-items: center;
 }
 
 a[mat-list-item].active {
@@ -29,8 +64,8 @@ a[mat-list-item].active {
 }
 
 .menu-section {
-  margin: 14px 8px 8px;
-  padding-top: 12px;
+  margin: 8px 8px 5px;
+  padding-top: 8px;
   border-top: 1px solid #d9dee5;
 }
 
