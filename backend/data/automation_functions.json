@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "name": "Importar dados da calculadora de progressao docente",
+    "slug": "importar-dados-calculadora-progressao-docente",
+    "description": "Prepara dados importados por SIAPE para a calculadora de pontuacao da progressao docente. Nesta versao a fonte externa DB2 ainda esta simulada.",
+    "language": "python",
+    "source_code": "from datetime import datetime\n\n\ndef handle(context):\n    user = context[\"user\"]\n    config = context.get(\"config\", {})\n    siape = str(user.get(\"siape\") or \"\").strip()\n\n    if not siape:\n        return {\n            \"warnings\": [\"Usuario sem SIAPE; importacao automatica nao executada.\"]\n        }\n\n    periodo_meses = int(config.get(\"periodo_meses\", 24))\n    connection = str(config.get(\"connection\", \"db2_guri\"))\n    requisito_i_item_1_quantidade = 4\n\n    return {\n        \"form_data_patch\": {\n            \"automacoes\": {\n                \"importar-dados-calculadora-progressao-docente\": {\n                    \"connection\": connection,\n                    \"siape\": siape,\n                    \"periodo_meses\": periodo_meses,\n                    \"executed_at\": datetime.utcnow().isoformat(),\n                    \"source\": \"database_function\"\n                }\n            },\n            \"pontuacao\": {\n                \"quantities\": {\n                    \"I-0\": requisito_i_item_1_quantidade\n                },\n                \"importados\": {\n                    \"requisito_i_item_1\": {\n                        \"siape\": siape,\n                        \"periodo_meses\": periodo_meses,\n                        \"quantidade\": requisito_i_item_1_quantidade,\n                        \"origem\": connection,\n                        \"status\": \"simulado_db2\"\n                    },\n                    \"encargos_didaticos\": {\n                        \"siape\": siape,\n                        \"periodo_meses\": periodo_meses,\n                        \"quantidade_horas_aula_semanais_media\": requisito_i_item_1_quantidade,\n                        \"origem\": connection,\n                        \"status\": \"simulado_db2\"\n                    }\n                }\n            }\n        },\n        \"messages\": [\"Requisito I - Item 1 preenchido automaticamente com quantidade 4.\"]\n    }\n",
+    "timeout_seconds": 10,
+    "active": true
+  }
+]

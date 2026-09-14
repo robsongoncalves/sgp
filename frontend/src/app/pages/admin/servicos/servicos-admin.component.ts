@@ -9,15 +9,19 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
+import { AutomationFunction } from '../../../core/models/automation-function';
 import { DocumentType } from '../../../core/models/document-type';
 import { ServiceCategory } from '../../../core/models/service-category';
 import {
+  ServiceHook,
+  ServiceHookDraft,
   ServiceSituation,
   ServiceSituationDraft,
   Service,
   ServicePayload
 } from '../../../core/models/service';
 import { UserGroup } from '../../../core/models/user-group';
+import { AutomationFunctionService } from '../../../core/services/automation-function.service';
 import { DocumentTypeService } from '../../../core/services/document-type.service';
 import { ServiceCategoryService } from '../../../core/services/service-category.service';
 import { ServiceService } from '../../../core/services/service.service';
@@ -41,6 +45,7 @@ import { UserGroupService } from '../../../core/services/user-group.service';
 })
 export class ServicosAdminComponent implements OnInit, AfterViewInit {
   services: Service[] = [];
+  automationFunctions: AutomationFunction[] = [];
   categories: ServiceCategory[] = [];
   documentTypes: DocumentType[] = [];
   groups: UserGroup[] = [];
@@ -56,12 +61,18 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
 
   form: ServicePayload = this.createEmptyForm();
   situationDraft: ServiceSituationDraft = this.createEmptySituationDraft();
+  hookDraft: ServiceHookDraft = this.createEmptyHookDraft();
+  hookEvents = [
+    { value: 'before_request_create', label: 'Antes de criar solicitação' },
+    { value: 'after_request_create', label: 'Depois de criar solicitação' }
+  ];
 
   @ViewChild(MatPaginator) paginator?: MatPaginator;
   @ViewChild(MatSort) sort?: MatSort;
 
   constructor(
     private readonly serviceService: ServiceService,
+    private readonly automationFunctionService: AutomationFunctionService,
     private readonly serviceCategoryService: ServiceCategoryService,
     private readonly documentTypeService: DocumentTypeService,
     private readonly userGroupService: UserGroupService
@@ -86,11 +97,13 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
 
   loadReferenceData(): void {
     forkJoin({
+      automationFunctions: this.automationFunctionService.list(),
       categories: this.serviceCategoryService.list(),
       documentTypes: this.documentTypeService.list(),
       groups: this.userGroupService.list()
     }).subscribe({
-      next: ({ categories, documentTypes, groups }) => {
+      next: ({ automationFunctions, categories, documentTypes, groups }) => {
+        this.automationFunctions = automationFunctions.filter((item) => item.active);
         this.categories = categories;
         this.documentTypes = documentTypes.filter((documentType) => documentType.active);
         this.groups = groups;
@@ -183,9 +196,14 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
       situations: service.situations.map((situation) => ({
         ...situation,
         document_type_ids: [...(situation.document_type_ids || [])]
+      })),
+      hooks: (service.hooks || []).map((hook) => ({
+        ...hook,
+        config: { ...(hook.config || {}) }
       }))
     };
     this.situationDraft = this.createEmptySituationDraft();
+    this.hookDraft = this.createEmptyHookDraft();
     this.errorMessage = '';
     this.successMessage = '';
     this.isFormVisible = true;
@@ -320,6 +338,58 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     }));
   }
 
+  addHook(): void {
+    if (!this.hookDraft.event_name) {
+      this.errorMessage = 'Informe o evento da automacao.';
+      return;
+    }
+
+    if (!this.hookDraft.function_id && !this.hookDraft.handler_key.trim()) {
+      this.errorMessage = 'Selecione uma function ou informe uma chave de handler.';
+      return;
+    }
+
+    const config = this.parseHookConfig(this.hookDraft.config_text);
+
+    if (config === null) {
+      return;
+    }
+
+    const newHook: ServiceHook = {
+      id: this.nextHookId(),
+      function_id: this.hookDraft.function_id || null,
+      function_name: this.functionName(this.hookDraft.function_id),
+      event_name: this.hookDraft.event_name,
+      handler_key: this.hookDraft.handler_key.trim(),
+      config,
+      execution_order: Number(this.hookDraft.execution_order) || this.form.hooks.length + 1,
+      active: this.hookDraft.active
+    };
+
+    this.form.hooks = [...this.form.hooks, newHook].sort(
+      (first, second) => first.execution_order - second.execution_order
+    );
+    this.hookDraft = this.createEmptyHookDraft();
+    this.errorMessage = '';
+  }
+
+  removeHook(hook: ServiceHook): void {
+    this.form.hooks = this.form.hooks.filter((item) => item.id !== hook.id);
+  }
+
+  toggleHookStatus(hook: ServiceHook): void {
+    this.form.hooks = this.form.hooks.map((item) => {
+      if (item.id !== hook.id) {
+        return item;
+      }
+
+      return {
+        ...item,
+        active: !item.active
+      };
+    });
+  }
+
   resetForm(): void {
     this.editingServiceId = null;
     this.form = this.createEmptyForm();
@@ -378,6 +448,24 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     return names.length ? names.join(', ') : '-';
   }
 
+  eventLabel(eventName: string): string {
+    return this.hookEvents.find((event) => event.value === eventName)?.label || eventName;
+  }
+
+  functionName(functionId: number | null): string {
+    if (!functionId) {
+      return '-';
+    }
+
+    return this.automationFunctions.find((item) => item.id === functionId)?.name || '-';
+  }
+
+  configPreview(config: Record<string, unknown>): string {
+    const value = JSON.stringify(config || {});
+
+    return value.length > 90 ? `${value.slice(0, 87)}...` : value;
+  }
+
   syncSlugFromName(): void {
     if (this.isEditing || this.form.slug.trim()) {
       return;
@@ -428,6 +516,15 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
         ...situation,
         document_type_ids: [...(situation.document_type_ids || [])],
         display_order: index + 1
+      })),
+      hooks: this.form.hooks.map((hook, index) => ({
+        ...hook,
+        function_name: hook.function_name || this.functionName(hook.function_id),
+        function_id: hook.function_id || null,
+        handler_key: (hook.handler_key || '').trim(),
+        config: hook.config || {},
+        execution_order: Number(hook.execution_order) || index + 1,
+        active: hook.active
       }))
     };
   }
@@ -445,7 +542,8 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
       updated_at: '',
       category_ids: [],
       group_ids: [],
-      situations: []
+      situations: [],
+      hooks: []
     };
   }
 
@@ -463,12 +561,54 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     };
   }
 
+  private createEmptyHookDraft(): ServiceHookDraft {
+    return {
+      function_id: null,
+      event_name: 'before_request_create',
+      handler_key: '',
+      config: {},
+      config_text: '{\n  "connection": "db2_guri"\n}',
+      execution_order: 0,
+      active: true
+    };
+  }
+
   private nextSituationId(): number {
     if (!this.form.situations.length) {
       return 1;
     }
 
     return Math.max(...this.form.situations.map((situation) => situation.id)) + 1;
+  }
+
+  private nextHookId(): number {
+    if (!this.form.hooks.length) {
+      return 1;
+    }
+
+    return Math.max(...this.form.hooks.map((hook) => hook.id)) + 1;
+  }
+
+  private parseHookConfig(value: string): Record<string, unknown> | null {
+    const trimmedValue = value.trim();
+
+    if (!trimmedValue) {
+      return {};
+    }
+
+    try {
+      const parsedValue = JSON.parse(trimmedValue);
+
+      if (!parsedValue || Array.isArray(parsedValue) || typeof parsedValue !== 'object') {
+        this.errorMessage = 'A configuracao da automacao deve ser um objeto JSON.';
+        return null;
+      }
+
+      return parsedValue;
+    } catch {
+      this.errorMessage = 'A configuracao da automacao nao esta em um JSON valido.';
+      return null;
+    }
   }
 
   private toggleId(ids: number[], id: number, checked: boolean): number[] {

@@ -377,6 +377,126 @@
       </div>
     </section>
 
+    <section class="form-section hooks-section">
+      <h2>Automações do serviço</h2>
+
+      <div class="hook-editor">
+        <label for="hook-event">
+          Evento
+          <select
+            id="hook-event"
+            name="hookEvent"
+            [(ngModel)]="hookDraft.event_name"
+          >
+            @for (event of hookEvents; track event.value) {
+              <option [value]="event.value">{{ event.label }}</option>
+            }
+          </select>
+        </label>
+
+        <label for="hook-function">
+          Function
+          <select
+            id="hook-function"
+            name="hookFunction"
+            [(ngModel)]="hookDraft.function_id"
+          >
+            <option [ngValue]="null">Selecionar function</option>
+            @for (functionItem of automationFunctions; track functionItem.id) {
+              <option [ngValue]="functionItem.id">{{ functionItem.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label for="hook-handler-key">
+          Handler legado
+          <input
+            id="hook-handler-key"
+            name="hookHandlerKey"
+            type="text"
+            autocomplete="off"
+            placeholder="Opcional"
+            [(ngModel)]="hookDraft.handler_key"
+          >
+        </label>
+
+        <label for="hook-order">
+          Ordem
+          <input
+            id="hook-order"
+            name="hookOrder"
+            type="number"
+            min="0"
+            [(ngModel)]="hookDraft.execution_order"
+          >
+        </label>
+
+        <mat-checkbox name="hookActive" [(ngModel)]="hookDraft.active">
+          Ativa
+        </mat-checkbox>
+
+        <label for="hook-config" class="full-field">
+          Configuração JSON
+          <textarea
+            id="hook-config"
+            name="hookConfig"
+            rows="4"
+            spellcheck="false"
+            [(ngModel)]="hookDraft.config_text"
+          ></textarea>
+        </label>
+
+        <button mat-stroked-button type="button" (click)="addHook()">
+          <mat-icon aria-hidden="true">add</mat-icon>
+          Adicionar automação
+        </button>
+      </div>
+
+      <div class="hooks-table-wrap">
+        <table class="hooks-table">
+          <thead>
+            <tr>
+              <th>Ordem</th>
+              <th>Evento</th>
+              <th>Function</th>
+              <th>Handler</th>
+              <th>Configuração</th>
+              <th>Status</th>
+              <th aria-label="Acoes"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (hook of form.hooks; track hook.id) {
+              <tr>
+                <td>{{ hook.execution_order }}</td>
+                <td>{{ eventLabel(hook.event_name) }}</td>
+                <td>{{ functionName(hook.function_id) }}</td>
+                <td>{{ hook.handler_key || '-' }}</td>
+                <td>{{ configPreview(hook.config) }}</td>
+                <td>
+                  <span class="rule-chip" [class.active]="hook.active">
+                    {{ hook.active ? 'Ativa' : 'Inativa' }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <button mat-icon-button type="button" aria-label="Alterar status da automacao" (click)="toggleHookStatus(hook)">
+                    <mat-icon aria-hidden="true">{{ hook.active ? 'block' : 'check_circle' }}</mat-icon>
+                  </button>
+                  <button mat-icon-button type="button" aria-label="Remover automacao" (click)="removeHook(hook)">
+                    <mat-icon aria-hidden="true">delete</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-state">Nenhuma automação cadastrada.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     @if (errorMessage) {
       <p class="feedback error">{{ errorMessage }}</p>
     }

@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "service_id": 90,
+    "function_id": 1,
+    "event_name": "before_request_create",
+    "handler_key": "",
+    "config": {
+      "connection": "db2_guri",
+      "periodo_meses": 24,
+      "usar_cache": true
+    },
+    "execution_order": 10,
+    "active": true
+  }
+]

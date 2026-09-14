@@ -1,0 +1,114 @@
+<section class="page-header">
+  <div class="page-title">
+    <mat-icon aria-hidden="true">receipt_long</mat-icon>
+    <div>
+      <h1>Logs</h1>
+      <p>Consulte execuções de automações dos serviços.</p>
+    </div>
+  </div>
+
+  <button mat-stroked-button type="button" (click)="loadLogs()" [disabled]="isLoading">
+    <mat-icon aria-hidden="true">refresh</mat-icon>
+    Atualizar
+  </button>
+</section>
+
+<section class="content-panel logs-list" aria-label="Logs de automacoes">
+  <header class="table-toolbar">
+    <label class="table-filter" for="logs-filter">
+      <mat-icon aria-hidden="true">search</mat-icon>
+      <input
+        id="logs-filter"
+        type="search"
+        placeholder="Filtrar por serviço, function, usuário, status ou mensagem"
+        [ngModel]="filterTerm"
+        (ngModelChange)="applyFilter($event)"
+      >
+    </label>
+  </header>
+
+  @if (errorMessage) {
+    <p class="feedback error">{{ errorMessage }}</p>
+  }
+
+  @if (isLoading) {
+    <div class="loading-state">
+      <mat-spinner diameter="28" />
+      <span>Carregando logs</span>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="created_at">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
+          <td mat-cell *matCellDef="let log">{{ log.created_at | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let log">
+            <span class="status-pill" [class.success]="log.status === 'success'" [class.error]="log.status === 'error'">
+              {{ log.status }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="service_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Serviço</th>
+          <td mat-cell *matCellDef="let log">
+            <strong>{{ log.service_name || '-' }}</strong>
+            <small>{{ log.service_slug }}</small>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="automation">
+          <th mat-header-cell *matHeaderCellDef>Automação</th>
+          <td mat-cell *matCellDef="let log">{{ automationName(log) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="event_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Evento</th>
+          <td mat-cell *matCellDef="let log">{{ eventLabel(log.event_name) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="service_request_number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Solicitação</th>
+          <td mat-cell *matCellDef="let log">{{ log.service_request_number || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="user_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuário</th>
+          <td mat-cell *matCellDef="let log">
+            <strong>{{ log.user_name || '-' }}</strong>
+            <small>{{ log.user_email }}</small>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="duration_ms">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Duração</th>
+          <td mat-cell *matCellDef="let log">{{ log.duration_ms }} ms</td>
+        </ng-container>
+
+        <ng-container matColumnDef="details">
+          <th mat-header-cell *matHeaderCellDef>Detalhes</th>
+          <td mat-cell *matCellDef="let log" class="details-cell">{{ details(log) }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let log; columns: displayedColumns;" class="data-row"></tr>
+        <tr class="mat-row empty-row" *matNoDataRow>
+          <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+            Nenhum log encontrado.
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[10, 25, 50]"
+      showFirstLastButtons
+      aria-label="Paginacao de logs"
+    />
+  }
+</section>

@@ -5,6 +5,7 @@ from datetime import datetime
 from app.extensions import db
 from app.models import Service, ServiceRequest, User, UserGroup
 from app.repositories.utils import datetime_to_api, optional_int
+from app.service_hooks import service_hook_runner
 
 DEV_REQUESTER_USER_ID = 3
 
@@ -72,7 +73,23 @@ class ServiceRequestsRepository:
         )
 
         if existing_initial_request is not None:
+            hook_result = service_hook_runner.run(
+                event_name="before_request_create",
+                service=service,
+                user=requester,
+                service_request=existing_initial_request,
+                form_data=existing_initial_request.form_data or {},
+            )
+            existing_initial_request.form_data = hook_result["form_data"]
+            db.session.commit()
             return self._to_dict(existing_initial_request), None, False
+
+        hook_result = service_hook_runner.run(
+            event_name="before_request_create",
+            service=service,
+            user=requester,
+            form_data=data.get("form_data", {}),
+        )
 
         service_request = ServiceRequest(
             number="",
@@ -80,11 +97,20 @@ class ServiceRequestsRepository:
             requester_user_id=requester.id,
             current_situation_id=initial_situation.id if initial_situation else None,
             status=initial_situation.name if initial_situation else "Solicitado",
-            form_data={},
+            form_data=hook_result["form_data"],
         )
         db.session.add(service_request)
         db.session.flush()
         service_request.number = self._request_number(service_request.id)
+
+        service_hook_runner.run(
+            event_name="after_request_create",
+            service=service,
+            user=requester,
+            service_request=service_request,
+            form_data=service_request.form_data,
+        )
+
         db.session.commit()
 
         return self._to_dict(service_request), None, True

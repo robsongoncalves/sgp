@@ -74,14 +74,14 @@ export class SidebarComponent {
       adminOnly: true,
       items: [
         {
-          icon: 'folder',
-          label: 'Categorias de Servico',
-          route: '/admin/categorias-servico'
-        },
-        {
           icon: 'category',
           label: 'Serviços',
           route: '/admin/servicos'
+        },
+        {
+          icon: 'folder',
+          label: 'Categorias de Servico',
+          route: '/admin/categorias-servico'
         },
         {
           icon: 'description',
@@ -109,9 +109,24 @@ export class SidebarComponent {
           route: '/admin/usuarios'
         },
         {
+          icon: 'code',
+          label: 'Functions',
+          route: '/admin/functions'
+        },
+        {
+          icon: 'data_object',
+          label: 'Mapa de Campos',
+          route: '/admin/mapa-campos'
+        },
+        {
           icon: 'settings',
           label: 'Configurações',
           route: '/configuracoes'
+        },
+        {
+          icon: 'receipt_long',
+          label: 'Logs',
+          route: '/admin/logs'
         }
       ]
     }

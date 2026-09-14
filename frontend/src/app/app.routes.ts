@@ -108,6 +108,30 @@ export const routes: Routes = [
     canActivate: [systemAdminGuard]
   },
   {
+    path: 'admin/functions',
+    loadComponent: () =>
+      import('./pages/admin/functions/functions.component').then(
+        (component) => component.FunctionsComponent
+      ),
+    canActivate: [systemAdminGuard]
+  },
+  {
+    path: 'admin/logs',
+    loadComponent: () =>
+      import('./pages/admin/logs/logs.component').then(
+        (component) => component.LogsComponent
+      ),
+    canActivate: [systemAdminGuard]
+  },
+  {
+    path: 'admin/mapa-campos',
+    loadComponent: () =>
+      import('./pages/admin/mapa-campos/mapa-campos.component').then(
+        (component) => component.MapaCamposComponent
+      ),
+    canActivate: [systemAdminGuard]
+  },
+  {
     path: 'admin/equipes',
     redirectTo: 'admin/grupos',
     pathMatch: 'full'

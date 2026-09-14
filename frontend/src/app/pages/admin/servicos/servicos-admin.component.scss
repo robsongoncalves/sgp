@@ -78,7 +78,8 @@ h3 {
 }
 
 .form-grid,
-.situation-editor {
+.situation-editor,
+.hook-editor {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px 16px;
@@ -183,22 +184,26 @@ select:disabled {
   flex-wrap: wrap;
 }
 
-.situation-editor button {
+.situation-editor button,
+.hook-editor button {
   align-self: end;
   min-height: 42px;
 }
 
 .situations-table-wrap,
+.hooks-table-wrap,
 .table-wrap {
   overflow-x: auto;
 }
 
 .situations-table,
+.hooks-table,
 table {
   width: 100%;
 }
 
-.situations-table {
+.situations-table,
+.hooks-table {
   border-collapse: collapse;
 }
 
@@ -209,7 +214,9 @@ td {
 }
 
 .situations-table th,
-.situations-table td {
+.situations-table td,
+.hooks-table th,
+.hooks-table td {
   border-bottom: 1px solid #edf0f5;
   text-align: left;
 }
@@ -363,6 +370,7 @@ td small {
 @media (max-width: 900px) {
   .form-grid,
   .situation-editor,
+  .hook-editor,
   .check-grid,
   .document-check-grid {
     grid-template-columns: 1fr;

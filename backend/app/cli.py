@@ -10,10 +10,13 @@ from sqlalchemy import text
 from app.extensions import db
 from app.models import (
     DocumentType,
+    AutomationFunction,
     FormTemplate,
     OpinionTemplate,
     Service,
     ServiceCategory,
+    ServiceHook,
+    ServiceHookExecution,
     ServiceRequest,
     ServiceRequestAttachment,
     ServiceRequestDocument,
@@ -34,6 +37,7 @@ DATA_DIR = BASE_DIR / "data"
 def register_cli(app):
     app.cli.add_command(seed_json_command)
     app.cli.add_command(seed_document_config_command)
+    app.cli.add_command(seed_service_hooks_command)
 
 
 @click.command("seed-json")
@@ -48,7 +52,9 @@ def seed_json_command(reset: bool):
     _seed_form_templates()
     _seed_opinion_templates()
     _seed_document_types()
+    _seed_automation_functions()
     _seed_services()
+    _seed_service_hooks()
     _seed_service_requests()
     db.session.commit()
 
@@ -65,12 +71,23 @@ def seed_document_config_command():
     click.echo("Configuracao documental importada para o PostgreSQL.")
 
 
+@click.command("seed-service-hooks")
+def seed_service_hooks_command():
+    _seed_automation_functions()
+    _seed_service_hooks()
+    db.session.commit()
+
+    click.echo("Automacoes de servicos importadas para o PostgreSQL.")
+
+
 def _reset_database() -> None:
     for table in (
         ServiceRequestMovement.__table__,
+        ServiceHookExecution.__table__,
         ServiceRequestAttachment.__table__,
         ServiceRequestDocument.__table__,
         ServiceRequest.__table__,
+        ServiceHook.__table__,
         service_situation_document_type_association,
         ServiceSituation.__table__,
         service_group_association,
@@ -78,6 +95,7 @@ def _reset_database() -> None:
         user_group_members,
         Service.__table__,
         DocumentType.__table__,
+        AutomationFunction.__table__,
         OpinionTemplate.__table__,
         FormTemplate.__table__,
         ServiceCategory.__table__,
@@ -168,6 +186,22 @@ def _seed_document_types() -> None:
     _reset_sequence("document_types", "id")
 
 
+def _seed_automation_functions() -> None:
+    for item in _read_json("automation_functions.json"):
+        function = db.session.get(AutomationFunction, item["id"]) or AutomationFunction(id=item["id"])
+        function.name = item["name"]
+        function.slug = item["slug"]
+        function.description = item.get("description", "")
+        function.language = item.get("language", "python")
+        function.source_code = item.get("source_code", "")
+        function.timeout_seconds = int(item.get("timeout_seconds", 10))
+        function.active = item.get("active", True)
+        db.session.add(function)
+
+    db.session.flush()
+    _reset_sequence("automation_functions", "id")
+
+
 def _seed_form_templates() -> None:
     for item in _read_json("form_templates.json"):
         template = db.session.get(FormTemplate, item["id"]) or FormTemplate(id=item["id"])
@@ -236,6 +270,27 @@ def _seed_services() -> None:
     db.session.flush()
     _reset_sequence("services", "id")
     _reset_sequence("service_situations", "id")
+
+
+def _seed_service_hooks() -> None:
+    for item in _read_json("service_hooks.json"):
+        service = db.session.get(Service, item.get("service_id"))
+
+        if service is None:
+            continue
+
+        hook = db.session.get(ServiceHook, item["id"]) or ServiceHook(id=item["id"])
+        hook.service_id = service.id
+        hook.function_id = item.get("function_id")
+        hook.event_name = item["event_name"]
+        hook.handler_key = item["handler_key"]
+        hook.config = item.get("config", {})
+        hook.execution_order = int(item.get("execution_order", 0))
+        hook.active = item.get("active", True)
+        db.session.add(hook)
+
+    db.session.flush()
+    _reset_sequence("service_hooks", "id")
 
 
 def _seed_service_situations(service: Service, situations_data: list[dict]) -> None:

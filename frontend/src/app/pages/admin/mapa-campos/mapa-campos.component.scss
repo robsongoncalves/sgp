@@ -1,0 +1,165 @@
+.page-header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 22px 28px;
+  background: #ffffff;
+  border: 1px solid #d8dde6;
+}
+
+.page-title {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.page-title > mat-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 6px;
+  background: #e8f0fe;
+  color: #0b57d0;
+}
+
+h1,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.page-title p {
+  margin-top: 4px;
+  color: #5f6b7a;
+}
+
+.content-panel {
+  display: block;
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #d8dde6;
+}
+
+.table-toolbar {
+  display: flex;
+  margin-bottom: 18px;
+}
+
+.table-filter {
+  display: flex;
+  max-width: 640px;
+  flex: 1;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #aab3c2;
+  border-radius: 6px;
+  color: #5f6b7a;
+  font-weight: 400;
+}
+
+.table-filter input {
+  width: 100%;
+  height: auto;
+  padding: 0;
+  border: 0;
+  font: inherit;
+}
+
+.table-filter input:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+th,
+td {
+  height: 42px;
+  padding: 6px 12px;
+}
+
+th {
+  color: #4b5563;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+td strong,
+td small {
+  display: block;
+}
+
+td small {
+  color: #5f6b7a;
+  font-size: 0.82rem;
+}
+
+.activity-cell {
+  min-width: 360px;
+}
+
+.field-cell {
+  min-width: 270px;
+  white-space: nowrap;
+}
+
+code {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: #eef2f7;
+  color: #1f2937;
+  font-family: "Roboto Mono", "Courier New", monospace;
+  font-size: 0.84rem;
+}
+
+.field-cell button {
+  width: 34px;
+  height: 34px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.field-cell mat-icon {
+  font-size: 19px;
+}
+
+.data-row:hover {
+  background: #f5f8fd;
+}
+
+.empty-state {
+  padding: 28px 16px;
+  color: #5f6b7a;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .page-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .table-filter {
+    max-width: none;
+  }
+}

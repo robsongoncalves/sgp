@@ -13,6 +13,17 @@ export interface ServiceSituation {
   display_order: number;
 }
 
+export interface ServiceHook {
+  id: number;
+  function_id: number | null;
+  function_name: string;
+  event_name: string;
+  handler_key: string;
+  config: Record<string, unknown>;
+  execution_order: number;
+  active: boolean;
+}
+
 export interface Service {
   id: number;
   name: string;
@@ -27,10 +38,17 @@ export interface Service {
   category_ids: number[];
   group_ids: number[];
   situations: ServiceSituation[];
+  hooks: ServiceHook[];
 }
 
 export type ServicePayload = Omit<Service, 'id'>;
 
 export type ServiceSituationDraft = Omit<ServiceSituation, 'id'> & {
   id?: number;
+};
+
+export type ServiceHookDraft = Omit<ServiceHook, 'id' | 'function_name' | 'config'> & {
+  id?: number;
+  config: Record<string, unknown>;
+  config_text: string;
 };

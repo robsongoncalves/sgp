@@ -1,0 +1,86 @@
+<section class="page-header">
+  <div class="page-title">
+    <mat-icon aria-hidden="true">data_object</mat-icon>
+    <div>
+      <h1>Mapa de Campos</h1>
+      <p>Consulte os caminhos técnicos usados por functions e automações.</p>
+    </div>
+  </div>
+</section>
+
+<section class="content-panel fields-list" aria-label="Mapa de campos tecnicos">
+  <header class="table-toolbar">
+    <label class="table-filter" for="fields-filter">
+      <mat-icon aria-hidden="true">search</mat-icon>
+      <input
+        id="fields-filter"
+        type="search"
+        placeholder="Filtrar por serviço, requisito, item ou campo"
+        [ngModel]="filterTerm"
+        (ngModelChange)="applyFilter($event)"
+      >
+    </label>
+  </header>
+
+  <div class="table-wrap">
+    <table mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="serviceName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Serviço</th>
+        <td mat-cell *matCellDef="let entry">
+          <strong>{{ entry.serviceName }}</strong>
+          <small>{{ entry.moduleKey }}</small>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="requirementCode">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Req.</th>
+        <td mat-cell *matCellDef="let entry">Req. {{ entry.requirementCode }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="itemNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Item</th>
+        <td mat-cell *matCellDef="let entry">{{ entry.itemNumber }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="itemLabel">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Atividade</th>
+        <td mat-cell *matCellDef="let entry" class="activity-cell">{{ entry.itemLabel }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="points">
+        <th mat-header-cell *matHeaderCellDef>Pontuação</th>
+        <td mat-cell *matCellDef="let entry">{{ entry.points }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="measure">
+        <th mat-header-cell *matHeaderCellDef>Unidade</th>
+        <td mat-cell *matCellDef="let entry">{{ entry.measure }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fieldPath">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Campo técnico</th>
+        <td mat-cell *matCellDef="let entry" class="field-cell">
+          <code>{{ entry.fieldPath }}</code>
+          <button mat-icon-button type="button" aria-label="Copiar campo tecnico" (click)="copyFieldPath(entry.fieldPath)">
+            <mat-icon aria-hidden="true">content_copy</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let entry; columns: displayedColumns;" class="data-row"></tr>
+      <tr class="mat-row empty-row" *matNoDataRow>
+        <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+          Nenhum campo encontrado.
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <mat-paginator
+    [pageSize]="10"
+    [pageSizeOptions]="[10, 25, 50]"
+    showFirstLastButtons
+    aria-label="Paginacao do mapa de campos"
+  />
+</section>

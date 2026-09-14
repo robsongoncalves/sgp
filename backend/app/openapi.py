@@ -24,6 +24,8 @@ OPENAPI_SPEC = {
         {"name": "Tipos de Documentos"},
         {"name": "Formularios"},
         {"name": "Modelos de Parecer"},
+        {"name": "Functions"},
+        {"name": "Logs"},
         {"name": "Servicos"},
         {"name": "Solicitacoes"},
     ],
@@ -240,6 +242,47 @@ OPENAPI_SPEC = {
                 "parameters": [{"name": "template_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
                 "responses": {"204": {"description": "Modelo de parecer removido"}},
             },
+        },
+        "/automation-functions": {
+            "get": {
+                "tags": ["Functions"],
+                "summary": "Lista functions de automacao",
+                "responses": {"200": {"description": "Functions retornadas"}},
+            },
+            "post": {
+                "tags": ["Functions"],
+                "summary": "Cria function de automacao",
+                "responses": {"201": {"description": "Function criada"}},
+            },
+        },
+        "/automation-functions/{function_id}": {
+            "put": {
+                "tags": ["Functions"],
+                "summary": "Atualiza function de automacao",
+                "parameters": [{"name": "function_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"200": {"description": "Function atualizada"}},
+            },
+            "delete": {
+                "tags": ["Functions"],
+                "summary": "Remove function de automacao",
+                "parameters": [{"name": "function_id", "in": "path", "required": True, "schema": {"type": "integer"}}],
+                "responses": {"204": {"description": "Function removida"}},
+            },
+        },
+        "/logs/automation": {
+            "get": {
+                "tags": ["Logs"],
+                "summary": "Lista logs de execucao das automacoes",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": False,
+                        "schema": {"type": "integer", "default": 300},
+                    }
+                ],
+                "responses": {"200": {"description": "Logs retornados"}},
+            }
         },
         "/services": {
             "get": {

@@ -493,6 +493,9 @@
                           min="0"
                           step="0.01"
                           [value]="getItemQuantity(requisito.code, entry.originalIndex)"
+                          [matTooltip]="quantityFieldTooltip(requisito.code, entry.originalIndex)"
+                          [matTooltipDisabled]="!isSystemAdmin"
+                          matTooltipPosition="above"
                           (input)="updateItemQuantity(requisito.code, entry.originalIndex, $event)"
                         >
                       </label>

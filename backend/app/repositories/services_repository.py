@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 
 from app.extensions import db
-from app.models import DocumentType, Service, ServiceCategory, ServiceSituation, UserGroup
+from app.models import AutomationFunction, DocumentType, Service, ServiceCategory, ServiceHook, ServiceSituation, UserGroup
 from app.repositories.utils import bool_value, date_to_api, optional_int
 
 
@@ -50,6 +50,7 @@ class ServicesRepository:
         db.session.add(service)
         db.session.flush()
         self._sync_situations(service, normalized_data["situations"])
+        self._sync_hooks(service, normalized_data["hooks"])
         db.session.commit()
 
         return self._to_dict(service), None
@@ -80,6 +81,7 @@ class ServicesRepository:
         self._sync_categories(service, normalized_data["category_ids"])
         self._sync_groups(service, normalized_data["group_ids"])
         self._sync_situations(service, normalized_data["situations"])
+        self._sync_hooks(service, normalized_data["hooks"])
         db.session.commit()
 
         return self._to_dict(service), None
@@ -114,6 +116,18 @@ class ServicesRepository:
             }
             for index, item in enumerate(data.get("situations", []))
         ]
+        hooks = [
+            {
+                "id": optional_int(item.get("id")) or index + 1,
+                "function_id": optional_int(item.get("function_id")),
+                "event_name": str(item.get("event_name", "")).strip(),
+                "handler_key": str(item.get("handler_key", "")).strip(),
+                "config": item.get("config", {}),
+                "execution_order": int(item.get("execution_order") or index + 1),
+                "active": bool_value(item.get("active", True)),
+            }
+            for index, item in enumerate(data.get("hooks", []))
+        ]
 
         return {
             "name": name,
@@ -129,6 +143,7 @@ class ServicesRepository:
             "category_ids": sorted(set(self._int_list(data.get("category_ids", [])))),
             "group_ids": sorted(set(self._int_list(data.get("group_ids", [])))),
             "situations": situations,
+            "hooks": hooks,
         }
 
     def _validate(self, data: dict) -> str | None:
@@ -162,6 +177,19 @@ class ServicesRepository:
                 and situation["previous_situation_id"] not in valid_situation_ids
             ):
                 return "A situacao anterior informada nao existe neste servico."
+
+        for hook in data["hooks"]:
+            if not hook["event_name"]:
+                return "Informe o evento de todas as automacoes."
+
+            if hook["function_id"] and db.session.get(AutomationFunction, hook["function_id"]) is None:
+                return "Function associada nao encontrada."
+
+            if not hook["function_id"] and not hook["handler_key"]:
+                return "Informe a function ou handler de todas as automacoes."
+
+            if not isinstance(hook["config"], dict):
+                return "A configuracao da automacao deve ser um objeto JSON."
 
         return None
 
@@ -219,6 +247,34 @@ class ServicesRepository:
                 situation_by_input_id[previous_input_id].id
             )
 
+    def _sync_hooks(self, service: Service, hooks_data: list[dict]) -> None:
+        current_by_id = {hook.id: hook for hook in service.hooks}
+        incoming_ids = {
+            hook["id"]
+            for hook in hooks_data
+            if hook["id"] in current_by_id
+        }
+
+        for hook in list(service.hooks):
+            if hook.id not in incoming_ids:
+                db.session.delete(hook)
+
+        db.session.flush()
+
+        for hook_data in hooks_data:
+            hook = current_by_id.get(hook_data["id"])
+
+            if hook is None:
+                hook = ServiceHook(service_id=service.id)
+                db.session.add(hook)
+
+            hook.function_id = hook_data["function_id"]
+            hook.event_name = hook_data["event_name"]
+            hook.handler_key = hook_data["handler_key"]
+            hook.config = hook_data["config"]
+            hook.execution_order = hook_data["execution_order"]
+            hook.active = hook_data["active"]
+
     def _slug_exists(self, slug: str, ignore_service_id: int | None = None) -> bool:
         query = Service.query.filter(Service.slug == slug)
 
@@ -259,6 +315,19 @@ class ServicesRepository:
                     "display_order": situation.display_order,
                 }
                 for situation in situations
+            ],
+            "hooks": [
+                {
+                    "id": hook.id,
+                    "function_id": hook.function_id,
+                    "function_name": hook.function.name if hook.function else "",
+                    "event_name": hook.event_name,
+                    "handler_key": hook.handler_key,
+                    "config": hook.config or {},
+                    "execution_order": hook.execution_order,
+                    "active": hook.active,
+                }
+                for hook in service.hooks
             ],
         }
 

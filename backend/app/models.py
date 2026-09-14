@@ -207,6 +207,11 @@ class Service(db.Model, TimestampMixin):
         cascade="all, delete-orphan",
         order_by="ServiceSituation.display_order",
     )
+    hooks: Mapped[list["ServiceHook"]] = relationship(
+        back_populates="service",
+        cascade="all, delete-orphan",
+        order_by="ServiceHook.execution_order",
+    )
 
 
 class ServiceSituation(db.Model, TimestampMixin):
@@ -239,6 +244,64 @@ class ServiceSituation(db.Model, TimestampMixin):
         secondary=service_situation_document_type_association,
         back_populates="situations",
     )
+
+
+class ServiceHook(db.Model, TimestampMixin):
+    __tablename__ = "service_hooks"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    service_id: Mapped[int] = mapped_column(ForeignKey("services.id", ondelete="CASCADE"), nullable=False)
+    function_id: Mapped[int | None] = mapped_column(
+        ForeignKey("automation_functions.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    event_name: Mapped[str] = mapped_column(String(80), nullable=False)
+    handler_key: Mapped[str] = mapped_column(String(180), nullable=False)
+    config: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    execution_order: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+    service: Mapped[Service] = relationship(back_populates="hooks")
+    function: Mapped["AutomationFunction | None"] = relationship()
+    executions: Mapped[list["ServiceHookExecution"]] = relationship(
+        back_populates="hook",
+        cascade="all, delete-orphan",
+    )
+
+
+class AutomationFunction(db.Model, TimestampMixin):
+    __tablename__ = "automation_functions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(180), nullable=False, unique=True)
+    slug: Mapped[str] = mapped_column(String(140), nullable=False, unique=True, index=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    language: Mapped[str] = mapped_column(String(40), nullable=False, default="python")
+    source_code: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    timeout_seconds: Mapped[int] = mapped_column(Integer, nullable=False, default=10)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+
+class ServiceHookExecution(db.Model, TimestampMixin):
+    __tablename__ = "service_hook_executions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    hook_id: Mapped[int] = mapped_column(ForeignKey("service_hooks.id", ondelete="CASCADE"), nullable=False)
+    service_request_id: Mapped[int | None] = mapped_column(
+        ForeignKey("service_requests.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    event_name: Mapped[str] = mapped_column(String(80), nullable=False)
+    status: Mapped[str] = mapped_column(String(40), nullable=False, default="success")
+    duration_ms: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    messages: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    warnings: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    error_message: Mapped[str] = mapped_column(Text, nullable=False, default="")
+
+    hook: Mapped[ServiceHook] = relationship(back_populates="executions")
+    service_request: Mapped["ServiceRequest | None"] = relationship()
+    user: Mapped[User | None] = relationship()
 
 
 class ServiceRequest(db.Model, TimestampMixin):
