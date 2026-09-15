@@ -58,6 +58,10 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
   isSaving = false;
   errorMessage = '';
   successMessage = '';
+  documentationHeadings = 'DEFINIÇÃO, QUEM FAZ?';
+  documentationImportMessage = '';
+  documentationImportSuccess = false;
+  isExtractingDocumentation = false;
   categoryFilterTerm = '';
   groupFilterTerm = '';
   situationFilterTerm = '';
@@ -304,6 +308,7 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     this.hookDraft = this.createEmptyHookDraft();
     this.errorMessage = '';
     this.successMessage = '';
+    this.setDocumentationImportMessage('', false);
     this.isFormVisible = true;
   }
 
@@ -331,6 +336,62 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
         this.errorMessage = response?.error?.message || 'Nao foi possivel alterar o status.';
       }
     });
+  }
+
+  extractDocumentationDescription(): void {
+    const url = this.form.documentation_url.trim();
+    const headings = this.documentationHeadings
+      .split(',')
+      .map((heading) => heading.trim())
+      .filter(Boolean);
+
+    if (!url) {
+      this.setDocumentationImportMessage('Informe a URL da documentacao.', false);
+      return;
+    }
+
+    if (!headings.length) {
+      this.setDocumentationImportMessage('Informe ao menos um topico para importar.', false);
+      return;
+    }
+
+    this.isExtractingDocumentation = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.setDocumentationImportMessage('Importando texto da documentacao.', true);
+
+    this.serviceService.extractDocumentation({
+      url,
+      headings,
+      content_class: 'entry-content',
+      heading_tags: ['h4'],
+      text_tags: ['p']
+    }).subscribe({
+      next: (result) => {
+        if (!result.description.trim()) {
+          this.setDocumentationImportMessage('Nenhum texto foi encontrado para os topicos informados.', false);
+          this.isExtractingDocumentation = false;
+          return;
+        }
+
+        this.form.description = result.description;
+        this.setDocumentationImportMessage('Descricao importada. Revise antes de salvar.', true);
+        this.isExtractingDocumentation = false;
+      },
+      error: (response) => {
+        const backendUnavailable = response?.status === 0;
+        const message = backendUnavailable
+          ? 'Backend nao respondeu em localhost:5000. Reinicie a API e tente novamente.'
+          : response?.error?.message || 'Nao foi possivel importar a documentacao.';
+        this.setDocumentationImportMessage(message, false);
+        this.isExtractingDocumentation = false;
+      }
+    });
+  }
+
+  private setDocumentationImportMessage(message: string, success: boolean): void {
+    this.documentationImportMessage = message;
+    this.documentationImportSuccess = success;
   }
 
   deleteService(service: Service): void {
@@ -536,6 +597,7 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     this.isSituationFormVisible = false;
     this.editingSituationId = null;
     this.situationDraft = this.createEmptySituationDraft();
+    this.setDocumentationImportMessage('', false);
   }
 
   closeForm(): void {

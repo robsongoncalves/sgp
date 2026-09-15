@@ -22,4 +22,12 @@ class Config:
         "ATTACHMENT_LOCAL_PATH",
         str(BASE_DIR / "storage" / "uploads"),
     )
+    DOCUMENTATION_ALLOWED_HOSTS = [
+        host.strip().lower()
+        for host in os.getenv("DOCUMENTATION_ALLOWED_HOSTS", ".unipampa.edu.br,unipampa.edu.br").split(",")
+        if host.strip()
+    ]
+    DOCUMENTATION_PLAYWRIGHT_ENABLED = os.getenv("DOCUMENTATION_PLAYWRIGHT_ENABLED", "true").lower() == "true"
+    DOCUMENTATION_PLAYWRIGHT_TIMEOUT_MS = int(os.getenv("DOCUMENTATION_PLAYWRIGHT_TIMEOUT_MS", "20000"))
+    DOCUMENTATION_PLAYWRIGHT_PROXY = os.getenv("DOCUMENTATION_PLAYWRIGHT_PROXY", "").strip()
     JSON_SORT_KEYS = False

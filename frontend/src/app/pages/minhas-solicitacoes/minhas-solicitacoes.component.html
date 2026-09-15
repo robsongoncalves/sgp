@@ -1,88 +1,74 @@
-<section class="filters-panel">
-  <h1>Selecione os filtros desejados:</h1>
-
-  <form [formGroup]="filterForm" (ngSubmit)="pesquisar()">
-    <div class="filters-grid">
-      <mat-form-field appearance="fill">
-        <mat-label>Número da Solicitação</mat-label>
-        <input matInput formControlName="numero" type="text">
-      </mat-form-field>
-
-      <mat-form-field appearance="fill">
-        <mat-label>Criado a partir de</mat-label>
-        <input matInput formControlName="criadoAPartirDe" type="date">
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="full-row">
-        <mat-label>Tipo de Solicitação</mat-label>
-        <mat-select formControlName="tipo">
-          @for (tipo of tipos; track tipo) {
-            <mat-option [value]="tipo">{{ tipo }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="full-row">
-        <mat-label>Situação</mat-label>
-        <mat-select formControlName="situacao">
-          @for (situacao of situacoes; track situacao) {
-            <mat-option [value]="situacao">{{ situacao }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+<section class="page-header">
+  <div class="page-title">
+    <mat-icon aria-hidden="true">assignment_turned_in</mat-icon>
+    <div>
+      <h1>Minhas Solicitações</h1>
+      <p>Acompanhe solicitações abertas por você.</p>
     </div>
+  </div>
 
-    <div class="filter-actions">
-      <button mat-stroked-button color="primary" type="button" (click)="limpar()">
-        <mat-icon aria-hidden="true">cleaning_services</mat-icon>
-        Limpar
-      </button>
-
-      <button mat-flat-button color="primary" type="submit">
-        <mat-icon aria-hidden="true">search</mat-icon>
-        Pesquisar
-      </button>
-    </div>
-  </form>
+  <button mat-stroked-button type="button" (click)="loadSolicitacoes()" [disabled]="isLoading">
+    <mat-icon aria-hidden="true">refresh</mat-icon>
+    Atualizar
+  </button>
 </section>
 
-<section class="requests-list" aria-label="Solicitações encontradas">
-  @if (isLoading) {
-    <article class="empty-card">
-      Carregando solicitações.
-    </article>
-  } @else if (errorMessage) {
-    <article class="empty-card error-message">
-      {{ errorMessage }}
-    </article>
-  } @else {
-  @for (solicitacao of filteredSolicitacoes; track solicitacao.number) {
-    <article class="request-card">
-      <div class="status-pill">{{ solicitacao.status }}</div>
-
-      <h2>{{ solicitacao.service_name }}</h2>
-
-      <p>Criada em {{ formatDate(solicitacao.created_at) }}</p>
-      <p>Última movimentação em {{ formatDate(solicitacao.updated_at) }}</p>
-
-      <span class="request-number">{{ solicitacao.number }}</span>
-
-      <button
-        mat-flat-button
-        color="primary"
-        class="continue-button"
-        type="button"
-        [routerLink]="getContinueRoute(solicitacao)"
-        [queryParams]="getContinueQueryParams(solicitacao)"
+<section class="content-panel requests-panel" aria-label="Minhas solicitações">
+  <header class="table-toolbar">
+    <label class="table-filter" for="requests-filter">
+      <mat-icon aria-hidden="true">search</mat-icon>
+      <input
+        id="requests-filter"
+        type="search"
+        placeholder="Buscar por número, serviço, situação ou data"
+        [ngModel]="filterTerm"
+        (ngModelChange)="applyFilter($event)"
       >
-        Continuar
-        <mat-icon aria-hidden="true">chevron_right</mat-icon>
-      </button>
-    </article>
-  } @empty {
-    <article class="empty-card">
-      Nenhuma solicitação encontrada.
-    </article>
-  }
+    </label>
+  </header>
+
+  @if (isLoading) {
+    <div class="empty-state">Carregando solicitações.</div>
+  } @else if (errorMessage) {
+    <div class="empty-state error-message">{{ errorMessage }}</div>
+  } @else {
+    <div class="requests-table">
+      <div class="table-head" aria-hidden="true">
+        <span>Solicitação</span>
+        <span>Situação</span>
+        <span>Atualização</span>
+        <span></span>
+      </div>
+
+      @for (solicitacao of filteredSolicitacoes; track solicitacao.number) {
+        <article class="request-row">
+          <div class="request-main">
+            <strong>{{ solicitacao.service_name }}</strong>
+            <small>{{ solicitacao.number }}</small>
+          </div>
+
+          <div class="request-status">
+            <span>{{ solicitacao.current_situation_name || solicitacao.status }}</span>
+          </div>
+
+          <div class="request-dates">
+            <span>{{ formatDate(solicitacao.updated_at) }}</span>
+            <small>Criada em {{ formatDate(solicitacao.created_at) }}</small>
+          </div>
+
+          <a
+            mat-icon-button
+            class="open-button"
+            [routerLink]="getContinueRoute(solicitacao)"
+            [queryParams]="getContinueQueryParams(solicitacao)"
+            [attr.aria-label]="'Abrir solicitação ' + solicitacao.number"
+          >
+            <mat-icon aria-hidden="true">open_in_new</mat-icon>
+          </a>
+        </article>
+      } @empty {
+        <div class="empty-state">Nenhuma solicitação encontrada.</div>
+      }
+    </div>
   }
 </section>

@@ -310,6 +310,49 @@ OPENAPI_SPEC = {
                 "responses": {"204": {"description": "Servico removido"}},
             },
         },
+        "/services/documentation/extract": {
+            "post": {
+                "tags": ["Servicos"],
+                "summary": "Extrai secoes de uma pagina de documentacao",
+                "requestBody": {
+                    "required": True,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["url"],
+                                "properties": {
+                                    "url": {
+                                        "type": "string",
+                                        "example": "https://sites.unipampa.edu.br/dap/abono-de-permanencia/",
+                                    },
+                                    "headings": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                        "default": ["DEFINIÇÃO", "QUEM FAZ?"],
+                                    },
+                                    "content_class": {
+                                        "type": "string",
+                                        "default": "entry-content",
+                                    },
+                                    "heading_tags": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                        "default": ["h4"],
+                                    },
+                                    "text_tags": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                        "default": ["p"],
+                                    },
+                                },
+                            }
+                        }
+                    },
+                },
+                "responses": {"200": {"description": "Secoes extraidas"}},
+            }
+        },
         "/services/{service_id}/ratings": {
             "get": {
                 "tags": ["Servicos"],

@@ -325,15 +325,54 @@
         </label>
       </div>
 
-      <label for="service-description">
-        Descricao
-        <textarea
-          id="service-description"
-          name="description"
-          rows="4"
-          [(ngModel)]="form.description"
-        ></textarea>
-      </label>
+      <div class="description-tools">
+        <label for="service-description">
+          Descricao
+          <textarea
+            id="service-description"
+            name="description"
+            rows="4"
+            [(ngModel)]="form.description"
+          ></textarea>
+        </label>
+
+        <aside class="documentation-import" aria-label="Importar descricao da documentacao">
+          <label for="documentation-headings">
+            Topicos da documentacao
+            <input
+              id="documentation-headings"
+              name="documentationHeadings"
+              type="text"
+              autocomplete="off"
+              [(ngModel)]="documentationHeadings"
+            >
+          </label>
+
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="extractDocumentationDescription()"
+            [disabled]="isExtractingDocumentation || !form.documentation_url.trim()"
+          >
+            @if (isExtractingDocumentation) {
+              <mat-spinner diameter="18"></mat-spinner>
+            } @else {
+              <mat-icon aria-hidden="true">sync</mat-icon>
+            }
+            Importar
+          </button>
+
+          @if (documentationImportMessage) {
+            <p
+              class="documentation-import-message"
+              [class.success]="documentationImportSuccess"
+              [class.error]="!documentationImportSuccess"
+            >
+              {{ documentationImportMessage }}
+            </p>
+          }
+        </aside>
+      </div>
 
       <div class="flag-options">
         <mat-checkbox name="active" [(ngModel)]="form.active">

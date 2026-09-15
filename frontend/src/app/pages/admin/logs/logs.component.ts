@@ -31,14 +31,9 @@ export class LogsComponent implements OnInit, AfterViewInit {
   logs: AutomationLog[] = [];
   dataSource = new MatTableDataSource<AutomationLog>([]);
   displayedColumns = [
-    'created_at',
-    'status',
-    'service_name',
-    'automation',
-    'event_name',
-    'service_request_number',
+    'context',
+    'automation_event',
     'user_name',
-    'duration_ms',
     'details'
   ];
   filterTerm = '';

@@ -109,6 +109,16 @@ td small {
   display: block;
 }
 
+.stacked-cell {
+  display: grid;
+  gap: 3px;
+  padding: 4px 0;
+}
+
+.stacked-cell small {
+  line-height: 1.25;
+}
+
 td small {
   color: #5f6b7a;
   font-size: 0.82rem;
@@ -124,6 +134,13 @@ td small {
   color: #5f6b7a;
   font-size: 0.8rem;
   font-weight: 700;
+}
+
+.stacked-cell .status-pill {
+  min-height: 20px;
+  padding: 0 7px;
+  font-size: 0.76rem;
+  vertical-align: middle;
 }
 
 .status-pill.success {

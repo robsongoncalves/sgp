@@ -39,41 +39,33 @@
   } @else {
     <div class="table-wrap">
       <table mat-table [dataSource]="dataSource" matSort>
-        <ng-container matColumnDef="created_at">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
-          <td mat-cell *matCellDef="let log">{{ log.created_at | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <ng-container matColumnDef="context">
+          <th mat-header-cell *matHeaderCellDef>Execução</th>
           <td mat-cell *matCellDef="let log">
-            <span class="status-pill" [class.success]="log.status === 'success'" [class.error]="log.status === 'error'">
-              {{ log.status }}
-            </span>
+            <div class="stacked-cell">
+              <strong>{{ log.created_at | date: 'dd/MM/yyyy HH:mm:ss' }}</strong>
+              <small>Solicitação: {{ log.service_request_number || '-' }}</small>
+              <small>
+                Status:
+                <span class="status-pill" [class.success]="log.status === 'success'" [class.error]="log.status === 'error'">
+                  {{ log.status }}
+                </span>
+              </small>
+              <small>Duração: {{ log.duration_ms }} ms</small>
+            </div>
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="service_name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Serviço</th>
-          <td mat-cell *matCellDef="let log">
-            <strong>{{ log.service_name || '-' }}</strong>
-            <small>{{ log.service_slug }}</small>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="automation">
+        <ng-container matColumnDef="automation_event">
           <th mat-header-cell *matHeaderCellDef>Automação</th>
-          <td mat-cell *matCellDef="let log">{{ automationName(log) }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="event_name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Evento</th>
-          <td mat-cell *matCellDef="let log">{{ eventLabel(log.event_name) }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="service_request_number">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Solicitação</th>
-          <td mat-cell *matCellDef="let log">{{ log.service_request_number || '-' }}</td>
+          <td mat-cell *matCellDef="let log">
+            <div class="stacked-cell">
+              <strong>{{ automationName(log) }}</strong>
+              <small>{{ eventLabel(log.event_name) }}</small>
+              <small>{{ log.service_name || '-' }}</small>
+              <small>{{ log.service_slug }}</small>
+            </div>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="user_name">

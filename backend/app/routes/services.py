@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 
+from app.documentation_extractor import extract_documentation_sections
 from app.repositories.service_ratings_repository import service_ratings_repository
 from app.repositories.services_repository import services_repository
 from app.repositories.utils import optional_int
@@ -44,6 +45,16 @@ def delete_service(service_id: int):
         return jsonify({"message": "Servico nao encontrado."}), 404
 
     return "", 204
+
+
+@services_bp.post("/services/documentation/extract")
+def extract_service_documentation():
+    content, error = extract_documentation_sections(request.get_json(silent=True) or {})
+
+    if error:
+        return jsonify({"message": error}), 400
+
+    return jsonify(content)
 
 
 @services_bp.get("/services/<int:service_id>/ratings")
