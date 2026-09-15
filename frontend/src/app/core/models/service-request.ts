@@ -15,6 +15,10 @@ export interface ServiceRequest {
   created_at: string;
   updated_at: string;
   canceled_at: string | null;
+  canceled_by_user_id?: number | null;
+  canceled_by_name?: string | null;
+  situation_before_cancellation?: string | null;
+  is_final?: boolean;
 }
 
 export interface ServiceRequestAttachment {

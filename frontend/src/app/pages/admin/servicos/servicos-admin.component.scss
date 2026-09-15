@@ -131,16 +131,21 @@ textarea {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
   gap: 14px 16px;
-  align-items: end;
+  align-items: start;
+}
+
+#service-description,
+#documentation-headings {
+  box-sizing: border-box;
+  height: 280px;
+  min-height: 280px;
+  resize: none;
 }
 
 .documentation-import {
   display: grid;
   gap: 10px;
-  padding: 12px;
-  border: 1px solid #d8dde6;
-  border-radius: 6px;
-  background: #f8fafc;
+  align-content: start;
 }
 
 .documentation-import button {

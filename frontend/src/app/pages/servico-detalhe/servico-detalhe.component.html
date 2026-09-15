@@ -38,31 +38,6 @@
       </div>
     </div>
 
-    @if (service.description) {
-      <section
-        class="service-description"
-        [class.collapsed]="hasLongDescription && !isDescriptionExpanded"
-      >
-        @for (paragraph of descriptionParagraphs; track paragraph) {
-          <p>{{ paragraph }}</p>
-        }
-      </section>
-
-      @if (hasLongDescription) {
-        <button
-          mat-button
-          type="button"
-          class="description-toggle"
-          (click)="isDescriptionExpanded = !isDescriptionExpanded"
-        >
-          <mat-icon aria-hidden="true">
-            {{ isDescriptionExpanded ? 'expand_less' : 'expand_more' }}
-          </mat-icon>
-          {{ isDescriptionExpanded ? 'Ocultar detalhes' : 'Mostrar detalhes' }}
-        </button>
-      }
-    }
-
     @if (serviceSituationsWithDocuments.length) {
       <section class="documents-checklist" aria-label="Checklist de documentos do serviço">
         <h2>Documentos do serviço</h2>
@@ -87,6 +62,19 @@
           }
         </div>
       </section>
+    }
+
+    @if (service.description) {
+      <section class="service-description">
+        @if (service.description_html) {
+          <div class="rich-description" [innerHTML]="service.description_html"></div>
+        } @else {
+          @for (paragraph of descriptionParagraphs; track paragraph) {
+            <p>{{ paragraph }}</p>
+          }
+        }
+      </section>
+
     }
 
     <section class="service-rating-panel" aria-label="Avaliar servico">

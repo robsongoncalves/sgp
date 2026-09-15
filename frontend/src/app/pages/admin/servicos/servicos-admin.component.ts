@@ -1,3 +1,4 @@
+import { Documentation, DocumentationService } from '../../../core/services/documentation.service';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -44,6 +45,7 @@ import { UserGroupService } from '../../../core/services/user-group.service';
   styleUrl: './servicos-admin.component.scss'
 })
 export class ServicosAdminComponent implements OnInit, AfterViewInit {
+  documentations: Documentation[] = [];
   services: Service[] = [];
   automationFunctions: AutomationFunction[] = [];
   categories: ServiceCategory[] = [];
@@ -58,10 +60,6 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
   isSaving = false;
   errorMessage = '';
   successMessage = '';
-  documentationHeadings = 'DEFINIÇÃO, QUEM FAZ?';
-  documentationImportMessage = '';
-  documentationImportSuccess = false;
-  isExtractingDocumentation = false;
   categoryFilterTerm = '';
   groupFilterTerm = '';
   situationFilterTerm = '';
@@ -97,6 +95,7 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort?: MatSort;
 
   constructor(
+    private readonly documentationService: DocumentationService,
     private readonly serviceService: ServiceService,
     private readonly automationFunctionService: AutomationFunctionService,
     private readonly serviceCategoryService: ServiceCategoryService,
@@ -199,13 +198,15 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
 
   loadReferenceData(): void {
     forkJoin({
+      documentations: this.documentationService.list(),
       automationFunctions: this.automationFunctionService.list(),
       categories: this.serviceCategoryService.list(),
       documentTypes: this.documentTypeService.list(),
       groups: this.userGroupService.list()
     }).subscribe({
-      next: ({ automationFunctions, categories, documentTypes, groups }) => {
+      next: ({ documentations, automationFunctions, categories, documentTypes, groups }) => {
         this.automationFunctions = automationFunctions.filter((item) => item.active);
+        this.documentations = documentations;
         this.categories = categories;
         this.documentTypes = documentTypes.filter((documentType) => documentType.active);
         this.groups = groups;
@@ -286,8 +287,9 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     this.form = {
       name: service.name,
       slug: service.slug,
-      description: service.description || '',
-      documentation_url: service.documentation_url || '',
+      description: '',
+      documentation_id: service.documentation_id ?? null,
+      documentation_url: '',
       implementation_mode: service.implementation_mode,
       module_key: service.module_key,
       active: service.active,
@@ -308,7 +310,6 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     this.hookDraft = this.createEmptyHookDraft();
     this.errorMessage = '';
     this.successMessage = '';
-    this.setDocumentationImportMessage('', false);
     this.isFormVisible = true;
   }
 
@@ -336,62 +337,6 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
         this.errorMessage = response?.error?.message || 'Nao foi possivel alterar o status.';
       }
     });
-  }
-
-  extractDocumentationDescription(): void {
-    const url = this.form.documentation_url.trim();
-    const headings = this.documentationHeadings
-      .split(',')
-      .map((heading) => heading.trim())
-      .filter(Boolean);
-
-    if (!url) {
-      this.setDocumentationImportMessage('Informe a URL da documentacao.', false);
-      return;
-    }
-
-    if (!headings.length) {
-      this.setDocumentationImportMessage('Informe ao menos um topico para importar.', false);
-      return;
-    }
-
-    this.isExtractingDocumentation = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.setDocumentationImportMessage('Importando texto da documentacao.', true);
-
-    this.serviceService.extractDocumentation({
-      url,
-      headings,
-      content_class: 'entry-content',
-      heading_tags: ['h4'],
-      text_tags: ['p']
-    }).subscribe({
-      next: (result) => {
-        if (!result.description.trim()) {
-          this.setDocumentationImportMessage('Nenhum texto foi encontrado para os topicos informados.', false);
-          this.isExtractingDocumentation = false;
-          return;
-        }
-
-        this.form.description = result.description;
-        this.setDocumentationImportMessage('Descricao importada. Revise antes de salvar.', true);
-        this.isExtractingDocumentation = false;
-      },
-      error: (response) => {
-        const backendUnavailable = response?.status === 0;
-        const message = backendUnavailable
-          ? 'Backend nao respondeu em localhost:5000. Reinicie a API e tente novamente.'
-          : response?.error?.message || 'Nao foi possivel importar a documentacao.';
-        this.setDocumentationImportMessage(message, false);
-        this.isExtractingDocumentation = false;
-      }
-    });
-  }
-
-  private setDocumentationImportMessage(message: string, success: boolean): void {
-    this.documentationImportMessage = message;
-    this.documentationImportSuccess = success;
   }
 
   deleteService(service: Service): void {
@@ -469,6 +414,7 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
   }
 
   saveSituation(): void {
+    if (this.isSaving) return;
     if (!this.situationDraft.name.trim()) {
       this.errorMessage = 'Informe o nome da situacao.';
       return;
@@ -510,6 +456,23 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
       }));
     this.closeSituationForm();
     this.errorMessage = '';
+    if (this.editingServiceId !== null) {
+      this.isSaving = true;
+      this.serviceService.updateSituations(this.editingServiceId, this.form.situations).subscribe({
+        next: service => {
+          this.form.situations = service.situations;
+          this.isSaving = false;
+          this.successMessage = 'Situação salva. A página do serviço e as novas solicitações usarão o fluxo atualizado.';
+          this.loadServices();
+        },
+        error: response => {
+          this.isSaving = false;
+          this.errorMessage = response?.error?.message || 'Não foi possível salvar a situação. Salve o serviço para tentar novamente.';
+        }
+      });
+    } else {
+      this.successMessage = 'Situação adicionada. Salve o novo serviço para concluir o cadastro.';
+    }
   }
 
   closeSituationForm(): void {
@@ -597,7 +560,6 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
     this.isSituationFormVisible = false;
     this.editingSituationId = null;
     this.situationDraft = this.createEmptySituationDraft();
-    this.setDocumentationImportMessage('', false);
   }
 
   closeForm(): void {
@@ -767,6 +729,7 @@ export class ServicosAdminComponent implements OnInit, AfterViewInit {
       slug: '',
       description: '',
       documentation_url: '',
+      documentation_id: null,
       implementation_mode: 'custom_module',
       module_key: '',
       active: true,

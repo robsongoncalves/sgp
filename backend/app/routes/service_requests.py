@@ -1,10 +1,32 @@
 from flask import Blueprint, jsonify, request, send_file
+from app.models import ServiceRequest
 
 from app.repositories.attachments_repository import attachments_repository
 from app.repositories.service_request_documents_repository import service_request_documents_repository
 from app.repositories.service_requests_repository import service_requests_repository
 
 service_requests_bp = Blueprint("service_requests", __name__)
+
+
+@service_requests_bp.before_request
+def protect_canceled_requests():
+    request_id = (request.view_args or {}).get('service_request_id')
+    if request_id and request.method in {'POST', 'PUT', 'PATCH', 'DELETE'} and request.endpoint != 'service_requests.cancel_service_request':
+        item = ServiceRequest.query.filter_by(id=request_id).with_for_update().first()
+        if item and item.canceled_at:
+            return jsonify(message='Solicitacao cancelada. Os dados estao disponiveis somente para consulta.'), 409
+
+
+@service_requests_bp.post('/service-requests/<int:service_request_id>/cancel')
+def cancel_service_request(service_request_id):
+    payload = request.get_json(silent=True) or {}
+    user_id = payload.get('user_id') if isinstance(payload, dict) else None
+    if type(user_id) is not int or user_id <= 0:
+        return jsonify(message='Informe o usuario solicitante.'), 400
+    item, error, status = service_requests_repository.cancel(service_request_id, user_id)
+    if error:
+        return jsonify(message=error), status
+    return jsonify(item), status
 
 
 @service_requests_bp.get("/service-requests")

@@ -345,6 +345,11 @@ OPENAPI_SPEC = {
                                         "items": {"type": "string"},
                                         "default": ["p"],
                                     },
+                                    "output_format": {
+                                        "type": "string", "enum": ["text", "html"],
+                                        "default": "text",
+                                        "description": "html preserva os elementos dos topicos, com sanitizacao; text usa text_tags.",
+                                    },
                                 },
                             }
                         }
@@ -596,4 +601,53 @@ OPENAPI_SPEC = {
             },
         },
     },
+}
+
+# Reusable documentation catalog.
+_documentation_body = {
+    'required': True,
+    'content': {'application/json': {'schema': {
+        'type': 'object', 'required': ['url'], 'properties': {
+            'url': {'type': 'string', 'format': 'uri'},
+            'description': {'type': 'string'},
+            'headings': {'type': 'array', 'items': {'type': 'string'}},
+            'sync_enabled': {'type': 'boolean', 'default': False},
+        }
+    }}},
+}
+OPENAPI_SPEC['paths'].update({
+    '/documentations': {
+        'get': {'tags': ['Documentacoes'], 'summary': 'Lista documentacoes', 'responses': {'200': {'description': 'Documentacoes cadastradas'}}},
+        'post': {'tags': ['Documentacoes'], 'summary': 'Cria documentacao', 'requestBody': _documentation_body, 'responses': {'201': {'description': 'Criada'}, '400': {'description': 'Dados invalidos'}}},
+    },
+    '/documentations/{id}': {
+        'parameters': [{'name': 'id', 'in': 'path', 'required': True, 'schema': {'type': 'integer'}}],
+        'get': {'tags': ['Documentacoes'], 'summary': 'Consulta documentacao', 'responses': {'200': {'description': 'Documentacao'}, '404': {'description': 'Nao encontrada'}}},
+        'put': {'tags': ['Documentacoes'], 'summary': 'Atualiza documentacao dos servicos vinculados', 'requestBody': _documentation_body, 'responses': {'200': {'description': 'Atualizada'}, '400': {'description': 'Dados invalidos'}, '404': {'description': 'Nao encontrada'}}},
+        'delete': {'tags': ['Documentacoes'], 'summary': 'Exclui documentacao sem vinculos', 'responses': {'204': {'description': 'Excluida'}, '404': {'description': 'Nao encontrada'}, '409': {'description': 'Documentacao em uso'}}},
+    },
+    '/documentations/import': {
+        'post': {**OPENAPI_SPEC['paths']['/services/documentation/extract']['post'], 'tags': ['Documentacoes'], 'summary': 'Importa conteudo para revisao, sem salvar'},
+    },
+    '/documentations/sync': {
+        'post': {
+            'tags': ['Documentacoes'],
+            'summary': 'Sincroniza descricoes das documentacoes marcadas; sem topicos importa todo o conteudo',
+            'responses': {'200': {'description': 'Totais de atualizacoes e falhas, com erros por documentacao'}},
+        },
+    },
+})
+
+OPENAPI_SPEC['paths']['/service-requests/{service_request_id}/cancel'] = {
+    'post': {
+        'tags': ['Solicitacoes'],
+        'summary': 'Cancela solicitacao preservando dados e historico',
+        'parameters': [{'name': 'service_request_id', 'in': 'path', 'required': True, 'schema': {'type': 'integer'}}],
+        'requestBody': {'required': True, 'content': {'application/json': {'schema': {
+            'type': 'object', 'required': ['user_id'], 'properties': {'user_id': {'type': 'integer'}}
+        }}}},
+        'responses': {'200': {'description': 'Solicitacao cancelada'}, '400': {'description': 'Usuario invalido'},
+                      '403': {'description': 'Somente o solicitante pode cancelar'}, '404': {'description': 'Nao encontrada'},
+                      '409': {'description': 'Solicitacao concluida'}}
+    }
 }

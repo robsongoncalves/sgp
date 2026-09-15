@@ -6,3 +6,5 @@ flask-swagger-ui==4.11.1
 playwright==1.62.0
 psycopg[binary]==3.2.1
 python-dotenv==1.0.1
+beautifulsoup4==4.13.4
+bleach==6.2.0

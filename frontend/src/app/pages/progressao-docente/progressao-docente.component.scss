@@ -1078,3 +1078,8 @@ h4 {
     grid-template-columns: 1fr;
   }
 }
+
+.request-status-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.cancellation-notice { display: grid; gap: 12px; padding: 16px; margin-bottom: 18px; border: 1px solid #d8dde6; background: #f8fafc; }
+.cancellation-notice p { margin: 0; }
+.cancellation-notice button { justify-self: start; }

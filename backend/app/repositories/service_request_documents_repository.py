@@ -29,6 +29,7 @@ class ServiceRequestDocumentsRepository:
         documents = ServiceRequestDocument.query.filter(
             ServiceRequestDocument.assigned_to_user_id == user_id,
             ServiceRequestDocument.status == "submitted",
+            ServiceRequestDocument.service_request.has(ServiceRequest.canceled_at.is_(None)),
             ServiceRequestDocument.deleted_at.is_(None),
         ).order_by(
             ServiceRequestDocument.updated_at.desc(),

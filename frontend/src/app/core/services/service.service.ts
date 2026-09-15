@@ -11,9 +11,11 @@ export interface DocumentationExtractionPayload {
   content_class?: string;
   heading_tags?: string[];
   text_tags?: string[];
+  output_format?: 'text' | 'html';
 }
 
 export interface DocumentationExtractionSection {
+  html: string;
   heading: string;
   text: string;
   paragraphs: string[];
@@ -21,6 +23,7 @@ export interface DocumentationExtractionSection {
 }
 
 export interface DocumentationExtractionResult {
+  output_format: 'text' | 'html';
   url: string;
   content_class: string;
   headings: string[];
@@ -50,6 +53,10 @@ export class ServiceService {
 
   delete(serviceId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${serviceId}`);
+  }
+
+  updateSituations(serviceId: number, situations: Service['situations']): Observable<Service> {
+    return this.http.put<Service>(`${this.apiUrl}/${serviceId}/situations`, { situations });
   }
 
   getRatings(serviceId: number, userId?: number): Observable<ServiceRatingSummary> {

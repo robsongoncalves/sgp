@@ -47,6 +47,23 @@ def delete_service(service_id: int):
     return "", 204
 
 
+@services_bp.put('/services/<int:service_id>/situations')
+def update_service_situations(service_id):
+    service = services_repository.get(service_id)
+    if service is None:
+        return jsonify(message='Servico nao encontrado.'), 404
+    payload = request.get_json(silent=True) or {}
+    situations = payload.get('situations') if isinstance(payload, dict) else None
+    if not isinstance(situations, list) or not all(isinstance(item, dict) for item in situations):
+        return jsonify(message='Informe uma lista de situacoes.'), 400
+    data = services_repository._to_dict(service)
+    data['situations'] = situations
+    updated, error = services_repository.update(service_id, data)
+    if error:
+        return jsonify(message=error), 400
+    return jsonify(updated)
+
+
 @services_bp.post("/services/documentation/extract")
 def extract_service_documentation():
     content, error = extract_documentation_sections(request.get_json(silent=True) or {})

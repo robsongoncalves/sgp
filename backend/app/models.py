@@ -194,6 +194,16 @@ class OpinionTemplate(db.Model, TimestampMixin):
     default_responsible_group: Mapped[UserGroup | None] = relationship()
 
 
+class Documentation(db.Model, TimestampMixin):
+    __tablename__ = "documentations"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    url: Mapped[str] = mapped_column(Text, nullable=False)
+    sync_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    headings: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=lambda: ["DEFINIÇÃO", "QUEM FAZ?"])
+
+
 class Service(db.Model, TimestampMixin):
     __tablename__ = "services"
 
@@ -201,7 +211,12 @@ class Service(db.Model, TimestampMixin):
     name: Mapped[str] = mapped_column(String(220), nullable=False)
     slug: Mapped[str] = mapped_column(String(220), nullable=False, unique=True, index=True)
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    documentation_id: Mapped[int | None] = mapped_column(ForeignKey("documentations.id", ondelete="RESTRICT"), nullable=True, index=True)
+    documentation: Mapped[Documentation | None] = relationship()
     documentation_url: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    documentation_headings: Mapped[list[str]] = mapped_column(
+        JSONB, nullable=False, default=lambda: ["DEFINIÇÃO", "QUEM FAZ?"]
+    )
     implementation_mode: Mapped[str] = mapped_column(String(40), nullable=False, default="custom_module")
     module_key: Mapped[str] = mapped_column(String(120), nullable=False, default="")
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
@@ -351,9 +366,11 @@ class ServiceRequest(db.Model, TimestampMixin):
     status: Mapped[str] = mapped_column(String(120), nullable=False, default="Solicitado")
     form_data: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     canceled_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    canceled_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"), nullable=True)
 
     service: Mapped[Service] = relationship()
-    requester: Mapped[User] = relationship()
+    requester: Mapped[User] = relationship(foreign_keys=[requester_user_id])
+    canceled_by: Mapped[User | None] = relationship(foreign_keys=[canceled_by_user_id])
     current_situation: Mapped[ServiceSituation | None] = relationship()
     movements: Mapped[list["ServiceRequestMovement"]] = relationship(
         back_populates="service_request",

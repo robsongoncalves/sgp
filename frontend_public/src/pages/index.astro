@@ -48,7 +48,7 @@ const categories = groupServicesByCategory(services);
             <a class="service-card" href={`/servicos/${service.slug}`}>
               <span>{service.categories[0]?.name || 'Servico'}</span>
               <h3>{service.name}</h3>
-              <p>{service.description || 'Consulte os detalhes deste servico.'}</p>
+              <p>{(service.description_text ?? service.description) || 'Consulte os detalhes deste servico.'}</p>
             </a>
           ))}
         </div>

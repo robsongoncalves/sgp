@@ -30,11 +30,11 @@ const categories = groupServicesByCategory(services);
             {category.services.map((service) => (
               <article
                 class="service-row"
-                data-search={`${service.name} ${service.description} ${category.name}`.toLowerCase()}
+                data-search={`${service.name} ${service.description_text ?? service.description} ${category.name}`.toLowerCase()}
               >
                 <a href={`/servicos/${service.slug}`}>
                   <h2>{service.name}</h2>
-                  <p>{service.description || 'Consulte os detalhes deste servico.'}</p>
+                  <p>{(service.description_text ?? service.description) || 'Consulte os detalhes deste servico.'}</p>
                 </a>
                 {service.documentation_url && (
                   <a

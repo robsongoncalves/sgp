@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from app.extensions import db
-from app.models import Service, ServiceRequest, User, UserGroup
+from app.models import Service, ServiceRequest, ServiceRequestMovement, User, UserGroup
 from app.repositories.utils import datetime_to_api, optional_int
 from app.service_hooks import service_hook_runner
 
@@ -11,6 +11,29 @@ DEV_REQUESTER_USER_ID = 3
 
 
 class ServiceRequestsRepository:
+    def cancel(self, service_request_id: int, user_id: int):
+        item = ServiceRequest.query.filter_by(id=service_request_id).with_for_update().first()
+        if item is None:
+            return None, "Solicitacao nao encontrada.", 404
+        user = db.session.get(User, user_id)
+        if user is None or item.requester_user_id != user.id:
+            return None, "Somente o solicitante pode cancelar esta solicitacao.", 403
+        if item.canceled_at:
+            return self._to_dict(item), None, 200
+        if item.current_situation and item.current_situation.is_final:
+            return None, "Uma solicitacao concluida nao pode ser cancelada.", 409
+        item.canceled_at = datetime.utcnow()
+        item.canceled_by_user_id = user.id
+        db.session.add(ServiceRequestMovement(
+            service_request_id=item.id,
+            from_situation_id=item.current_situation_id,
+            to_situation_id=None,
+            moved_by_user_id=user.id,
+            opinion=f"Solicitacao cancelada pelo solicitante. Situacao anterior: {item.status}.",
+        ))
+        db.session.commit()
+        return self._to_dict(item), None, 200
+
     def get(self, service_request_id: int) -> dict | None:
         service_request = db.session.get(ServiceRequest, service_request_id)
 
@@ -39,8 +62,10 @@ class ServiceRequestsRepository:
         if service_slug:
             query = query.filter(ServiceRequest.service.has(Service.slug == service_slug))
 
-        if status:
-            query = query.filter(ServiceRequest.status == status)
+        if status == 'Cancelada':
+            query = query.filter(ServiceRequest.canceled_at.is_not(None))
+        elif status:
+            query = query.filter(ServiceRequest.status == status, ServiceRequest.canceled_at.is_(None))
 
         requests = query.order_by(ServiceRequest.created_at.desc()).all()
         return [self._to_dict(service_request) for service_request in requests]
@@ -208,12 +233,16 @@ class ServiceRequestsRepository:
             "requester_name": service_request.requester.name if service_request.requester else "",
             "requester_email": service_request.requester.email if service_request.requester else "",
             "current_situation_id": service_request.current_situation_id,
-            "current_situation_name": current_situation.name if current_situation else service_request.status,
-            "status": service_request.status,
+            "current_situation_name": "Cancelada" if service_request.canceled_at else service_request.status,
+            "status": "Cancelada" if service_request.canceled_at else service_request.status,
+            "situation_before_cancellation": service_request.status if service_request.canceled_at else None,
+            "is_final": bool(current_situation and current_situation.is_final),
             "form_data": service_request.form_data or {},
             "created_at": datetime_to_api(service_request.created_at),
             "updated_at": datetime_to_api(service_request.updated_at),
             "canceled_at": datetime_to_api(service_request.canceled_at) if service_request.canceled_at else None,
+            "canceled_by_user_id": service_request.canceled_by_user_id,
+            "canceled_by_name": service_request.canceled_by.name if service_request.canceled_by else None,
         }
 
     def _request_number(self, request_id: int) -> str:

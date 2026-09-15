@@ -3,6 +3,16 @@
     <h1>{{ pageTitle }}</h1>
   </header>
 
+  @if (cancelMessage) { <p role="status" class="document-message">{{ cancelMessage }}</p> }
+  @if (currentServiceRequest?.canceled_at) {
+    <div class="cancellation-notice" role="status">
+      <p>Solicitação cancelada em {{ currentServiceRequest?.canceled_at | date: 'dd/MM/yyyy HH:mm' }}
+        por {{ currentServiceRequest?.canceled_by_name || 'solicitante' }}.
+        Situação anterior: {{ currentServiceRequest?.situation_before_cancellation }}. Dados disponíveis para consulta.</p>
+      <button mat-stroked-button type="button" (click)="returnToService()">Voltar ao serviço para iniciar nova solicitação</button>
+    </div>
+  }
+
   @if (!isCalculatorMode) {
     <nav class="steps" aria-label="Etapas do serviço">
       @for (situation of situationSteps; track situation.id; let index = $index) {
@@ -32,7 +42,14 @@
           </div>
 
           @if (currentServiceRequest?.current_situation_name) {
-            <span>Situação atual: {{ currentServiceRequest?.current_situation_name }}</span>
+            <div class="request-status-actions">
+              <span>Situação atual: {{ currentServiceRequest?.current_situation_name }}</span>
+              @if (canCancelRequest) {
+                <button mat-stroked-button color="warn" type="button" (click)="cancelRequest()" [disabled]="isCancelingRequest">
+                  {{ isCancelingRequest ? 'Cancelando...' : 'Cancelar solicitação' }}
+                </button>
+              }
+            </div>
           }
         </div>
 

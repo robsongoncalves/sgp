@@ -10,6 +10,9 @@ from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 from flask import current_app
+from bs4 import BeautifulSoup, Comment, NavigableString
+from html import escape
+from app.service_description import sanitize_html
 
 
 DEFAULT_HEADINGS = ["DEFINIÇÃO", "QUEM FAZ?"]
@@ -96,16 +99,36 @@ def extract_documentation_sections(data: dict) -> tuple[dict | None, str | None]
     if not _is_allowed_host(parsed_url.hostname):
         return None, "Host da documentacao nao permitido."
 
-    headings = _list_value(data.get("headings")) or DEFAULT_HEADINGS
+    headings = _list_value(data['headings']) if 'headings' in data else DEFAULT_HEADINGS
     content_class = str(data.get("content_class") or DEFAULT_CONTENT_CLASS).strip() or DEFAULT_CONTENT_CLASS
     heading_tags = _list_value(data.get("heading_tags")) or DEFAULT_HEADING_TAGS
     text_tags = _list_value(data.get("text_tags")) or DEFAULT_TEXT_TAGS
+    output_format = data.get("output_format", "text")
+    if output_format not in ("text", "html"):
+        return None, "Formato de importacao invalido. Use text ou html."
 
     html, fetch_method, error = _fetch_html(url)
     if error:
         html, fetch_method, playwright_error = _fetch_html_with_playwright(url, content_class)
         if playwright_error:
             return None, _combined_fetch_error(error, playwright_error)
+
+    if not headings:
+        soup = BeautifulSoup(html, 'html.parser')
+        containers = [node for node in soup.find_all(class_=content_class)
+                      if not node.find_parent(class_=content_class)]
+        if not containers:
+            containers = [soup.find('main') or soup.find('article') or soup.body or soup]
+        for container in containers:
+            for node in container.find_all(['script', 'style', 'nav', 'header', 'footer', 'aside', 'form', 'template']):
+                node.decompose()
+        content = sanitize_html('\n'.join(str(node) for node in containers), url)
+        text = BeautifulSoup(content, 'html.parser').get_text(' ', strip=True)
+        return {
+            'url': url, 'fetch_method': fetch_method, 'content_class': content_class,
+            'headings': [], 'sections': [], 'output_format': output_format,
+            'description': content if output_format == 'html' and text else text,
+        }, None
 
     parser = DocumentationContentParser(
         content_class=content_class,
@@ -115,11 +138,18 @@ def extract_documentation_sections(data: dict) -> tuple[dict | None, str | None]
     parser.feed(html)
 
     sections = _extract_sections(parser.tokens, headings, heading_tags)
+    html_sections = _extract_html_sections(html, content_class, headings, heading_tags, url)
+    for section, html_section in zip(sections, html_sections):
+        section['html'] = html_section['html']
+        if output_format == 'html':
+            section['found'] = html_section['found']
     description = "\n\n".join(
         f"{section['heading']}\n{section['text']}"
         for section in sections
         if section["text"]
     )
+    if output_format == 'html':
+        description = '\n\n'.join(section['html'] for section in html_sections if section['found'])
 
     return {
         "url": url,
@@ -128,7 +158,57 @@ def extract_documentation_sections(data: dict) -> tuple[dict | None, str | None]
         "headings": headings,
         "sections": sections,
         "description": description,
+        "output_format": output_format,
     }, None
+
+
+def _extract_html_sections(html, content_class, headings, heading_tags, url):
+    soup = BeautifulSoup(html, 'html.parser')
+    expected = {_normalize_text(heading) for heading in headings}
+    fragments = {key: [] for key in expected}
+    found = set()
+    heading_tags = {tag.lower() for tag in heading_tags}
+    current = None
+
+    def visit(node):
+        nonlocal current
+        if isinstance(node, Comment):
+            return {}
+        if isinstance(node, NavigableString):
+            return {current: escape(str(node))} if current else {}
+        if node.name in ('script', 'style', 'iframe', 'object', 'template'):
+            return {}
+        if node.name in heading_tags:
+            key = _normalize_text(node.get_text(' ', strip=True))
+            current = key if key in expected else None
+            if current:
+                found.add(current)
+                return {current: str(node)}
+            return {}
+        # Preserve whole elements when they cannot contain a section boundary.
+        if not node.find(heading_tags):
+            return {current: str(node)} if current else {}
+        pieces = {}
+        for child in node.children:
+            for key, fragment in visit(child).items():
+                pieces[key] = pieces.get(key, '') + fragment
+        result = {}
+        for key, fragment in pieces.items():
+            wrapper = soup.new_tag(node.name, attrs=dict(node.attrs))
+            wrapper.append(BeautifulSoup(fragment, 'html.parser'))
+            result[key] = str(wrapper)
+        return result
+
+    for container in soup.find_all(class_=content_class):
+        if container.find_parent(class_=content_class):
+            continue
+        current = None
+        for child in container.children:
+            for key, fragment in visit(child).items():
+                fragments[key].append(fragment)
+    return [{'heading': heading, 'found': _normalize_text(heading) in found,
+             'html': sanitize_html(''.join(fragments[_normalize_text(heading)]), url)}
+            for heading in headings]
 
 
 def _fetch_html(url: str) -> tuple[str, str, str | None]:

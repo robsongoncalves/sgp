@@ -1,0 +1,61 @@
+﻿<header class="page-header">
+  <div class="page-title"><mat-icon>menu_book</mat-icon><div><h1>Documentações</h1><p>Cadastre conteúdos e importe a documentação dos serviços.</p></div></div>
+  @if (!formVisible) { <button mat-flat-button color="primary" (click)="edit()" [disabled]="syncing">Nova documentação</button> }
+</header>
+@if (error) { <p class="feedback error" role="alert">{{ error }}</p> }
+@if (message) { <p class="feedback success" role="status">{{ message }}</p> }
+@if (syncErrors.length) {
+  <div class="feedback error" role="alert"><ul>
+    @for (failure of syncErrors; track failure.id) {
+      <li>{{ failure.url }}: {{ failure.message }}</li>
+    }
+  </ul></div>
+}
+<section class="content-panel">
+@if (formVisible) {
+  <form class="service-form" #documentationForm="ngForm" (ngSubmit)="save()">
+    <h2>{{ editingId === null ? 'Nova documentação' : 'Editar documentação' }}</h2>
+    <label for="documentation-url">URL<input id="documentation-url" name="url" type="url" required [(ngModel)]="form.url" [disabled]="importing || saving" placeholder="https://..."></label>
+    <div class="description-tools">
+      <label for="documentation-description">Descrição (texto ou HTML)
+        <textarea id="documentation-description" name="description" rows="14" [(ngModel)]="form.description" [disabled]="importing || saving"></textarea>
+        <small>Links, listas e tabelas são preservados na importação.</small>
+      </label>
+      <aside class="documentation-import">
+        <label for="documentation-headings">Tópicos para importação
+          <textarea id="documentation-headings" name="headings" rows="8" [(ngModel)]="headings" [disabled]="importing || saving"></textarea>
+          <small>Um tópico por linha. Deixe vazio para importar todo o texto.</small>
+        </label>
+        <div class="import-actions">
+          <button mat-stroked-button type="button" (click)="importDescription()" [disabled]="importing || saving || !form.url.trim()">{{ importing ? 'Importando...' : 'Importar' }}</button>
+          <mat-checkbox name="syncEnabled" [(ngModel)]="form.sync_enabled" [disabled]="importing || saving">Sincronizar</mat-checkbox>
+        </div>
+      </aside>
+    </div>
+    <p>Ao salvar, o conteúdo será atualizado em todos os serviços vinculados.</p>
+    <div class="actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="documentationForm.invalid || saving || importing">{{ saving ? 'Salvando...' : 'Salvar' }}</button>
+      <button mat-stroked-button type="button" (click)="formVisible = false" [disabled]="saving || importing">Cancelar</button>
+    </div>
+  </form>
+} @else {
+  <div class="list-toolbar">
+    <label for="documentation-search">Pesquisar documentação<input id="documentation-search" type="search" [(ngModel)]="filter" placeholder="URL ou descrição"></label>
+    <button mat-stroked-button type="button" (click)="syncAll()" [disabled]="syncing || loading"><mat-icon aria-hidden="true">sync</mat-icon>{{ syncing ? 'Sincronizando...' : 'Sincronizar tudo' }}</button>
+  </div>
+  @if (syncing) { <p role="status">Importando as documentações marcadas para sincronizar. Aguarde a conclusão.</p> }
+  @if (loading) { <p role="status">Carregando...</p> } @else {
+    <div class="table-scroll"><table>
+      <thead><tr><th>URL</th><th class="row-actions" aria-label="Ações"></th></tr></thead>
+      <tbody>
+      @for (item of filteredItems; track item.id) {
+        <tr (dblclick)="edit(item)"><td><div class="documentation-url">{{ item.url || 'Sem URL' }}</div><p class="summary">{{ summary(item) }}</p></td><td class="row-actions" (dblclick)="$event.stopPropagation()">
+          <button mat-icon-button type="button" (click)="edit(item)" [disabled]="syncing" [attr.aria-label]="'Editar documentação ' + item.id"><mat-icon aria-hidden="true">edit</mat-icon></button>
+          <button mat-icon-button type="button" (click)="remove(item)" [disabled]="syncing" [attr.aria-label]="'Excluir documentação ' + item.id"><mat-icon aria-hidden="true">delete</mat-icon></button>
+        </td></tr>
+      } @empty { <tr><td colspan="2">Nenhuma documentação encontrada.</td></tr> }
+      </tbody>
+    </table></div>
+  }
+}
+</section>

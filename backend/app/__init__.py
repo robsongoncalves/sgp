@@ -6,6 +6,7 @@ from app.cli import register_cli
 from app.config import Config
 from app.extensions import db, migrate
 from app.openapi import OPENAPI_SPEC
+from app.routes.documentations import documentations_bp
 from app.routes.auth import auth_bp
 from app.routes.automation_functions import automation_functions_bp
 from app.routes.health import health_bp
@@ -31,6 +32,7 @@ def create_app() -> Flask:
 
     from app import models  # noqa: F401
 
+    app.register_blueprint(documentations_bp, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/api")
     app.register_blueprint(automation_functions_bp, url_prefix="/api")
     app.register_blueprint(document_types_bp, url_prefix="/api")

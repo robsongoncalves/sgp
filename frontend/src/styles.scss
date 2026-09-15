@@ -3,6 +3,18 @@ body {
   height: 100%;
 }
 
+.rich-description {
+  overflow-wrap: anywhere;
+  overflow-x: auto;
+  line-height: 1.6;
+
+  img { max-width: 100%; height: auto; }
+  table { border-collapse: collapse; max-width: 100%; }
+  th, td { border: 1px solid currentColor; padding: 8px; }
+  p { margin: 0 0 12px; }
+  pre { white-space: pre-wrap; }
+}
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", Arial, sans-serif;

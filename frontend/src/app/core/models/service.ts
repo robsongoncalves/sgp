@@ -29,7 +29,11 @@ export interface Service {
   name: string;
   slug: string;
   description: string;
+  description_html?: string;
+  description_text?: string;
+  documentation_id?: number | null;
   documentation_url: string;
+  documentation_headings?: string[];
   implementation_mode: ServiceImplementationMode;
   module_key: string;
   active: boolean;

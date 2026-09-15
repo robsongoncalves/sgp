@@ -86,6 +86,10 @@ export class ServiceRequestService {
     return this.http.get<ServiceRequest>(`${this.apiUrl}/${serviceRequestId}`);
   }
 
+  cancel(serviceRequestId: number, userId: number): Observable<ServiceRequest> {
+    return this.http.post<ServiceRequest>(`${this.apiUrl}/${serviceRequestId}/cancel`, { user_id: userId });
+  }
+
   updateFormData(serviceRequestId: number, formData: Record<string, unknown>): Observable<ServiceRequest> {
     return this.http.patch<ServiceRequest>(
       `${this.apiUrl}/${serviceRequestId}/form-data`,

@@ -6,6 +6,8 @@ export interface PublicCategory {
 }
 
 export interface PublicService {
+  description_html?: string;
+  description_text?: string;
   id: number;
   name: string;
   slug: string;

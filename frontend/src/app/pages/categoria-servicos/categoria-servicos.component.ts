@@ -190,7 +190,7 @@ export class CategoriaServicosComponent implements OnInit {
       id: service.id,
       icon: this.resolveIcon(service),
       label: service.name,
-      description: service.description || '',
+      description: service.description_text ?? service.description ?? '',
       documentationUrl: service.documentation_url || '',
       featured: service.featured || false,
       categoryIds: Array.isArray(service.category_ids) ? service.category_ids : [],

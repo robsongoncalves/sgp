@@ -95,6 +95,36 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
   currentService?: Service;
   services: Service[] = [];
   currentServiceRequest?: ServiceRequest;
+  isCancelingRequest = false;
+  cancelMessage = '';
+
+  get canCancelRequest(): boolean {
+    const request = this.currentServiceRequest;
+    return Boolean(request && !request.canceled_at && !request.is_final
+      && request.requester_user_id === this.authService.currentUser?.id);
+  }
+
+  cancelRequest(): void {
+    if (!this.canCancelRequest || this.isCancelingRequest || !this.currentServiceRequest) return;
+    if (!window.confirm('Cancelar esta solicitação? Ela será encerrada, mantendo os documentos e o histórico para consulta. Você poderá iniciar uma nova solicitação com o fluxo atualizado.')) return;
+    this.isCancelingRequest = true;
+    this.cancelMessage = '';
+    this.serviceRequestService.cancel(this.currentServiceRequest.id, this.authService.currentUser!.id).subscribe({
+      next: request => {
+        this.currentServiceRequest = request;
+        this.isCancelingRequest = false;
+        this.cancelMessage = 'Solicitação cancelada. Os dados e documentos foram preservados.';
+      },
+      error: response => {
+        this.isCancelingRequest = false;
+        this.cancelMessage = response?.error?.message || 'Não foi possível cancelar a solicitação. Tente novamente.';
+      }
+    });
+  }
+
+  returnToService(): void {
+    this.router.navigate(['/servicos', this.currentServiceRequest?.service_slug || 'progressao-docente']);
+  }
   documentTypes: DocumentType[] = [];
   formTemplates: FormTemplate[] = [];
   users: User[] = [];
@@ -531,6 +561,7 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
   }
 
   canManageDocument(situation: ServiceSituation, documentType: DocumentType): boolean {
+    if (this.currentServiceRequest?.canceled_at || this.isCancelingRequest) return false;
     if (!this.isCurrentSituation(situation)) {
       return false;
     }
@@ -701,6 +732,7 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
   }
 
   canSubmitActiveDocument(): boolean {
+    if (this.currentServiceRequest?.canceled_at || this.isCancelingRequest) return false;
     return Boolean(
       this.activeServiceDocument
       && this.activeDocumentType
@@ -710,6 +742,7 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
   }
 
   canDecideActiveDocument(): boolean {
+    if (this.currentServiceRequest?.canceled_at || this.isCancelingRequest) return false;
     const currentUser = this.authService.currentUser;
 
     return Boolean(
@@ -720,6 +753,7 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
   }
 
   canSaveActiveDocumentDraft(): boolean {
+    if (this.currentServiceRequest?.canceled_at || this.isCancelingRequest) return false;
     const currentUser = this.authService.currentUser;
 
     return Boolean(
@@ -731,6 +765,7 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
   }
 
   canDeleteDocument(documentType: DocumentType): boolean {
+    if (this.currentServiceRequest?.canceled_at || this.isCancelingRequest) return false;
     const currentUser = this.authService.currentUser;
 
     return Boolean(
@@ -1023,6 +1058,7 @@ export class ProgressaoDocenteComponent implements OnInit, OnDestroy {
   }
 
   private saveCalculatorData(): void {
+    if (this.currentServiceRequest?.canceled_at || this.isCancelingRequest) return;
     if (!this.requestId) {
       return;
     }

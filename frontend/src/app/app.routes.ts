@@ -82,6 +82,11 @@ export const routes: Routes = [
     canActivate: [systemAdminGuard]
   },
   {
+    path: 'admin/documentacoes',
+    loadComponent: () => import('./pages/admin/documentacoes/documentacoes.component').then(c => c.DocumentacoesComponent),
+    canActivate: [systemAdminGuard]
+  },
+  {
     path: 'admin/servicos',
     loadComponent: () =>
       import('./pages/admin/servicos/servicos-admin.component').then(

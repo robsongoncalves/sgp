@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from app.service_description import description_fields
+
 import re
 from datetime import datetime
 
 from app.extensions import db
-from app.models import AutomationFunction, DocumentType, Service, ServiceCategory, ServiceHook, ServiceSituation, UserGroup
+from app.models import Documentation, AutomationFunction, DocumentType, Service, ServiceCategory, ServiceHook, ServiceSituation, UserGroup
 from app.repositories.utils import bool_value, date_to_api, optional_int
 
 
@@ -36,10 +38,12 @@ class ServicesRepository:
             return None, "Ja existe um servico cadastrado com este slug."
 
         service = Service(
+            documentation_id=normalized_data["documentation_id"],
             name=normalized_data["name"],
             slug=normalized_data["slug"],
             description=normalized_data["description"],
             documentation_url=normalized_data["documentation_url"],
+            documentation_headings=normalized_data["documentation_headings"],
             implementation_mode=normalized_data["implementation_mode"],
             module_key=normalized_data["module_key"],
             active=normalized_data["active"],
@@ -69,10 +73,14 @@ class ServicesRepository:
         if self._slug_exists(normalized_data["slug"], ignore_service_id=service_id):
             return None, "Ja existe um servico cadastrado com este slug."
 
+        if "documentation_id" in data:
+            service.documentation = db.session.get(Documentation, normalized_data["documentation_id"]) if normalized_data["documentation_id"] else None
         service.name = normalized_data["name"]
         service.slug = normalized_data["slug"]
         service.description = normalized_data["description"]
         service.documentation_url = normalized_data["documentation_url"]
+        if "documentation_headings" in data:
+            service.documentation_headings = normalized_data["documentation_headings"]
         service.implementation_mode = normalized_data["implementation_mode"]
         service.module_key = normalized_data["module_key"]
         service.active = normalized_data["active"]
@@ -101,6 +109,11 @@ class ServicesRepository:
         slug = str(data.get("slug", "")).strip().lower() or self._slugify(name)
         description = data.get("description", "")
         documentation_url = data.get("documentation_url", data.get("documentationUrl", ""))
+        headings = data.get("documentation_headings", ["DEFINIÇÃO", "QUEM FAZ?"])
+        if isinstance(headings, list) and all(isinstance(heading, str) for heading in headings):
+            headings = list(dict.fromkeys(heading.strip() for heading in headings if heading.strip()))
+        else:
+            headings = None
         situations = [
             {
                 "id": optional_int(item.get("id")) or index + 1,
@@ -130,10 +143,12 @@ class ServicesRepository:
         ]
 
         return {
+            "documentation_id": data.get("documentation_id"),
             "name": name,
             "slug": self._slugify(slug),
             "description": str(description or "").strip(),
             "documentation_url": str(documentation_url or "").strip(),
+            "documentation_headings": headings,
             "implementation_mode": str(
                 data.get("implementation_mode", "custom_module")
             ).strip() or "custom_module",
@@ -147,6 +162,13 @@ class ServicesRepository:
         }
 
     def _validate(self, data: dict) -> str | None:
+        documentation_id = data["documentation_id"]
+        if documentation_id is not None and (
+            type(documentation_id) is not int or db.session.get(Documentation, documentation_id) is None
+        ):
+            return "Documentacao nao encontrada."
+        if data["documentation_headings"] is None:
+            return "Informe os topicos da documentacao como uma lista de textos."
         if not data["name"]:
             return "Informe o nome do servico."
 
@@ -292,8 +314,11 @@ class ServicesRepository:
             "id": service.id,
             "name": service.name,
             "slug": service.slug,
-            "description": service.description,
-            "documentation_url": service.documentation_url,
+            "description": service.documentation.description if service.documentation else service.description,
+            **description_fields(service.documentation.description if service.documentation else service.description),
+            "documentation_id": service.documentation_id,
+            "documentation_url": service.documentation.url if service.documentation else service.documentation_url,
+            "documentation_headings": service.documentation.headings if service.documentation else service.documentation_headings,
             "implementation_mode": service.implementation_mode,
             "module_key": service.module_key,
             "active": service.active,
@@ -340,8 +365,10 @@ class ServicesRepository:
             "id": service.id,
             "name": service.name,
             "slug": service.slug,
-            "description": service.description,
-            "documentation_url": service.documentation_url,
+            "description": service.documentation.description if service.documentation else service.description,
+            **description_fields(service.documentation.description if service.documentation else service.description),
+            "documentation_id": service.documentation_id,
+            "documentation_url": service.documentation.url if service.documentation else service.documentation_url,
             "featured": service.featured,
             "updated_at": date_to_api(service.updated_at),
             "categories": [

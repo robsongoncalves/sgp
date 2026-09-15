@@ -32,7 +32,6 @@ export class ServicoDetalheComponent implements OnInit {
   isLoading = false;
   isStarting = false;
   isSavingRating = false;
-  isDescriptionExpanded = false;
   errorMessage = '';
   ratingMessage = '';
   averageRating = 0;
@@ -92,10 +91,6 @@ export class ServicoDetalheComponent implements OnInit {
       .split(/\n+/)
       .map((paragraph) => paragraph.trim())
       .filter(Boolean);
-  }
-
-  get hasLongDescription(): boolean {
-    return (this.service?.description || '').length > 360 || this.descriptionParagraphs.length > 2;
   }
 
   get serviceSituationsWithDocuments() {
@@ -210,7 +205,6 @@ export class ServicoDetalheComponent implements OnInit {
     this.serviceService.list().subscribe({
       next: (services) => {
         this.service = services.find((service) => service.slug === slug && service.active !== false);
-        this.isDescriptionExpanded = false;
         this.errorMessage = this.service ? '' : 'Servico nao encontrado.';
         this.isLoading = false;
         this.loadRatings();

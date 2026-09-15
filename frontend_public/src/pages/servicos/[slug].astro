@@ -21,7 +21,7 @@ const appBaseUrl = import.meta.env.PUBLIC_APP_BASE_URL || 'http://localhost:4200
 const startUrl = `${appBaseUrl}/servicos/${service.slug}`;
 ---
 
-<PublicLayout title={service.name} description={service.description || `Servico ${service.name}`}>
+<PublicLayout title={service.name} description={(service.description_text ?? service.description) || `Servico ${service.name}`}>
   <section class="page-shell detail-page">
     <div class="service-hero">
       <div>
@@ -46,7 +46,11 @@ const startUrl = `${appBaseUrl}/servicos/${service.slug}`;
 
     <section class="content-block" aria-labelledby="about-title">
       <h2 id="about-title">Sobre o servico</h2>
-      <p>{service.description || 'Este servico ainda nao possui descricao publica cadastrada.'}</p>
+      {service.description_html ? (
+        <div class="rich-description" set:html={service.description_html} />
+      ) : (
+        <p>{service.description || 'Este servico ainda nao possui descricao publica cadastrada.'}</p>
+      )}
     </section>
 
     {service.categories.length > 0 && (
@@ -61,6 +65,11 @@ const startUrl = `${appBaseUrl}/servicos/${service.slug}`;
 </PublicLayout>
 
 <style>
+  .rich-description { overflow-wrap: anywhere; overflow-x: auto; line-height: 1.6; }
+  .rich-description :global(img) { max-width: 100%; height: auto; }
+  .rich-description :global(table) { border-collapse: collapse; max-width: 100%; }
+  .rich-description :global(th), .rich-description :global(td) { border: 1px solid currentColor; padding: 8px; }
+  .rich-description :global(pre) { white-space: pre-wrap; }
   .detail-page {
     padding-top: 44px;
   }

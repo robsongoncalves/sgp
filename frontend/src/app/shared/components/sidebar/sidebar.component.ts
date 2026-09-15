@@ -117,6 +117,7 @@ export class SidebarComponent implements OnInit {
           label: 'Mapa de Campos',
           route: '/admin/mapa-campos'
         },
+        { icon: 'menu_book', label: 'Documentações', route: '/admin/documentacoes' },
         {
           icon: 'settings',
           label: 'Configurações',
